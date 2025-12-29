@@ -12,8 +12,14 @@ title: Lab 3 – Data Engineering
 
 ---
 
+
 ## Notebook : DE1_Lab3_Notebook_EN
-{% include "labs/lab3/assets/DE1_Lab3_Notebook_EN.md" %}
+
+<!-- BEGIN NOTEBOOK HTML INCLUDE -->
+<div class="notebook-html">
+[Direct HTML content from public/labs/lab3/assets/DE1_Lab3_Notebook_EN.html is included below.]
+</div>
+<!-- END NOTEBOOK HTML INCLUDE -->
 
 ## 📊 Proof / Outputs
 
