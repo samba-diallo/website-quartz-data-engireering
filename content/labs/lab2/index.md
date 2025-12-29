@@ -6,9 +6,14 @@ title: Lab 2 – Data Engineering
 
 
 
+
 ## Notebook : assignment2_esiee
 
-{% include "labs/lab2/assets/assignment2_esiee.md" %}
+<iframe src="./assets/assignment2_esiee.html" width="100%" height="900"></iframe>
+
+## Notebook : DE1_Lab2_Notebook_EN
+
+<iframe src="./assets/DE1_Lab2_Notebook_EN.html" width="100%" height="900"></iframe>
 
 ---
 

@@ -7,8 +7,14 @@ title: Lab 3 – Data Engineering
 
 
 
+data_path = "/home/sable/devops_base/td2/retail_dw_20250826"
 ## Notebook : assignment3_esiee
-{% include "labs/lab3/assets/assignment3_esiee.md" %}
+
+<iframe src="./assets/assignment3_esiee.html" width="100%" height="900"></iframe>
+
+## Notebook : DE1_Lab3_Notebook_EN
+
+<iframe src="./assets/DE1_Lab3_Notebook_EN.html" width="100%" height="900"></iframe>
 
 ---
 

@@ -6,28 +6,72 @@ title: Lab 1 – Data Engineering
 
 
 
+
 ## Notebook : assignment1_esiee
 
-{% include "labs/lab1/assets/assignment1_esiee.md" %}
+# ESIEE Paris — Data Engineering I — Assignment 1
+> Author : DIALLO Samba & DIOP Mouhamed
+
+**Academic year:** 2025–2026  
+**Program:** Data & Applications - Engineering - (FD)   
+**Course:** Data Engineering I  
+
+---
+
+In this assignment, you'll make sure that you've correctly set up your local Spark environment.
+You'll then complete a classic "Word Count" task on the `description` column of the `a1-brand.csv` file.
+
+You can think of "Word Count" as the "Hello World!" of Hadoop, Spark, etc.
+The task is simple: We want to count the total number of times each word occurs (in a potentially large collection of text).
+Typically, we want to sort by the counts in descending order so we can examine the most frequently occurring words.
+
+## Learning goals
+- Confirm local Spark environment in JupyterLab.
+- Implement word-count using **RDD** and **DataFrame** APIs.
+- Produce top-10 tokens with and without stopwords.
+- Record brief performance notes and environment details.
+
+## 1. Setup
+
+The following code snippet should "just work" to initialize Spark.
+If it doesn't, consult the **helper and Lab 0 with installation and setup guide**.
+
+```python
+#import findspark, os
+#os.environ["SPARK_HOME"] = "/path/to/spark-4.0.0-bin-hadoop3"
+#findspark.init()
+```
+
+```python
+import os
+import sys
+from pyspark.sql import SparkSession
+import pyspark
+```
+
+```python
+# Configurer JAVA_HOME
+os.environ['JAVA_HOME'] = '/home/sable/miniconda3/envs/de1-env'
+
+# Configurer SPARK_HOME correctement
+os.environ['SPARK_HOME'] = '/home/sable/miniconda3/envs/de1-env/lib/python3.10/site-packages/pyspark'
+
+# Vérifier les configurations
+print(f"JAVA_HOME: {os.environ['JAVA_HOME']}")
+print(f"SPARK_HOME: {os.environ['SPARK_HOME']}")
+```
+
+	JAVA_HOME: /home/sable/miniconda3/envs/de1-env
+	SPARK_HOME: /home/sable/miniconda3/envs/de1-env/lib/python3.10/site-packages/pyspark
 
 ---
 
 
+## Notebook : assignment1_esiee
+
+<iframe src="./assets/assignment1_esiee.html" width="100%" height="900"></iframe>
+
 ## Notebook : DE1_Lab1_Notebook_EN
 
-<!-- DE1_Lab1_Notebook_EN.html intégré ci-dessous -->
-<div class="notebook-html">
-<!DOCTYPE html>
-<html lang="en" dir="ltr"><head><title>DE1_Lab1_Notebook_EN</title><meta charset="utf-8"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Quartz 4"/><meta property="og:title" content="DE1_Lab1_Notebook_EN"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="DE1_Lab1_Notebook_EN"/><meta name="twitter:description" content="DE1 — Lab 1: PySpark Warmup and Reading Plans Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 This notebook is the student deliverable."/><meta property="og:description" content="DE1 — Lab 1: PySpark Warmup and Reading Plans Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 This notebook is the student deliverable."/><meta property="og:image:alt" content="DE1 — Lab 1: PySpark Warmup and Reading Plans Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 This notebook is the student deliverable."/><meta property="og:image" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta property="og:image:url" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta name="twitter:image" content="https://quartz.jzhao.xyz/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="quartz.jzhao.xyz"/><meta property="og:url" content="https://quartz.jzhao.xyz/labs/lab1/assets/DE1_Lab1_Notebook_EN"/><meta property="twitter:url" content="https://quartz.jzhao.xyz/labs/lab1/assets/DE1_Lab1_Notebook_EN"/><link rel="icon" href="../../../static/icon.png"/><meta name="description" content="DE1 — Lab 1: PySpark Warmup and Reading Plans Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 This notebook is the student deliverable."/><meta name="generator" content="Quartz"/><link href="../../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><style>.expand-button { position: absolute; display: flex; float: right; padding: 0.4rem; margin: 0.3rem; right: 0; color: var(--gray); border-color: var(--dark); background-color: var(--light); border: 1px solid; border-radius: 5px; opacity: 0; transition: 0.2s; } .expand-button > svg { fill: var(--light); filter: contrast(0.3); } .expand-button:hover { cursor: pointer; border-color: var(--secondary); } .expand-button:focus { outline: 0; } pre:hover > .expand-button { opacity: 1; transition: 0.2s; } #mermaid-container { position: fixed; contain: layout; z-index: 999; left: 0; top: 0; width: 100vw; height: 100vh; overflow: hidden; display: none; backdrop-filter: blur(4px); background: rgba(0, 0, 0, 0.5); } #mermaid-container.active { display: inline-block; } #mermaid-container > #mermaid-space { border: 1px solid var(--lightgray); background-color: var(--light); border-radius: 5px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 80vh; width: 80vw; overflow: hidden; } #mermaid-container > #mermaid-space > .mermaid-content { position: relative; transform-origin: 0 0; transition: transform 0.1s ease; overflow: visible; min-height: 200px; min-width: 200px; } #mermaid-container > #mermaid-space > .mermaid-content pre { margin: 0; border: none; } #mermaid-container > #mermaid-space > .mermaid-content svg { max-width: none; height: auto; } #mermaid-container > #mermaid-space > .mermaid-controls { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 8px; padding: 8px; background: var(--light); border: 1px solid var(--lightgray); border-radius: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); z-index: 2; } #mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--lightgray); background: var(--light); color: var(--dark); border-radius: 4px; cursor: pointer; font-size: 16px; font-family: var(--bodyFont); transition: all 0.2s ease; } #mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:hover { background: var(--lightgray); } #mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:active { transform: translateY(1px); } #mermaid-container > #mermaid-space > .mermaid-controls .mermaid-control-button:nth-child(2) { width: auto; padding: 0 12px; font-size: 14px; } /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiL2hvbWUvc2FibGUvRG9jdW1lbnRzL2RhdGEgZW5naW5lZXJpbmcxL3dlYnNpdGUvcXVhcnR6LW1pbi9xdWFydHovY29tcG9uZW50cy9zdHlsZXMiLCJzb3VyY2VzIjpbIm1lcm1haWQuaW5saW5lLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7O0FBR0Y7RUFDRTtFQUNBOztBQUdGO0VBQ0U7OztBQUtGO0VBQ0U7RUFDQTs7O0FBSUo7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBOztBQUVBO0VBQ0U7O0FBR0Y7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTs7QUFFQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7O0FBRUE7RUFDRTs7QUFHRjtFQUNFOztBQUlGO0VBQ0U7RUFDQTtFQUNBIiwic291cmNlc0NvbnRlbnQiOlsiLmV4cGFuZC1idXR0b24ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsb2F0OiByaWdodDtcbiAgcGFkZGluZzogMC40cmVtO1xuICBtYXJnaW46IDAuM3JlbTtcbiAgcmlnaHQ6IDA7IC8vIE5PVEU6IHJpZ2h0IHdpbGwgYmUgc2V0IGluIG1lcm1haWQuaW5saW5lLnRzXG4gIGNvbG9yOiB2YXIoLS1ncmF5KTtcbiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tbGlnaHQpO1xuICBib3JkZXI6IDFweCBzb2xpZDtcbiAgYm9yZGVyLXJhZGl1czogNXB4O1xuICBvcGFjaXR5OiAwO1xuICB0cmFuc2l0aW9uOiAwLjJzO1xuXG4gICYgPiBzdmcge1xuICAgIGZpbGw6IHZhcigtLWxpZ2h0KTtcbiAgICBmaWx0ZXI6IGNvbnRyYXN0KDAuMyk7XG4gIH1cblxuICAmOmhvdmVyIHtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgYm9yZGVyLWNvbG9yOiB2YXIoLS1zZWNvbmRhcnkpO1xuICB9XG5cbiAgJjpmb2N1cyB7XG4gICAgb3V0bGluZTogMDtcbiAgfVxufVxuXG5wcmUge1xuICAmOmhvdmVyID4gLmV4cGFuZC1idXR0b24ge1xuICAgIG9wYWNpdHk6IDE7XG4gICAgdHJhbnNpdGlvbjogMC4ycztcbiAgfVxufVxuXG4jbWVybWFpZC1jb250YWluZXIge1xuICBwb3NpdGlvbjogZml4ZWQ7XG4gIGNvbnRhaW46IGxheW91dDtcbiAgei1pbmRleDogOTk5O1xuICBsZWZ0OiAwO1xuICB0b3A6IDA7XG4gIHdpZHRoOiAxMDB2dztcbiAgaGVpZ2h0OiAxMDB2aDtcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcbiAgZGlzcGxheTogbm9uZTtcbiAgYmFja2Ryb3AtZmlsdGVyOiBibHVyKDRweCk7XG4gIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgMC41KTtcblxuICAmLmFjdGl2ZSB7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgJiA+ICNtZXJtYWlkLXNwYWNlIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWxpZ2h0KTtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBoZWlnaHQ6IDgwdmg7XG4gICAgd2lkdGg6IDgwdnc7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjtcblxuICAgICYgPiAubWVybWFpZC1jb250ZW50IHtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgIHRyYW5zaXRpb24tb3JpZ2luOiAwIDAwO1xuICAgICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMXMgZWFzZTtcbiAgICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgICAgbWluLWhlaWdodDogMjAwcHg7XG4gICAgICBtaW4td2lkdGg6IDIwMHB4O1xuXG4gICAgICBwcmUge1xuICAgICAgICBtYXJnaW46IDA7XG4gICAgICAgIGJvcmRlcjogbm9uZTtcbiAgICAgIH1cblxuICAgICAgc3ZnIHtcbiAgICAgICAgbWF4LXdpZHRoOiBub25lO1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgICB9XG4gICAgfVxuXG4gICAgJiA+IC5tZXJtYWlkLWNvbnRyb2xzIHtcbiAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICAgIGJvdHRvbTogMjBweDtcbiAgICAgIHJpZ2h0OiAyMHB4O1xuICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgIGdhcDogOHB4O1xuICAgICAgcGFkZGluZzogOHB4O1xuICAgICAgYmFja2dyb3VuZDogdmFyKC0tbGlnaHQpO1xuICAgICAgYm9yZGVyOiAxcHggc29saWQgd mFyKC0tbGlnaHRncmF5KTtcbiAgICAgIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgICAgIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsIDAsIDAsIDAuMSk7XG4gICAgICB6LWluZGV4OiAyO1xuXG4gICAgICAubWVybWFpZC1jb250cm9sLWJ1dHRvbiB7XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB3aWR0aDogMzJweDtcbiAgICAgICAgaGVpZ2h0OiAzMnB4O1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saWdodGdyYXkpO1xuICAgICAgICBiYWNrZ3JvdW5kOiB2YXIoLS1saWdodCk7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1kYXJrKTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNHB4O1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICAgICAgZm9udC1mYW1pbHk6IHZhcigtLWJvZHlGb250KTtcbiAgICAgICAgdHJhbnNpdGlvbjogYWxsIDAuMnMgZWFzZTtcblxuICAgICAgICA6aG92ZXIge1xuICAgICAgICAgIGJhY2tncm91bmQ6IHZhcigtLWxpZ2h0Z3JheSk7XG4gICAgICAgIH1cblxuICAgICAgICA6YWN0aXZlIHtcbiAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoMXB4KTtcbiAgICAgICAgfVxuXG4gICAgICAgIC8vIFN0eWxlIHRoZSByZXNldCBidXR0b24gZGlmZmVyZW50bHlcbiAgICAgICAgOm50aC1jaGlsZCgyKSB7XG4gICAgICAgICAgd2lkdGg6IGF1dG87XG4gICAgICAgICAgcGFkZGluZzogMCAxMnB4O1xuICAgICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgIH1cbiAgfVxuIn19 */</style><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../../static/contentIndex.json").then(data => data.json())</script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="https://quartz.jzhao.xyz/index.xml"/></head><body data-slug="labs/lab1/assets/DE1_Lab1_Notebook_EN">... (contenu HTML du notebook, tronqué pour la lisibilité) ...</div>
-
+<iframe src="./assets/DE1_Lab1_Notebook_EN.html" width="100%" height="900"></iframe>
 ## 📊 Proof / Outputs
-- ![metrics.png](labs/lab1/assets/metrics.png)
-- ![screenshot_lab1_extra.png](labs/lab1/assets/screenshot_lab1_extra.png)
-- ![Spark_job.png](labs/lab1/assets/Spark_job.png)
-
-### Text files
-- [assignment1_genai.md](labs/lab1/assets/assignment1_genai.md)
-- [plan_df.txt](labs/lab1/assets/plan_df.txt)
-- [plan_rdd.txt](labs/lab1/assets/plan_rdd.txt)
-- [RDD_vs_DataFrame_NOTE.md](labs/lab1/assets/RDD_vs_DataFrame_NOTE.md)
-- [README.md](labs/lab1/assets/README.md)
