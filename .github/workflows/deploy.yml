@@ -25,5 +25,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: quartz-min
+          projectName: website-quartz-data-engineering
           directory: public
