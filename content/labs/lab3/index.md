@@ -1,9 +1,31 @@
----
 title: Lab 3 – Data Engineering
----
 
 # Lab 3 – Data Engineering
+---
+title: "Lab 3 – Data Engineering"
+---
 
+## 🧪 Assignment – Lab 3
+
+<iframe
+	src="/assignments/lab3/assignment3_esiee.html"
+	width="100%"
+	height="850"
+	loading="lazy"
+	style="border:1px solid #ccc; border-radius:10px;">
+</iframe>
+
+---
+
+## 📘 Notebook de cours – DE1_Lab3_Notebook
+
+<iframe
+	src="/assignments/lab3/DE1_Lab3_Notebook.html"
+	width="100%"
+	height="900"
+	loading="lazy"
+	style="border:1px solid #ccc; border-radius:10px;">
+</iframe>
 
 
 
