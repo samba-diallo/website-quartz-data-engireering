@@ -1,5 +1,5 @@
 # DE1 — Lab 3: Physical Representations and Batch II Costs
-> Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026
+> Author : DIALLO Samba & DIOP Mouhamed - Data Engineering I - ESIEE 2025-2026
 ---
 
 Execute all cells. Capture plans and Spark UI evidence.

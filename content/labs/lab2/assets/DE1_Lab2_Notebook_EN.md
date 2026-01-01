@@ -1,6 +1,4 @@
 # DE1 — Lab 2: PostgreSQL → Star Schema ETL
-> Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026
----
 > Students : DIALLO Samba & DIOP Mouhamed
 ---
 

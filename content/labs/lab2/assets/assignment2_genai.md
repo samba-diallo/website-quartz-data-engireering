@@ -8,7 +8,7 @@
 
 ## AI Tool Used
 
-**Tool:** Claude Sonnet 4.5  
+**Tool:** Claude   
 **Access Method:** GitHub Copilot Chat integration in VS Code  
 **Usage Period:** Throughout Assignment 2 development
 
@@ -179,7 +179,7 @@ All AI-assisted sections are documented in this file. We did not:
 
 ## Conclusion
 
-**Claude Sonnet 4.5** served as an effective **learning accelerator** for Assignment 2. It helped us:
+**Claude** served as an effective **learning accelerator** for Assignment 2. It helped us:
 - Debug faster, leaving more time for concept mastery
 - Learn industry best practices early in our education
 - Produce higher-quality, well-documented code
@@ -192,4 +192,4 @@ We believe this transparent approach to AI usage aligns with modern engineering 
 
 **Authors:** DIALLO Samba, DIOP Mouhamed  
 **Submission Date:** October 30, 2025  
-**AI Tool:** Claude Sonnet 4.5 (via GitHub Copilot)
+**AI Tool:** Claude Sonnet (via GitHub Copilot)

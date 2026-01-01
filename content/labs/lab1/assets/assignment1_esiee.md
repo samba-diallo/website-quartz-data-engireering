@@ -1,5 +1,5 @@
 # ESIEE Paris — Data Engineering I — Assignment 1
-> Author : Badr TAJINI
+> Author : DIALLO Samba & DIOP Mouhamed
 
 **Academic year:** 2025–2026  
 **Program:** Data & Applications - Engineering - (FD)   

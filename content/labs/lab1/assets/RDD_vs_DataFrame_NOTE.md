@@ -1,7 +1,7 @@
 # RDD_vs_DataFrame_NOTE.md
 
 ## DE1 Lab 1: PySpark Warmup and Reading Plans
-**Student:** Samba DIALLO | **Date:** 2025-10-23 | **AI Assistant:** Claude Haiku 4.5
+**Student:** Samba DIALLO & DIOP Mouhamed **Date:** 2025-10-23 | **AI Assistant:** Claude 
 
 ---
 
@@ -14,7 +14,7 @@ This lab compares **RDD API** vs **DataFrame API** in Apache Spark through three
 
 ---
 
-## How Claude Haiku 4.5 Assisted
+## How Claude Assisted
 
 ### 1. **Setup & Environment Issues** 
 - **Problem:** FileNotFoundError for SPARK_HOME path (`/path/to/spark-4.0.0-bin-hadoop3`)
@@ -74,7 +74,7 @@ This lab compares **RDD API** vs **DataFrame API** in Apache Spark through three
 
 ## Conclusion
 
-**Claude Haiku 4.5** accelerated the lab by:
+**Claude** accelerated the lab by:
 1. Diagnosing environment setup issues immediately
 2. Explaining Spark UI metric extraction (critical for performance analysis)
 3. Automating comparative analysis and result interpretation

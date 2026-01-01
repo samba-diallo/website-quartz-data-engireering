@@ -1,5 +1,5 @@
 # DE1 — Lab 1: PySpark Warmup and Reading Plans
-> Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026
+> Author : DIALLO Samba & DIOP Mouhamed - Data Engineering I - ESIEE 2025-2026
 ---
 
 This notebook is the **student deliverable**. Execute all cells and attach evidence.
