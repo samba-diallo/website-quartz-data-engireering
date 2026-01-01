@@ -74,4 +74,4 @@ print(f"SPARK_HOME: {os.environ['SPARK_HOME']}")
 ## Notebook : DE1_Lab1_Notebook_EN
 
 <iframe src="./assets/DE1_Lab1_Notebook_EN.html" width="100%" height="900"></iframe>
-## 📊 Proof / Outputs
+## Proof / Outputs
