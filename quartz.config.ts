@@ -6,6 +6,21 @@ import * as Plugin from "./quartz/plugins"
  *
  * See https://quartz.jzhao.xyz/configuration for more information.
  */
+
+// Déterminer l'environnement
+const isProduction = process.env.NODE_ENV === "production"
+
+// Définir la base URL selon l'environnement
+const getBaseUrl = (): string => {
+  if (isProduction) {
+    // Remplace avec ton domaine final si tu en as un
+    return "https://website-quartz-data-engireering.pages.dev"
+    // Ou si tu as un domaine personnalisé :
+    // return "https://data-engineering.com"
+  }
+  return "http://localhost:8080"
+}
+
 const config: QuartzConfig = {
   configuration: {
     pageTitle: "Data Engineering 1",
@@ -16,7 +31,8 @@ const config: QuartzConfig = {
       provider: "",
     },
     locale: "fr-FR",
-    baseUrl: "localhost:8080",
+    // ✅ URL dynamique : localhost en dev, production en prod
+    baseUrl: getBaseUrl(),
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
@@ -53,7 +69,6 @@ const config: QuartzConfig = {
       },
     },
   },
-
   plugins: {
     transformers: [
       Plugin.FrontMatter(),
@@ -74,33 +89,26 @@ const config: QuartzConfig = {
       Plugin.Description(),
       Plugin.Latex({ renderEngine: "katex" }),
     ],
-
     filters: [
       Plugin.RemoveDrafts(),
     ],
-
     // 🔑 ORDRE CORRECT DES EMITTERS (CRITIQUE)
     emitters: [
       Plugin.AliasRedirects(),
       Plugin.ComponentResources(),
-
       // ✅ Assets AVANT la génération des pages
       Plugin.Assets(),
       Plugin.Static(),
-
       // Pages Quartz
       Plugin.ContentPage(),
       Plugin.FolderPage(),
       Plugin.TagPage(),
-
       Plugin.ContentIndex({
         enableSiteMap: true,
         enableRSS: true,
       }),
-
       Plugin.Favicon(),
       Plugin.NotFoundPage(),
-
       // Optionnel (lent, tu peux le laisser commenté)
       // Plugin.CustomOgImages(),
     ],
@@ -108,4 +116,3 @@ const config: QuartzConfig = {
 }
 
 export default config
-
