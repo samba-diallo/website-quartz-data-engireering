@@ -6,65 +6,41 @@
       <description>Les dernières 10 notes on Data Engineering 1</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>Architecture</title>
-    <link>https://localhost:8080/advanced/architecture</link>
-    <guid>https://localhost:8080/advanced/architecture</guid>
-    <description><![CDATA[ Quartz is a static site generator. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
+    <title>Labs - Data Engineering 1</title>
+    <link>https://localhost:8080/labs/</link>
+    <guid>https://localhost:8080/labs/</guid>
+    <description><![CDATA[ Labs Welcome to the Data Engineering 1 Labs. This section contains all practical exercises for the course. ]]></description>
+    <pubDate>Fri, 02 Jan 2026 16:11:34 GMT</pubDate>
   </item><item>
-    <title>Creating your own Quartz components</title>
-    <link>https://localhost:8080/advanced/creating-components</link>
-    <guid>https://localhost:8080/advanced/creating-components</guid>
-    <description><![CDATA[  Warning This guide assumes you have experience writing JavaScript and are familiar with TypeScript. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
+    <title>Lab 1 - Bases de Spark</title>
+    <link>https://localhost:8080/labs/lab1/</link>
+    <guid>https://localhost:8080/labs/lab1/</guid>
+    <description><![CDATA[ Lab 1 - Spark Basics Notebook - DE1_Lab1_Notebook_EN Assignment 1 - ESIEE Outputs Assignment 1 - ESIEE Output Assignment 1 - GenAI Analysis RDD vs DataFrame Notes Description This lab covers fundamental Spark concepts including: Introduction to Apache Spark RDD (Resilient Distributed Datasets) DataF... ]]></description>
+    <pubDate>Fri, 02 Jan 2026 16:11:34 GMT</pubDate>
   </item><item>
-    <title>Advanced</title>
-    <link>https://localhost:8080/advanced/</link>
-    <guid>https://localhost:8080/advanced/</guid>
-    <description><![CDATA[  ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
+    <title>Lab 2 - Data Warehousing</title>
+    <link>https://localhost:8080/labs/lab2/</link>
+    <guid>https://localhost:8080/labs/lab2/</guid>
+    <description><![CDATA[ Lab 2 - Data Warehousing Notebook - DE1_Lab2_Notebook_EN Assignment 2 - ESIEE Outputs Assignment 2 - ESIEE Output Assignment 2 - GenAI Analysis Description This lab deepens understanding of data warehousing concepts with Spark: Data Warehouse Architecture Spark SQL and Query Optimization Partitionin... ]]></description>
+    <pubDate>Fri, 02 Jan 2026 16:11:34 GMT</pubDate>
   </item><item>
-    <title>Making your own plugins</title>
-    <link>https://localhost:8080/advanced/making-plugins</link>
-    <guid>https://localhost:8080/advanced/making-plugins</guid>
-    <description><![CDATA[  Warning This part of the documentation will assume you have working knowledge in TypeScript and will include code snippets that describe the interface of what Quartz plugins should look like. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
+    <title>Lab 3 - Advanced Topics</title>
+    <link>https://localhost:8080/labs/lab3/</link>
+    <guid>https://localhost:8080/labs/lab3/</guid>
+    <description><![CDATA[ Lab 3 - Advanced Topics Assignment 3 - ESIEE Outputs Assignment 3 - ESIEE Output Description This lab explores advanced topics in data engineering: Advanced Optimization Techniques Real-time Data Processing Distributed Architecture and Scaling Monitoring and Debugging Production Patterns and Best Pr... ]]></description>
+    <pubDate>Fri, 02 Jan 2026 16:11:34 GMT</pubDate>
   </item><item>
-    <title>Paths in Quartz</title>
-    <link>https://localhost:8080/advanced/paths</link>
-    <guid>https://localhost:8080/advanced/paths</guid>
-    <description><![CDATA[ Paths are pretty complex to reason about because, especially for a static site generator, they can come from so many places. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
+    <title>Final Project - Data Engineering 1</title>
+    <link>https://localhost:8080/project/</link>
+    <guid>https://localhost:8080/project/</guid>
+    <description><![CDATA[ Final Project - Data Engineering 1 Project Notebook - DE1_Project_Notebook_EN Metrics and Visualizations MetricPreviewMetrics 13Metrics 15Metrics 7Metrics 8Metrics 9Spark Job Reports and Outputs Query Plans Baseline Q1 Baseline Q2 Baseline Q3 Optimized Q1 Optimized Q2 Optimized Q3 Documentation Fina... ]]></description>
+    <pubDate>Fri, 02 Jan 2026 16:11:34 GMT</pubDate>
   </item><item>
-    <title>Authoring Content</title>
-    <link>https://localhost:8080/authoring-content</link>
-    <guid>https://localhost:8080/authoring-content</guid>
-    <description><![CDATA[ All of the content in your Quartz should go in the /content folder. The content for the home page of your Quartz lives in content/index.md. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
-  </item><item>
-    <title>Building your Quartz</title>
-    <link>https://localhost:8080/build</link>
-    <guid>https://localhost:8080/build</guid>
-    <description><![CDATA[ Once you’ve initialized Quartz, let’s see what it looks like locally: npx quartz build --serve This will start a local web server to run your Quartz on your computer. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
-  </item><item>
-    <title>Configuration</title>
-    <link>https://localhost:8080/configuration</link>
-    <guid>https://localhost:8080/configuration</guid>
-    <description><![CDATA[ Quartz is meant to be extremely configurable, even if you don’t know any coding. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
-  </item><item>
-    <title>Citations</title>
-    <link>https://localhost:8080/features/Citations</link>
-    <guid>https://localhost:8080/features/Citations</guid>
-    <description><![CDATA[ Quartz uses rehype-citation to support parsing of a BibTex bibliography file. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
-  </item><item>
-    <title>Docker Support</title>
-    <link>https://localhost:8080/features/Docker-Support</link>
-    <guid>https://localhost:8080/features/Docker-Support</guid>
-    <description><![CDATA[ Quartz comes shipped with a Docker image that will allow you to preview your Quartz locally without installing Node. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
+    <title>Data Engineering 1 – Labs &amp; Projet final</title>
+    <link>https://localhost:8080/</link>
+    <guid>https://localhost:8080/</guid>
+    <description><![CDATA[ Data Engineering 1 ESIEE Paris – Année universitaire 2025–2026 Ce site web présente l’ensemble des travaux pratiques (labs) ainsi que le projet final réalisés dans le cadre du cours Data Engineering 1. ]]></description>
+    <pubDate>Thu, 01 Jan 2026 21:17:38 GMT</pubDate>
   </item>
     </channel>
   </rss>

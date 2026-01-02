@@ -1,42 +1,36 @@
 ---
-title: "Lab 3 - Sujets Avances"
+title: "Lab 3 - Advanced Topics"
 publish: true
 ---
 
-# Lab 3 - Sujets Avances
+# Lab 3 - Advanced Topics
 
-## Cahier de Laboratoire - DE1_Lab3_Notebook_EN
+## Assignment 3 - ESIEE
 
 <iframe
-  src="/static/labs/lab3/DE1_Lab3_Notebook_EN.html"
+  src="/static/labs/lab3/assignment3_esiee.html"
   width="100%"
-  height="1100"
+  height="900"
   loading="lazy"
   style="border:1px solid #ccc; border-radius:12px;">
 </iframe>
 
 ---
 
-## Travaux Pratiques
+## Outputs
 
-- [Travail 3 - ESIEE](/static/labs/lab3/assignment3_esiee.html)
-
----
-
-## Resultats et Sorties
-
-- [Sortie - Travail 3 ESIEE](/static/labs/lab3/outputs/assignment3_esiee.md)
+- [Assignment 3 - ESIEE Output](/static/labs/lab3/outputs/assignment3_esiee.md)
 
 ---
 
 ## Description
 
-Ce lab explore des sujets avances en ingenierie des donnees :
+This lab explores advanced topics in data engineering:
 
-- Techniques avancees d'optimisation
-- Gestion des donnees en temps reel
-- Architecture distribuee et scaling
-- Monitoring et debugging
-- Patterns et best practices en production
+- Advanced Optimization Techniques
+- Real-time Data Processing
+- Distributed Architecture and Scaling
+- Monitoring and Debugging
+- Production Patterns and Best Practices
 
-Consultez le cahier interactif pour les etudes de cas et les solutions avancees.
+Explore the interactive assignment for case studies and advanced solutions.

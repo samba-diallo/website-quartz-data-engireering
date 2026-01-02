@@ -3,9 +3,9 @@ title: "Lab 1 - Bases de Spark"
 publish: true
 ---
 
-# Lab 1 - Bases de Spark
+# Lab 1 - Spark Basics
 
-## Cahier de Laboratoire - DE1_Lab1_Notebook_EN
+## Notebook - DE1_Lab1_Notebook_EN
 
 <iframe
   src="/static/labs/lab1/DE1_Lab1_Notebook_EN.html"
@@ -17,28 +17,34 @@ publish: true
 
 ---
 
-## Travail Pratique
+## Assignment 1 - ESIEE
 
-- [Travail 1 - ESIEE](/static/labs/lab1/assignment1_esiee.html)
+<iframe
+  src="/static/labs/lab1/assignment1_esiee.html"
+  width="100%"
+  height="900"
+  loading="lazy"
+  style="border:1px solid #ccc; border-radius:12px;">
+</iframe>
 
 ---
 
-## Resultats et Sorties
+## Outputs
 
-- [Sortie - Travail 1 ESIEE](/static/labs/lab1/outputs/assignment1_esiee.md)
-- [Sortie - Travail 1 GenAI](/static/labs/lab1/outputs/assignment1_genai.md)
-- [Note RDD vs DataFrame](/static/labs/lab1/outputs/RDD_vs_DataFrame_NOTE.md)
+- [Assignment 1 - ESIEE Output](/static/labs/lab1/outputs/assignment1_esiee.md)
+- [Assignment 1 - GenAI Analysis](/static/labs/lab1/outputs/assignment1_genai.md)
+- [RDD vs DataFrame Notes](/static/labs/lab1/outputs/RDD_vs_DataFrame_NOTE.md)
 
 ---
 
 ## Description
 
-Ce lab couvre les concepts fondamentaux de Spark, y compris :
+This lab covers fundamental Spark concepts including:
 
-- Introduction a Apache Spark
+- Introduction to Apache Spark
 - RDD (Resilient Distributed Datasets)
-- DataFrames et Spark SQL
-- Operations de base et transformations
-- Performance et optimisation
+- DataFrames and Spark SQL
+- Basic Operations and Transformations
+- Performance and Optimization
 
-Consultez le cahier interactif ci-dessus pour les exemples de code et les exercices pratiques.
+Explore the interactive notebook above for code examples and practical exercises.

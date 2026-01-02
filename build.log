@@ -1,0 +1,15 @@
+
+> @jackyzha0/quartz@4.5.2 build
+> npx quartz build
+
+
+ Quartz v4.5.2  
+
+Cleaned output directory `public` in 7ms
+Found 6 input files from `content` in 125ms
+Parsing input files using 1 threads
+Parsed 6 Markdown files in 760ms
+Filtered out 0 files in 214μs
+Emitting files
+Emitted 113 files to `public` in 742ms
+Done processing 6 files in 2s
