@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
     <channel>
-      <title>Quartz 4</title>
-      <link>https://quartz.jzhao.xyz</link>
-      <description>Last 10 notes on Quartz 4</description>
+      <title>Data Engineering 1</title>
+      <link>https://localhost:8080</link>
+      <description>Les dernières 10 notes on Data Engineering 1</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>DE1_Lab3_Notebook_EN</title>
-    <link>https://quartz.jzhao.xyz/labs/lab3/assets/DE1_Lab3_Notebook_EN</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab3/assets/DE1_Lab3_Notebook_EN</guid>
-    <description><![CDATA[ DE1 — Lab 3: Physical Representations and Batch II Costs Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 Execute all cells. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 04:11:06 GMT</pubDate>
+    <title>Architecture</title>
+    <link>https://localhost:8080/advanced/architecture</link>
+    <guid>https://localhost:8080/advanced/architecture</guid>
+    <description><![CDATA[ Quartz is a static site generator. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>assignment1_esiee</title>
-    <link>https://quartz.jzhao.xyz/labs/lab1/assets/assignment1_esiee</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab1/assets/assignment1_esiee</guid>
-    <description><![CDATA[ ESIEE Paris — Data Engineering I — Assignment 1 Author : Badr TAJINI Academic year: 2025–2026 Program: Data &amp; Applications - Engineering - (FD) Course: Data Engineering I In this assignment, you’ll make sure that you’ve correctly set up your local Spark environment. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 03:56:35 GMT</pubDate>
+    <title>Creating your own Quartz components</title>
+    <link>https://localhost:8080/advanced/creating-components</link>
+    <guid>https://localhost:8080/advanced/creating-components</guid>
+    <description><![CDATA[  Warning This guide assumes you have experience writing JavaScript and are familiar with TypeScript. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>DE1_Project_Notebook_EN</title>
-    <link>https://quartz.jzhao.xyz/project/assets/DE1_Project_Notebook_EN</link>
-    <guid>https://quartz.jzhao.xyz/project/assets/DE1_Project_Notebook_EN</guid>
-    <description><![CDATA[ DE1 — Final Project Notebook Professor : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 Students : DIALLO Samba &amp; DIOP Mouhamed This is the primary executable artifact. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 03:54:19 GMT</pubDate>
+    <title>Advanced</title>
+    <link>https://localhost:8080/advanced/</link>
+    <guid>https://localhost:8080/advanced/</guid>
+    <description><![CDATA[  ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>assignment3_esiee</title>
-    <link>https://quartz.jzhao.xyz/labs/lab3/assets/assignment3_esiee</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab3/assets/assignment3_esiee</guid>
-    <description><![CDATA[ ESIEE Paris — Data Engineering I — Assignment 3 Author : Badr TAJINI Academic year: 2025–2026 Program: Data &amp; Applications - Engineering - (FD) Course: Data Engineering I Learning goals Analyze with SQL and DataFrames. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 03:54:13 GMT</pubDate>
+    <title>Making your own plugins</title>
+    <link>https://localhost:8080/advanced/making-plugins</link>
+    <guid>https://localhost:8080/advanced/making-plugins</guid>
+    <description><![CDATA[  Warning This part of the documentation will assume you have working knowledge in TypeScript and will include code snippets that describe the interface of what Quartz plugins should look like. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>DE1_Lab2_Notebook_EN</title>
-    <link>https://quartz.jzhao.xyz/labs/lab2/assets/DE1_Lab2_Notebook_EN</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab2/assets/DE1_Lab2_Notebook_EN</guid>
-    <description><![CDATA[ DE1 — Lab 2: PostgreSQL → Star Schema ETL Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 Students : DIALLO Samba &amp; DIOP Mouhamed Execute all cells. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 03:54:07 GMT</pubDate>
+    <title>Paths in Quartz</title>
+    <link>https://localhost:8080/advanced/paths</link>
+    <guid>https://localhost:8080/advanced/paths</guid>
+    <description><![CDATA[ Paths are pretty complex to reason about because, especially for a static site generator, they can come from so many places. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>assignment2_esiee</title>
-    <link>https://quartz.jzhao.xyz/labs/lab2/assets/assignment2_esiee</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab2/assets/assignment2_esiee</guid>
-    <description><![CDATA[ Assignment 2: Data Engineering with PySpark Overview This assignment focuses on building a data engineering pipeline using PySpark to process and analyze user activity data. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 03:54:00 GMT</pubDate>
+    <title>Authoring Content</title>
+    <link>https://localhost:8080/authoring-content</link>
+    <guid>https://localhost:8080/authoring-content</guid>
+    <description><![CDATA[ All of the content in your Quartz should go in the /content folder. The content for the home page of your Quartz lives in content/index.md. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>DE1_Lab1_Notebook_EN</title>
-    <link>https://quartz.jzhao.xyz/labs/lab1/assets/DE1_Lab1_Notebook_EN</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab1/assets/DE1_Lab1_Notebook_EN</guid>
-    <description><![CDATA[ DE1 — Lab 1: PySpark Warmup and Reading Plans Author : Badr TAJINI - Data Engineering I - ESIEE 2025-2026 This notebook is the student deliverable. ]]></description>
-    <pubDate>Mon, 29 Dec 2025 03:53:53 GMT</pubDate>
+    <title>Building your Quartz</title>
+    <link>https://localhost:8080/build</link>
+    <guid>https://localhost:8080/build</guid>
+    <description><![CDATA[ Once you’ve initialized Quartz, let’s see what it looks like locally: npx quartz build --serve This will start a local web server to run your Quartz on your computer. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>Lab 1 – Data Engineering</title>
-    <link>https://quartz.jzhao.xyz/labs/lab1/</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab1/</guid>
-    <description><![CDATA[ Lab 1 – Data Engineering Notebook : assignment1_esiee {% include “labs/lab1/assets/assignment1_esiee.md” %} Notebook : DE1_Lab1_Notebook_EN {% include “labs/lab1/assets/DE1_Lab1_Notebook_EN.md” %} 📊 Proof / Outputs Text files assignment1_genai.md plan_df.txt plan_rdd.txt RDD_vs_DataFrame_NOTE.md RE... ]]></description>
-    <pubDate>Mon, 29 Dec 2025 02:21:00 GMT</pubDate>
+    <title>Configuration</title>
+    <link>https://localhost:8080/configuration</link>
+    <guid>https://localhost:8080/configuration</guid>
+    <description><![CDATA[ Quartz is meant to be extremely configurable, even if you don’t know any coding. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>Lab 2 – Data Engineering</title>
-    <link>https://quartz.jzhao.xyz/labs/lab2/</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab2/</guid>
-    <description><![CDATA[ Lab 2 – Data Engineering Notebook : assignment2_esiee {% include “labs/lab2/assets/assignment2_esiee.md” %} Notebook : DE1_Lab2_Notebook_EN {% include “labs/lab2/assets/DE1_Lab2_Notebook_EN.md” %} 📊 Proof / Outputs ![details metrics.png](labs/lab2/assets/details metrics.png) Text files assignment2_... ]]></description>
-    <pubDate>Mon, 29 Dec 2025 02:21:00 GMT</pubDate>
+    <title>Citations</title>
+    <link>https://localhost:8080/features/Citations</link>
+    <guid>https://localhost:8080/features/Citations</guid>
+    <description><![CDATA[ Quartz uses rehype-citation to support parsing of a BibTex bibliography file. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item><item>
-    <title>Lab 3 – Data Engineering</title>
-    <link>https://quartz.jzhao.xyz/labs/lab3/</link>
-    <guid>https://quartz.jzhao.xyz/labs/lab3/</guid>
-    <description><![CDATA[ Lab 3 – Data Engineering Notebook : assignment3_esiee {% include “labs/lab3/assets/assignment3_esiee.md” %} Notebook : DE1_Lab3_Notebook_EN {% include “labs/lab3/assets/DE1_Lab3_Notebook_EN.md” %} 📊 Proof / Outputs Text files plan_broadcast.txt plan_column.txt plan_row.txt . ]]></description>
-    <pubDate>Mon, 29 Dec 2025 02:21:00 GMT</pubDate>
+    <title>Docker Support</title>
+    <link>https://localhost:8080/features/Docker-Support</link>
+    <guid>https://localhost:8080/features/Docker-Support</guid>
+    <description><![CDATA[ Quartz comes shipped with a Docker image that will allow you to preview your Quartz locally without installing Node. ]]></description>
+    <pubDate>Mon, 29 Dec 2025 07:30:10 GMT</pubDate>
   </item>
     </channel>
   </rss>
