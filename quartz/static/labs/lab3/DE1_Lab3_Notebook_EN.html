@@ -1,1 +1,246 @@
-<!-- DE1_Lab3_Notebook HTML goes here. Replace with actual export if needed. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DE1 — Lab 3: Physical Representations and Batch II Costs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 1100px;
+      margin: auto;
+      background: #ffffff;
+      color: #222;
+    }
+    h1, h2, h3 {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3rem;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    code {
+      font-family: "IBM Plex Mono", monospace;
+    }
+    .output {
+      background: #f0f0f0;
+      border-left: 4px solid #999;
+      padding: 1rem;
+      margin: 1rem 0;
+      white-space: pre-wrap;
+    }
+    blockquote {
+      border-left: 4px solid #ccc;
+      padding-left: 1rem;
+      color: #555;
+    }
+    hr {
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>DE1 — Lab 3: Physical Representations and Batch II Costs</h1>
+
+<blockquote>
+  Author : Badr TAJINI – Data Engineering I – ESIEE 2025–2026
+</blockquote>
+
+<p><strong>Instruction:</strong> Execute all cells. Capture plans and Spark UI evidence.</p>
+
+<hr />
+
+<h2>0. Setup and explicit schema</h2>
+
+<pre><code class="language-python">
+from pyspark.sql import SparkSession, functions as F, types as T
+
+spark = SparkSession.builder.appName("de1-lab3").getOrCreate()
+
+clicks_schema = T.StructType([
+    T.StructField("prev_title", T.StringType(), True),
+    T.StructField("curr_title", T.StringType(), True),
+    T.StructField("type", T.StringType(), True),
+    T.StructField("n", T.IntegerType(), True),
+    T.StructField("ts", T.TimestampType(), True),
+])
+
+dim_schema = T.StructType([
+    T.StructField("curr_title", T.StringType(), True),
+    T.StructField("curr_category", T.StringType(), True),
+])
+</code></pre>
+
+<div class="output">
+WARNING: Using incubator modules: jdk.incubator.vector  
+Using Spark's default log4j profile  
+SparkUI binding warning on port 4040
+</div>
+
+<hr />
+
+<h2>1. Ingest monthly CSVs (row format baseline)</h2>
+
+<pre><code class="language-python">
+base = "/home/sable/Documents/data engineering1/lab3-practice/data/"
+paths = [
+    f"{base}lab3_clicks_2025-05.csv",
+    f"{base}lab3_clicks_2025-06.csv",
+    f"{base}lab3_clicks_2025-07.csv"
+]
+
+row_df = (
+    spark.read.schema(clicks_schema)
+    .option("header", "true")
+    .csv(paths)
+    .withColumn("year", F.year("ts"))
+    .withColumn("month", F.month("ts"))
+)
+
+row_df.cache()
+print("Rows:", row_df.count())
+row_df.printSchema()
+row_df.show(5, truncate=False)
+</code></pre>
+
+<div class="output">
+Rows: 15000  
+Schema includes prev_title, curr_title, type, n, ts, year, month  
+Top rows displayed
+</div>
+
+<hr />
+
+<h3>Evidence: row representation plan</h3>
+
+<pre><code class="language-python">
+q1_row = (
+    row_df.filter(F.col("type") == "link")
+    .groupBy("year", "month", "prev_title", "curr_title")
+    .agg(F.sum("n").alias("n"))
+    .orderBy(F.desc("n"))
+    .limit(50)
+)
+
+q1_row.explain("formatted")
+</code></pre>
+
+<div class="output">
+Physical plan showing Scan CSV → Filter → Aggregate → Exchange → Aggregate → Sort
+</div>
+
+<hr />
+
+<h2>2. Column representation: Parquet with partitioning</h2>
+
+<pre><code class="language-python">
+col_base = "outputs/lab3/columnar"
+
+row_df.write.mode("overwrite") \
+    .partitionBy("year", "month") \
+    .parquet(f"{col_base}/clicks_parquet")
+
+col_df = spark.read.parquet(f"{col_base}/clicks_parquet")
+col_df.cache()
+
+print("Columnar rows:", col_df.count())
+</code></pre>
+
+<div class="output">
+Columnar rows: 15000
+</div>
+
+<hr />
+
+<h3>Evidence: column representation plan</h3>
+
+<div class="output">
+Scan parquet → ColumnarToRow → Filter → Aggregate → Exchange → Aggregate → Sort
+</div>
+
+<hr />
+
+<h2>3. Join strategy: normal vs broadcast</h2>
+
+<pre><code class="language-python">
+dim = spark.read.schema(dim_schema) \
+    .option("header", "true") \
+    .csv("data/lab3_dim_curr_category.csv")
+
+from pyspark.sql.functions import broadcast
+
+j2 = (
+    col_df.join(broadcast(dim), "curr_title", "left")
+    .groupBy("curr_category")
+    .agg(F.sum("n").alias("total_n"))
+    .orderBy(F.desc("total_n"))
+)
+
+j2.explain("formatted")
+</code></pre>
+
+<div class="output">
+BroadcastHashJoin used instead of SortMergeJoin
+</div>
+
+<hr />
+
+<h2>4. Additional queries for metrics</h2>
+
+<pre><code class="language-python">
+q2_row = row_df.filter(
+    (F.col("type") == "link") &
+    F.col("curr_title").isin("Apache_Spark", "PySpark")
+)
+
+q2_col = col_df.filter(
+    (F.col("type") == "link") &
+    F.col("curr_title").isin("Apache_Spark", "PySpark")
+)
+
+_ = q2_row.count()
+_ = q2_col.count()
+</code></pre>
+
+<div class="output">
+Open Spark UI at http://localhost:4040 and record metrics
+</div>
+
+<hr />
+
+<h2>5. Save sample outputs</h2>
+
+<pre><code class="language-python">
+q1_row.limit(10).toPandas().to_csv("outputs/lab3/q1_row_top10.csv", index=False)
+q1_col.limit(10).toPandas().to_csv("outputs/lab3/q1_col_top10.csv", index=False)
+j2.limit(20).toPandas().to_csv("outputs/lab3/j2_broadcast_sample.csv", index=False)
+</code></pre>
+
+<div class="output">
+Saved sample outputs in outputs/lab3/
+</div>
+
+<hr />
+
+<h2>6. Cleanup</h2>
+
+<pre><code class="language-python">
+spark.stop()
+print("Spark session stopped.")
+</code></pre>
+
+<div class="output">
+Spark session stopped.
+</div>
+
+</body>
+</html>

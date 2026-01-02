@@ -1,13 +1,13 @@
 ---
-title: "Projet Final - Data Engineering 1"
+title: "Final Project - Data Engineering 1"
 publish: true
 ---
 
-# Projet Final - Data Engineering 1
+# Final Project - Data Engineering 1
 
 ---
 
-## Cahier de Laboratoire - DE1_Project_Notebook_EN
+## Project Notebook - DE1_Project_Notebook_EN
 
 <iframe
   src="/static/project/DE1_Project_Notebook_EN.html"
@@ -19,20 +19,20 @@ publish: true
 
 ---
 
-## Metriques et Visualisations
+## Metrics and Visualizations
 
-| Metrique | Apercu |
+| Metric | Preview |
 |------|--------|
-| Metrique 13 | ![](/static/project/images/metrics_13.png) |
-| Metrique 15 | ![](/static/project/images/metrics_15.png) |
-| Metrique 7  | ![](/static/project/images/metrics7.png) |
-| Metrique 8  | ![](/static/project/images/metrics_8.png) |
-| Metrique 9  | ![](/static/project/images/metrics_9.png) |
+| Metrics 13 | ![](/static/project/images/metrics_13.png) |
+| Metrics 15 | ![](/static/project/images/metrics_15.png) |
+| Metrics 7  | ![](/static/project/images/metrics7.png) |
+| Metrics 8  | ![](/static/project/images/metrics_8.png) |
+| Metrics 9  | ![](/static/project/images/metrics_9.png) |
 | Spark Job  | ![](/static/project/images/Sparkjob.png) |
 
 ---
 
-## 📄 Reports & Outputs
+## Reports and Outputs
 
 ### Query Plans
 - [Baseline Q1](/static/project/outputs/baseline_q1_plan.txt)
@@ -43,5 +43,5 @@ publish: true
 - [Optimized Q3](/static/project/outputs/optimized_q3_plan.txt)
 
 ### Documentation
-- 📘 [Final Report](/static/project/report/DE1_Project_Report.md)
-- 🧠 [GenAI Analysis](/static/project/outputs/project_final_genai.md)
+- [Final Report](/static/project/outputs/DE1_Project_Report.md)
+- [GenAI Analysis](/static/project/outputs/project_final_genai.md)

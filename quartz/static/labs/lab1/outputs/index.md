@@ -1,25 +1,11 @@
 ---
-title: "Lab 1 - Data Engineering"
+title: "Lab 1 - Bases de Spark"
 publish: true
 ---
 
-# Lab 1 - Data Engineering
+# Lab 1 - Spark Basics
 
----
-
-## Travail Pratique - Lab 1
-
-<iframe
-  src="/static/labs/lab1/assignment1_esiee.html"
-  width="100%"
-  height="900"
-  loading="lazy"
-  style="border:1px solid #ccc; border-radius:12px;">
-</iframe>
-
----
-
-## 📓 Notebook de cours – DE1_Lab1_Notebook_EN
+## Notebook - DE1_Lab1_Notebook_EN
 
 <iframe
   src="/static/labs/lab1/DE1_Lab1_Notebook_EN.html"
@@ -31,8 +17,34 @@ publish: true
 
 ---
 
-## 📊 Proof / Outputs
+## Assignment 1 - ESIEE
 
-> Résultats générés lors de l’exécution du notebook (captures, métriques, logs).
+<iframe
+  src="/static/labs/lab1/assignment1_esiee.html"
+  width="100%"
+  height="900"
+  loading="lazy"
+  style="border:1px solid #ccc; border-radius:12px;">
+</iframe>
 
-<!-- Ajoute ici images ou fichiers si besoin -->
+---
+
+## Outputs
+
+- [Assignment 1 - ESIEE Output](/static/labs/lab1/outputs/assignment1_esiee.md)
+- [Assignment 1 - GenAI Analysis](/static/labs/lab1/outputs/assignment1_genai.md)
+- [RDD vs DataFrame Notes](/static/labs/lab1/outputs/RDD_vs_DataFrame_NOTE.md)
+
+---
+
+## Description
+
+This lab covers fundamental Spark concepts including:
+
+- Introduction to Apache Spark
+- RDD (Resilient Distributed Datasets)
+- DataFrames and Spark SQL
+- Basic Operations and Transformations
+- Performance and Optimization
+
+Explore the interactive notebook above for code examples and practical exercises.
