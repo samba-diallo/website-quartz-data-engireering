@@ -1,0 +1,35 @@
+# _quarto.yml
+project:
+  type: website
+
+# Titre du site
+title: "Mon Projet Quartz"
+author: "Sable"
+format:
+  html:
+    theme: cosmo   # Thème Bootstrap pour l'interface web
+    toc: true      # Table des matières
+    number-sections: true
+
+# Dossiers principaux
+paths:
+  labs: labs
+  project: project
+  assets: assets
+
+# Paramètres facultatifs
+execute:
+  echo: true         # Affiche la sortie des cellules
+  warning: false     # Masque les warnings
+  error: true        # Stoppe en cas d'erreur
+
+# Navigation (exemple simple)
+site:
+  navbar:
+    left:
+      - text: "Accueil"
+        href: index.qmd
+      - text: "Labs"
+        href: labs/
+      - text: "Projet"
+        href: project/
