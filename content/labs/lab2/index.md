@@ -35,13 +35,13 @@ publish: true
 
 ### 📷 Screenshots
 
-![Details metrics](/static/labs/lab2/details_metrics.png)
-![SQL query](/static/labs/lab2/details_sql_query.png)
-![Stage details](/static/labs/lab2/details_stage.png)
-![Metrics](/static/labs/lab2/metrics.png)
-![Spark SQL](/static/labs/lab2/spark_sql.png)
-![Spark UI Jobs](/static/labs/lab2/spark_ui_jobs_overview.png)
-![Spark UI Stages](/static/labs/lab2/spark_ui_stages_overview.png)
+![Details metrics](/static/labs/lab2/images/details_metrics.png)
+![SQL query](/static/labs/lab2/images/details_sql_query.png)
+![Stage details](/static/labs/lab2/images/details_stage.png)
+![Metrics](/static/labs/lab2/images/metrics.png)
+![Spark SQL](/static/labs/lab2/images/spark_sql.png)
+![Spark UI Jobs](/static/labs/lab2/images/spark_ui_jobs_overview.png)
+![Spark UI Stages](/static/labs/lab2/images/spark_ui_stages_overview.png)
 
 ---
 
