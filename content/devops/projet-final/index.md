@@ -42,30 +42,47 @@ EcoData Platform est une application web full-stack permettant aux entreprises, 
 ## Structure du Projet
 
 ```
-ecodata-platform/
-├── backend/
-│ ├── main.py # API REST FastAPI
-│ ├── models.py # Modèles SQLAlchemy
-│ ├── database.py # Configuration DB
-│ ├── schemas.py # Schémas Pydantic
-│ ├── requirements.txt # Dépendances backend
-│ └── Dockerfile # Image Docker backend
-├── frontend/
-│ ├── app.py # Application Streamlit
-│ ├── requirements.txt # Dépendances frontend
-│ └── Dockerfile # Image Docker frontend
-├── k8s/
-│ ├── namespace.yaml
-│ ├── backend-deployment.yaml
-│ ├── frontend-deployment.yaml
-│ ├── postgres-statefulset.yaml
-│ └── secrets-and-pvc.yaml
-├── .github/
-│ └── workflows/
-│ └── ci-cd.yml # Pipeline CI/CD
-├── docker-compose.yml # Orchestration locale
-└── README.md
+projet-final/
+└── ecodata-platform/           # Plateforme EcoData
+    ├── backend/                # API FastAPI
+    │   ├── main.py
+    │   ├── models.py
+    │   ├── database.py
+    │   ├── schemas.py
+    │   └── Dockerfile
+    ├── frontend/               # Application Streamlit
+    │   ├── app.py
+    │   └── Dockerfile
+    ├── k8s/                    # Manifestes Kubernetes
+    │   ├── namespace.yaml
+    │   ├── backend-deployment.yaml
+    │   ├── frontend-deployment.yaml
+    │   ├── postgres-statefulset.yaml
+    │   └── secrets-and-pvc.yaml
+    ├── docs/                   # Documentation
+    └── docker-compose.yml      # Configuration Docker Compose
 ```
+
+## EcoData Platform
+
+[[devops/projet-final/ecodata-platform/index|Accéder à la plateforme EcoData Platform complète]]
+
+### Composants
+
+#### Backend (FastAPI)
+- [[devops/projet-final/ecodata-platform/backend/index|Vue d'ensemble du Backend]]
+- [[devops/projet-final/ecodata-platform/backend/main|Application FastAPI principale]]
+- [[devops/projet-final/ecodata-platform/backend/database|Configuration de la base de données]]
+- [[devops/projet-final/ecodata-platform/backend/models|Modèles SQLAlchemy]]
+- [[devops/projet-final/ecodata-platform/backend/schemas|Schémas Pydantic]]
+
+#### Frontend (Streamlit)
+- [[devops/projet-final/ecodata-platform/frontend/index|Vue d'ensemble du Frontend]]
+- [[devops/projet-final/ecodata-platform/frontend/app|Application Streamlit]]
+
+#### Documentation
+- [[devops/projet-final/ecodata-platform/docs/DESIGN|Architecture et Design]]
+- [[devops/projet-final/ecodata-platform/docs/VISUAL_ASSETS|Assets Visuels]]
 
 ## Installation et Lancement
 
