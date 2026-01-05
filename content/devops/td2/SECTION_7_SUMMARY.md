@@ -47,13 +47,13 @@ source = "github.com/user/repo.git//module?ref=abc123"
 
 ```
 /home/sable/devops_base/td2/scripts/live/github-modules/
-├── main.tf                                    # Primary config
-├── variables.tf                              # Input variables
-├── outputs.tf                                # Output values
-├── example1-local-module.tf                  # Local module example
-├── example2-github-module-terraform-aws.tf   # Registry module example
-├── example3-custom-github-module.tf          # Custom GitHub module
-└── example4-multiple-versions.tf             # Version constraint examples
+├── main.tf # Primary config
+├── variables.tf # Input variables
+├── outputs.tf # Output values
+├── example1-local-module.tf # Local module example
+├── example2-github-module-terraform-aws.tf # Registry module example
+├── example3-custom-github-module.tf # Custom GitHub module
+└── example4-multiple-versions.tf # Version constraint examples
 ```
 
 ### Module Patterns
@@ -61,34 +61,34 @@ source = "github.com/user/repo.git//module?ref=abc123"
 #### Pattern 1: Local Module (Baseline)
 ```hcl
 module "local_app" {
-  source        = "../../modules/ec2-instance"
-  ami_id        = var.ami_id
-  name          = "local-module"
-  instance_type = "t3.micro"
-  port          = 8080
+ source = "../../modules/ec2-instance"
+ ami_id = var.ami_id
+ name = "local-module"
+ instance_type = "t3.micro"
+ port = 8080
 }
 ```
 
 #### Pattern 2: GitHub Custom Module
 ```hcl
 module "github_app" {
-  source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=v1.0.0"
-  
-  ami_id        = var.ami_id
-  name          = "github-module"
-  instance_type = "t3.micro"
-  port          = 8080
+ source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=v1.0.0"
+ 
+ ami_id = var.ami_id
+ name = "github-module"
+ instance_type = "t3.micro"
+ port = 8080
 }
 ```
 
 #### Pattern 3: Terraform Registry Module
 ```hcl
 module "aws_vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.0.0"
-  
-  name = "main-vpc"
-  cidr = "10.0.0.0/16"
+ source = "terraform-aws-modules/vpc/aws"
+ version = "5.0.0"
+ 
+ name = "main-vpc"
+ cidr = "10.0.0.0/16"
 }
 ```
 
@@ -102,53 +102,53 @@ Learn to version modules using Git tags, branches, and commits.
 ### Key Steps
 
 1. **Create GitHub Repository**
-   ```
-   github.com/YOUR_USERNAME/iac-modules
-   ```
+ ```
+ github.com/YOUR_USERNAME/iac-modules
+ ```
 
 2. **Push Local Module**
-   ```bash
-   cd /home/sable/devops_base/td2/scripts/modules
-   git init
-   git add -A
-   git commit -m "Initial module structure"
-   git remote add origin https://github.com/YOUR_USERNAME/iac-modules.git
-   git push -u origin main
-   ```
+ ```bash
+ cd /home/sable/devops_base/td2/scripts/modules
+ git init
+ git add -A
+ git commit -m "Initial module structure"
+ git remote add origin https://github.com/YOUR_USERNAME/iac-modules.git
+ git push -u origin main
+ ```
 
 3. **Create Release Tags**
-   ```bash
-   git tag -a v1.0.0 -m "First stable release"
-   git tag -a v1.1.0 -m "Add improvements"
-   git push origin v1.0.0
-   git push origin v1.1.0
-   ```
+ ```bash
+ git tag -a v1.0.0 -m "First stable release"
+ git tag -a v1.1.0 -m "Add improvements"
+ git push origin v1.0.0
+ git push origin v1.1.0
+ ```
 
 4. **Create Development Branch**
-   ```bash
-   git checkout -b develop
-   git push -u origin develop
-   ```
+ ```bash
+ git checkout -b develop
+ git push -u origin develop
+ ```
 
 5. **Reference Specific Versions**
-   ```hcl
-   # Use v1.0.0
-   source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=v1.0.0"
-   
-   # Use v1.1.0
-   source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=v1.1.0"
-   
-   # Use develop branch
-   source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=develop"
-   ```
+ ```hcl
+ # Use v1.0.0
+ source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=v1.0.0"
+ 
+ # Use v1.1.0
+ source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=v1.1.0"
+ 
+ # Use develop branch
+ source = "github.com/YOUR_USERNAME/iac-modules.git//ec2-instance?ref=develop"
+ ```
 
 ### What You Learn
 
-✅ Semantic versioning (v1.2.3)  
-✅ Git tagging for releases  
-✅ Branch-based versioning  
-✅ Version pinning in OpenTofu  
-✅ Production release strategies  
+ Semantic versioning (v1.2.3) 
+ Git tagging for releases 
+ Branch-based versioning 
+ Version pinning in OpenTofu 
+ Production release strategies 
 
 ### Best Practices
 
@@ -199,24 +199,24 @@ Search by provider, type, or keyword
 #### Step 3: Copy Module Declaration
 ```hcl
 module "example" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "5.0.0"
+ source = "terraform-aws-modules/ec2-instance/aws"
+ version = "5.0.0"
 }
 ```
 
 #### Step 4: Configure Variables
 ```hcl
 module "web_server" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "5.0.0"
+ source = "terraform-aws-modules/ec2-instance/aws"
+ version = "5.0.0"
 
-  name           = "web-server"
-  ami            = "ami-0c55b159cbfafe1f0"
-  instance_type  = "t3.micro"
-  
-  tags = {
-    Name = "web-prod"
-  }
+ name = "web-server"
+ ami = "ami-0c55b159cbfafe1f0"
+ instance_type = "t3.micro"
+ 
+ tags = {
+ Name = "web-prod"
+ }
 }
 ```
 
@@ -231,7 +231,7 @@ tofu apply
 
 #### 1. EC2 Instance Module
 ```hcl
-source  = "terraform-aws-modules/ec2-instance/aws"
+source = "terraform-aws-modules/ec2-instance/aws"
 version = "5.0.0"
 ```
 - Simple EC2 instance provisioning
@@ -239,7 +239,7 @@ version = "5.0.0"
 
 #### 2. VPC Module
 ```hcl
-source  = "terraform-aws-modules/vpc/aws"
+source = "terraform-aws-modules/vpc/aws"
 version = "5.0.0"
 ```
 - Complete VPC with subnets
@@ -247,7 +247,7 @@ version = "5.0.0"
 
 #### 3. Security Group Module
 ```hcl
-source  = "terraform-aws-modules/security-group/aws"
+source = "terraform-aws-modules/security-group/aws"
 version = "5.0.0"
 ```
 - Predefined rules (web, ssh, db, etc.)
@@ -255,7 +255,7 @@ version = "5.0.0"
 
 #### 4. RDS Module
 ```hcl
-source  = "terraform-aws-modules/rds/aws"
+source = "terraform-aws-modules/rds/aws"
 version = "6.0.0"
 ```
 - Database provisioning
@@ -263,7 +263,7 @@ version = "6.0.0"
 
 #### 5. ALB/NLB Module
 ```hcl
-source  = "terraform-aws-modules/alb/aws"
+source = "terraform-aws-modules/alb/aws"
 version = "9.0.0"
 ```
 - Load balancer with target groups
@@ -271,22 +271,22 @@ version = "9.0.0"
 
 ### Best Practices
 
-✅ Always pin version (`version = "5.0.0"`)  
-✅ Read module documentation carefully  
-✅ Test in development first  
-✅ Check module maturity (stars, issues, releases)  
-✅ Review examples in module repository  
-✅ Understand input/output variables  
-✅ Monitor for security updates  
+ Always pin version (`version = "5.0.0"`) 
+ Read module documentation carefully 
+ Test in development first 
+ Check module maturity (stars, issues, releases) 
+ Review examples in module repository 
+ Understand input/output variables 
+ Monitor for security updates 
 
 ### Red Flags
 
-❌ No version pin (use `version = "latest"` or no version)  
-❌ No documentation or examples  
-❌ Inactive repository (no recent commits)  
-❌ High number of open issues  
-❌ Minimal test coverage  
-❌ Undocumented breaking changes  
+ No version pin (use `version = "latest"` or no version) 
+ No documentation or examples 
+ Inactive repository (no recent commits) 
+ High number of open issues 
+ Minimal test coverage 
+ Undocumented breaking changes 
 
 ---
 
@@ -389,31 +389,31 @@ local_module_security_group = "sg-0abc123"
 ## Key Learnings
 
 1. **Module Reuse**
-   - Local modules: Team/project
-   - GitHub modules: Shared across projects
-   - Registry modules: Community standards
+ - Local modules: Team/project
+ - GitHub modules: Shared across projects
+ - Registry modules: Community standards
 
 2. **Versioning Strategy**
-   - v1.2.3: MAJOR.MINOR.PATCH
-   - MAJOR: Breaking changes
-   - MINOR: New features
-   - PATCH: Bug fixes
+ - v1.2.3: MAJOR.MINOR.PATCH
+ - MAJOR: Breaking changes
+ - MINOR: New features
+ - PATCH: Bug fixes
 
 3. **Reference Patterns**
-   - Production: ?ref=v1.0.0 (tag)
-   - Development: ?ref=develop (branch)
-   - Debugging: ?ref=abc123 (commit)
+ - Production: ?ref=v1.0.0 (tag)
+ - Development: ?ref=develop (branch)
+ - Debugging: ?ref=abc123 (commit)
 
 4. **Module Sourcing**
-   - Local: Fastest, full control
-   - GitHub: Shared, version control
-   - Registry: Tested, documented
+ - Local: Fastest, full control
+ - GitHub: Shared, version control
+ - Registry: Tested, documented
 
 5. **Quality Assurance**
-   - Understand module purpose
-   - Test before production
-   - Pin versions
-   - Monitor updates
+ - Understand module purpose
+ - Test before production
+ - Pin versions
+ - Monitor updates
 
 ---
 
@@ -421,39 +421,39 @@ local_module_security_group = "sg-0abc123"
 
 | Aspect | Local | GitHub | Registry |
 |--------|-------|--------|----------|
-| **Development Speed** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **Reusability** | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Documentation** | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Community Support** | ⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Maintenance Burden** | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| **Version Control** | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Development Speed** | | | |
+| **Reusability** | | | |
+| **Documentation** | | | |
+| **Community Support** | | | |
+| **Maintenance Burden** | | | |
+| **Version Control** | | | |
 
 ---
 
 ## Next Steps
 
 1. **Create GitHub Repository**
-   - Push your local modules
-   - Create version tags
+ - Push your local modules
+ - Create version tags
 
 2. **Test Module References**
-   - Use ?ref=v1.0.0 syntax
-   - Verify module downloads
+ - Use ?ref=v1.0.0 syntax
+ - Verify module downloads
 
 3. **Explore Public Modules**
-   - Visit registry.terraform.io
-   - Review popular modules
-   - Study examples
+ - Visit registry.terraform.io
+ - Review popular modules
+ - Study examples
 
 4. **Implement in Projects**
-   - Replace local with GitHub modules
-   - Adopt public modules where applicable
-   - Document decisions
+ - Replace local with GitHub modules
+ - Adopt public modules where applicable
+ - Document decisions
 
 5. **Establish Standards**
-   - Define versioning policy
-   - Create module template
-   - Document best practices
+ - Define versioning policy
+ - Create module template
+ - Document best practices
 
 ---
 
@@ -527,12 +527,12 @@ local_module_security_group = "sg-0abc123"
 Section 7 completes the IaC journey:
 
 **Lab 2 Full Progression:**
-1. ✅ Bash scripting (manual)
-2. ✅ Ansible (configuration management)
-3. ✅ Packer (image building)
-4. ✅ OpenTofu (infrastructure provisioning)
-5. ✅ Modules (code organization)
-6. ✅ GitHub Modules (infrastructure sharing)
+1. Bash scripting (manual)
+2. Ansible (configuration management)
+3. Packer (image building)
+4. OpenTofu (infrastructure provisioning)
+5. Modules (code organization)
+6. GitHub Modules (infrastructure sharing)
 
 **Key Achievement:**
 From single instance deployment to enterprise-scale module management with version control, reusability, and team collaboration.
@@ -545,6 +545,6 @@ From single instance deployment to enterprise-scale module management with versi
 
 ---
 
-**Lab 2 Complete! 🎉**
+**Lab 2 Complete! **
 
 All sections (1-7) completed with exercises 3-12 successfully executed.

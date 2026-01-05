@@ -13,22 +13,22 @@ localhost : ok=6 changed=1 unreachable=0 failed=0 skipped=1
 
 | Tâche | 1ère exécution | 2ème exécution | Idempotent ? |
 |-------|---|---|---|
-| Gathering Facts | ok | ok | ✅ OUI |
-| Install Node.js setup repository | ok | ok | ✅ OUI |
-| Install Node.js | ok | ok | ✅ OUI |
-| Copy sample app | ok | ok | ✅ OUI |
-| Check if app is already running | ignored (failed) | ignored (failed) | ✅ OUI |
-| Stop any existing app | skipped | skipped | ✅ OUI |
-| **Start sample app** | **changed** | **changed** | ❌ NON |
+| Gathering Facts | ok | ok | OUI |
+| Install Node.js setup repository | ok | ok | OUI |
+| Install Node.js | ok | ok | OUI |
+| Copy sample app | ok | ok | OUI |
+| Check if app is already running | ignored (failed) | ignored (failed) | OUI |
+| Stop any existing app | skipped | skipped | OUI |
+| **Start sample app** | **changed** | **changed** | NON |
 
 ### Pourquoi "Start sample app" n'est PAS idempotent ?
 
 ```yaml
 - name: Start sample app
-  shell: nohup node /home/ec2-user/app.js > /tmp/app.log 2>&1 &
-  args:
-    chdir: /home/ec2-user/
-  become_user: ec2-user
+ shell: nohup node /home/ec2-user/app.js > /tmp/app.log 2>&1 &
+ args:
+ chdir: /home/ec2-user/
+ become_user: ec2-user
 ```
 
 **Problèmes** :
@@ -45,12 +45,12 @@ localhost : ok=6 changed=1 unreachable=0 failed=0 skipped=1
 
 ```yaml
 - name: Start sample app (IDEMPOTENT - version minimale)
-  shell: nohup node /home/ec2-user/app.js > /tmp/app.log 2>&1 &
-  args:
-    chdir: /home/ec2-user/
-  become_user: ec2-user
-  when: app_running.rc != 0         # Ne s'exécute que si app NOT running
-  changed_when: false               # Ne marque jamais comme "changed"
+ shell: nohup node /home/ec2-user/app.js > /tmp/app.log 2>&1 &
+ args:
+ chdir: /home/ec2-user/
+ become_user: ec2-user
+ when: app_running.rc != 0 # Ne s'exécute que si app NOT running
+ changed_when: false # Ne marque jamais comme "changed"
 ```
 
 **Avantages** :
@@ -70,41 +70,41 @@ Créer `/etc/systemd/system/sample-app.service` :
 
 ```yaml
 - name: Create systemd service file for sample app
-  copy:
-    dest: /etc/systemd/system/sample-app.service
-    mode: '0644'
-    content: |
-      [Unit]
-      Description=Sample Node.js Application
-      After=network.target
-      
-      [Service]
-      Type=simple
-      User=ec2-user
-      WorkingDirectory=/home/ec2-user
-      ExecStart=/usr/bin/node /home/ec2-user/app.js
-      Restart=on-failure
-      RestartSec=10
-      StandardOutput=journal
-      StandardError=journal
-      
-      [Install]
-      WantedBy=multi-user.target
+ copy:
+ dest: /etc/systemd/system/sample-app.service
+ mode: '0644'
+ content: |
+ [Unit]
+ Description=Sample Node.js Application
+ After=network.target
+ 
+ [Service]
+ Type=simple
+ User=ec2-user
+ WorkingDirectory=/home/ec2-user
+ ExecStart=/usr/bin/node /home/ec2-user/app.js
+ Restart=on-failure
+ RestartSec=10
+ StandardOutput=journal
+ StandardError=journal
+ 
+ [Install]
+ WantedBy=multi-user.target
 
 - name: Enable and start sample app service
-  systemd:
-    name: sample-app
-    state: started
-    enabled: yes
-    daemon_reload: yes
+ systemd:
+ name: sample-app
+ state: started
+ enabled: yes
+ daemon_reload: yes
 ```
 
 **Avantages** :
-- ✅ **PLEINEMENT IDEMPOTENT** — systemd gère l'idempotence
-- ✅ Redémarrage automatique en cas de crash (`Restart=on-failure`)
-- ✅ Logs centralisés dans `journalctl`
-- ✅ Contrôle facile : `systemctl start/stop/restart sample-app`
-- ✅ Démarrage automatique après reboot (`enabled: yes`)
+- **PLEINEMENT IDEMPOTENT** — systemd gère l'idempotence
+- Redémarrage automatique en cas de crash (`Restart=on-failure`)
+- Logs centralisés dans `journalctl`
+- Contrôle facile : `systemctl start/stop/restart sample-app`
+- Démarrage automatique après reboot (`enabled: yes`)
 
 **Inconvénients** :
 - Nécessite `become: yes` ou exécution en root
@@ -158,12 +158,12 @@ Puis relancer le playbook — la 2ème exécution doit montrer `ok` (aucun chang
 
 1. **Idempotence = Talon d'Achille** : Beaucoup de playbooks Ansible naïfs ne sont PAS idempotents.
 2. **Signes de non-idempotence** :
-   - `shell:` ou `command:` sans `changed_when:` ou `when:`
-   - Tâches qui modifient l'état sans vérifier l'état existant
-   - Redémarrage/relancement d'apps en boucle
+ - `shell:` ou `command:` sans `changed_when:` ou `when:`
+ - Tâches qui modifient l'état sans vérifier l'état existant
+ - Redémarrage/relancement d'apps en boucle
 3. **Bonnes pratiques** :
-   - Utiliser des modules de haut niveau (`yum:`, `copy:`, `systemd:`, etc.) — ils sont idempotents par défaut
-   - Pour les scripts personnalisés (`shell:`), ajouter `when:` ou `changed_when:`
-   - Préférer les services systemd ou supervisors pour la gestion d'applications
+ - Utiliser des modules de haut niveau (`yum:`, `copy:`, `systemd:`, etc.) — ils sont idempotents par défaut
+ - Pour les scripts personnalisés (`shell:`), ajouter `when:` ou `changed_when:`
+ - Préférer les services systemd ou supervisors pour la gestion d'applications
 4. **Vérification** : Relancer le playbook **deux fois de suite** — la 2ème exécution doit produire 0 changement (ou très peu).
 

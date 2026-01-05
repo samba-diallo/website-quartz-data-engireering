@@ -1,8 +1,8 @@
 # DevOps Labs - ESIEE 2025
 
-**Authors**: DIALLO Samba, DIOP Mouhamed  
-**Course Instructor**: Badr TAJINI - DevOps Data for SWE  
-**Institution**: ESIEE PARIS - E4FD Program  
+**Authors**: DIALLO Samba, DIOP Mouhamed 
+**Course Instructor**: Badr TAJINI - DevOps Data for SWE 
+**Institution**: ESIEE PARIS - E4FD Program 
 **Academic Year**: 2025-2026
 
 ## Project Overview
@@ -57,8 +57,8 @@ Automate infrastructure and application deployment using GitHub Actions. Configu
 ---
 
 ### [TD6 - GitOps Practices](td6/README_TD6.md)
-**Focus**: GitOps and Advanced Automation  
-**Statut**: ❌ ABANDONNÉ (raisons financières)
+**Focus**: GitOps and Advanced Automation 
+**Statut**: ABANDONNÉ (raisons financières)
 
 Explore GitOps methodologies for managing infrastructure and applications through Git. This TD was abandoned due to AWS Organizations costs that exceed the Free Tier limits.
 
@@ -87,10 +87,10 @@ Le projet final du cours DevOps consiste à
 
 ### Cloud Platform
 - **AWS** (Amazon Web Services)
-  - EC2, Auto Scaling Groups, Load Balancers
-  - Lambda, API Gateway (serverless)
-  - S3, DynamoDB (state management)
-  - IAM (security and permissions)
+ - EC2, Auto Scaling Groups, Load Balancers
+ - Lambda, API Gateway (serverless)
+ - S3, DynamoDB (state management)
+ - IAM (security and permissions)
 
 ### Infrastructure as Code
 - **OpenTofu** (Terraform-compatible) - Primary IaC tool
@@ -130,21 +130,21 @@ To work with these labs, you'll need:
 ## Getting Started
 
 1. **Clone this repository**
-   ```bash
-   git clone https://github.com/samba-diallo/Devops.git
-   cd devops_base
-   ```
+ ```bash
+ git clone https://github.com/samba-diallo/Devops.git
+ cd devops_base
+ ```
 
 2. **Configure AWS credentials**
-   ```bash
-   aws configure
-   # Enter your AWS Access Key ID and Secret Access Key
-   ```
+ ```bash
+ aws configure
+ # Enter your AWS Access Key ID and Secret Access Key
+ ```
 
 3. **Choose a lab and follow its README**
-   - Each TD directory contains detailed instructions
-   - Start with TD1 if you're new to cloud deployment
-   - Labs build on each other progressively
+ - Each TD directory contains detailed instructions
+ - Start with TD1 if you're new to cloud deployment
+ - Labs build on each other progressively
 
 4. **Important**: Always clean up AWS resources after testing to avoid unnecessary costs
 

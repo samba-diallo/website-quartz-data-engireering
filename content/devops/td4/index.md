@@ -1,4 +1,12 @@
-# TD4 - Version Control, Build Systems, and Automated Testing
+---
+title: "TD4 - Version Control, Build Systems, et Tests Automatisés"
+publish: true
+---
+
+> Students : DIALLO Samba & DIOP Mouhamed
+---
+
+# TD4 - Version Control, Build Systems, et Tests Automatisés
 
 **Auteurs** : DIALLO Samba, DIOP Mouhamed  
 **École** : ESIEE Paris  
@@ -7,7 +15,24 @@
 
 ---
 
-##  Sommaire
+## Applications Exemple et Documentation
+
+Ce TD inclut trois versions d'une application Node.js avec complexité croissante:
+
+### Applications Disponibles
+- [[devops/td4/sample_app_readme|sample-app]] - Application Node.js basique
+- [[devops/td4/sample_app_express_readme|sample-app-express]] - Version avec Express.js
+- [[devops/td4/sample_app_tests_readme|sample-app-express-with-tests]] - Version complète avec tests Jest
+
+### Fichiers de Code
+Les applications complètes avec leurs Dockerfiles et scripts sont disponibles dans:
+- [sample-app](/static/devops/td4/scripts/sample-app/)
+- [sample-app-express](/static/devops/td4/scripts/sample-app-express/)
+- [sample-app-express-with-tests](/static/devops/td4/scripts/sample-app-express-with-tests/)
+
+---
+
+## Sommaire
 
 1. [Section 1: Version Control with Git](#section-1-version-control-with-git)
 2. [Section 2: Collaborating with GitHub](#section-2-collaborating-with-github)

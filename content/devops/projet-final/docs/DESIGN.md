@@ -3,7 +3,7 @@ title: "DESIGN"
 publish: true
 ---
 
-# 🎨 Guide de Design - EcoData Platform
+# Guide de Design - EcoData Platform
 
 ## 🌍 Thème Écologique
 
@@ -19,7 +19,7 @@ publish: true
 - **Ombres douces** : `box-shadow` pour la profondeur
 - **Icônes écologiques** : 🌍 🌱 🌿 ♻️ 💚
 
-## 📝 Messages et Slogans
+## Messages et Slogans
 
 ### Slogan Principal
 > **"Agir aujourd'hui pour préserver demain"**
@@ -30,14 +30,14 @@ publish: true
 - **Titre** : "Bienvenue sur EcoData Platform"
 - **Message** : "Ensemble, mesurons notre impact pour mieux le réduire !"
 - **Citations** :
-  - "Chaque donnée partagée est un pas vers un avenir plus vert"
-  - "Mesurer pour mieux agir, agir pour mieux préserver"
+ - "Chaque donnée partagée est un pas vers un avenir plus vert"
+ - "Mesurer pour mieux agir, agir pour mieux préserver"
 
 #### 📤 Déposer des Données
 - **Titre** : "Partagez vos données, construisons ensemble un avenir durable"
 - **Message** : "Chaque fichier déposé nous rapproche d'une planète plus verte"
 
-#### 📊 Tableau de Bord
+#### Tableau de Bord
 - **Titre** : "Visualisez votre impact environnemental en temps réel"
 - **Message** : "Voir pour comprendre, comprendre pour agir"
 
@@ -45,11 +45,11 @@ publish: true
 - **Titre** : "Gérez vos contributions à la transition écologique"
 - **Message** : "Organisez vos données, optimisez votre impact"
 
-#### 📈 Analyses
+#### Analyses
 - **Titre** : "Analyses approfondies pour un impact mesurable"
 - **Message** : "Des données précises pour des décisions éclairées"
 
-## 🎯 Objectifs de Design
+## Objectifs de Design
 
 1. **Inspirer l'action** : Couleurs vives et messages motivants
 2. **Clarté** : Interface épurée et intuitive
@@ -57,7 +57,7 @@ publish: true
 4. **Optimisme** : Ton positif et encourageant
 5. **Professionnalisme** : Design moderne et sérieux
 
-## 💡 Citations Écologiques (Rotation aléatoire)
+## Citations Écologiques (Rotation aléatoire)
 
 - 🌿 "La nature ne fait rien en vain"
 - 🌍 "Soyez le changement que vous voulez voir"
@@ -66,7 +66,7 @@ publish: true
 - 💚 "Protégeons notre maison commune"
 - 🌊 "L'eau, l'air, la terre : notre héritage"
 
-## 🎨 Composants Visuels
+## Composants Visuels
 
 ### Cartes d'Information (Quote)
 ```css
@@ -95,7 +95,7 @@ border-radius: 15px;
 - Colonnes adaptatives (col1, col2)
 - Sidebar extensible par défaut
 
-## 🌟 Expérience Utilisateur
+## Expérience Utilisateur
 
 ### Points Forts
 1. **Premier impact visuel** : Bannière verte accueillante
@@ -106,10 +106,10 @@ border-radius: 15px;
 
 ### Émotions Ciblées
 - 🌱 **Espoir** : Un avenir meilleur est possible
-- 💪 **Empowerment** : Chacun peut agir
+- **Empowerment** : Chacun peut agir
 - 🤝 **Collaboration** : Ensemble, c'est mieux
-- 📊 **Transparence** : Données claires et accessibles
-- 🎯 **Action** : Passer des intentions aux actes
+- **Transparence** : Données claires et accessibles
+- **Action** : Passer des intentions aux actes
 
 ## 🔄 Améliorations Futures
 

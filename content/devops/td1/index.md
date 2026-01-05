@@ -1,11 +1,14 @@
 ---
-title: "index"
+title: "TD1 - Introduction au Déploiement d'Applications"
 publish: true
 ---
 
-# TD1 - An Introduction to Deploying Apps
+> Students : DIALLO Samba & DIOP Mouhamed
+---
 
-Author: Badr TAJINI - DevOps Data for SWE - ESIEE - 2025
+# TD1 - Introduction au Déploiement d'Applications
+
+Auteur: Badr TAJINI - DevOps Data for SWE - ESIEE - 2025
 
 ## Overview
 
@@ -87,12 +90,23 @@ td1/
 3. Follow the exercises to deploy the sample Node.js application
 4. Experiment with different EC2 instance types and configurations
 
-## Resources
+## Documentation Complète
 
-- AWS EC2 Documentation: https://docs.aws.amazon.com/ec2/
-- Node.js Official Site: https://nodejs.org/
+Pour plus de détails sur le TD1, consultez:
+- [[devops/td1/readme|Documentation complète du TD1 (Français)]]
+
+## Fichiers Scripts
+
+Les scripts et fichiers de configuration sont disponibles:
+- [user-data.sh](/static/devops/td1/scripts/user-data.sh) - Script d'initialisation EC2
+- [app.js](/static/devops/td1/scripts/app.js) - Application Node.js exemple
+
+## Ressources
+
+- Documentation AWS EC2: https://docs.aws.amazon.com/ec2/
+- Site Officiel Node.js: https://nodejs.org/
 - AWS Free Tier: https://aws.amazon.com/free/
 
 ## Notes
 
-This TD establishes the foundation for subsequent labs that build on these cloud deployment concepts, including Infrastructure as Code (TD2), advanced deployment strategies (TD3), and CI/CD pipelines (TD5).
+Ce TD établit les fondations pour les labs suivants qui s'appuient sur ces concepts de déploiement cloud, incluant l'Infrastructure as Code (TD2), les stratégies de déploiement avancées (TD3), et les pipelines CI/CD (TD5).

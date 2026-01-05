@@ -1,8 +1,20 @@
-# TD5: Continuous Integration (CI) and Continuous Delivery (CD) with Kubernetes
+---
+title: "TD5 - CI/CD avec Kubernetes"
+publish: true
+---
 
-**Auteur:** Samba DIALLO , Mouhamed DIOP
+> Students : DIALLO Samba & DIOP Mouhamed
+---
+
+# TD5: Continuous Integration (CI) et Continuous Delivery (CD) avec Kubernetes
+
+**Auteur:** Samba DIALLO, Mouhamed DIOP  
 **Date:** 7 décembre 2025  
 **Repository:** samba-diallo/Devops
+
+## Documentation Complète
+
+- [[devops/td5/readme|Documentation Complète du TD5 (Français)]]
 
 ## Objectifs
 

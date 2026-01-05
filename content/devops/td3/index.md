@@ -1,19 +1,21 @@
 ---
-title: "index"
+title: "TD3 - Comment Déployer Vos Applications"
 publish: true
 ---
 
-# TD3 - How to Deploy Your Apps
+> Students : DIALLO Samba & DIOP Mouhamed
+---
 
-## Auteurs
-
-- **DIALLO Samba**
-- **DIOP Mouhamed**
+# TD3 - Comment Déployer Vos Applications
 
 **Filière**: E4FD  
 **Matière**: DevOps  
 **Année académique**: 2025-2026  
 **École**: ESIEE PARIS
+
+## Documentation Complète
+
+- [[devops/td3/readme|Documentation Complète du TD3 (Français)]]
 
 ## Description
 

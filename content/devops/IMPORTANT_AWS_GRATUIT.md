@@ -34,15 +34,15 @@ Votre compte AWS a été automatiquement mis à niveau vers un forfait payant su
 Pour le TD6, au lieu de créer de vrais comptes AWS Organizations, vous pouvez:
 
 1. **Utiliser OpenTofu Workspaces** (Partie 2 du TD6)
-   - Créer des workspaces locaux: dev, stage, prod
-   - Déployer dans le MÊME compte AWS mais avec des noms différents
-   - Exemple: lambda-dev, lambda-stage, lambda-prod
+ - Créer des workspaces locaux: dev, stage, prod
+ - Déployer dans le MÊME compte AWS mais avec des noms différents
+ - Exemple: lambda-dev, lambda-stage, lambda-prod
 
 2. **Utiliser Kubernetes localement** (Partie 3 du TD6)
-   - Docker Desktop avec Kubernetes activé (GRATUIT)
-   - Minikube (GRATUIT)
-   - Kind (GRATUIT)
-   - Pas besoin d'AWS pour cette partie!
+ - Docker Desktop avec Kubernetes activé (GRATUIT)
+ - Minikube (GRATUIT)
+ - Kind (GRATUIT)
+ - Pas besoin d'AWS pour cette partie!
 
 ## Actions à faire MAINTENANT
 
@@ -80,17 +80,17 @@ aws apigatewayv2 get-apis --region us-east-2
 
 ## TD6 - Plan d'action GRATUIT
 
-### Partie 1: Multi-Comptes AWS ❌ ANNULÉE
+### Partie 1: Multi-Comptes AWS ANNULÉE
 **Raison**: Crée des comptes supplémentaires qui sortent du Free Tier
 
 **Alternative**: Documentation théorique uniquement
 
-### Partie 2: OpenTofu Workspaces ✅ POSSIBLE GRATUITEMENT
+### Partie 2: OpenTofu Workspaces POSSIBLE GRATUITEMENT
 - Utiliser des workspaces dans votre compte unique
 - Préfixer les ressources: dev-, stage-, prod-
 - Tout reste dans le Free Tier
 
-### Partie 3: Kubernetes Multi-Services ✅ 100% GRATUIT
+### Partie 3: Kubernetes Multi-Services 100% GRATUIT
 - Docker Desktop + Kubernetes (local)
 - Aucun coût AWS
 - Frontend + Backend dans Kubernetes local
@@ -105,8 +105,8 @@ aws ec2 describe-regions --query 'Regions[*].RegionName' --output text
 
 # 2. Pour CHAQUE région, vérifier les instances EC2
 for region in $(aws ec2 describe-regions --query 'Regions[*].RegionName' --output text); do
-  echo "=== $region ==="
-  aws ec2 describe-instances --region $region --query 'Reservations[*].Instances[?State.Name==`running`].[InstanceId]' --output text
+ echo "=== $region ==="
+ aws ec2 describe-instances --region $region --query 'Reservations[*].Instances[?State.Name==`running`].[InstanceId]' --output text
 done
 
 # 3. Terminer TOUTES les instances
@@ -117,7 +117,7 @@ aws s3 ls | awk '{print $3}' | xargs -I {} aws s3 rb s3://{} --force
 
 # 5. Supprimer TOUTES les fonctions Lambda
 for region in us-east-2 us-east-1; do
-  aws lambda list-functions --region $region --query 'Functions[*].FunctionName' --output text | xargs -I {} aws lambda delete-function --region $region --function-name {}
+ aws lambda list-functions --region $region --query 'Functions[*].FunctionName' --output text | xargs -I {} aws lambda delete-function --region $region --function-name {}
 done
 ```
 
@@ -130,11 +130,11 @@ done
 
 **Pour ce projet académique, je recommande:**
 
-1. ✅ Faire le TD6 Partie 2 et 3 SANS multi-comptes AWS
-2. ✅ Utiliser Kubernetes LOCAL (Docker Desktop)
-3. ✅ Documenter théoriquement la Partie 1 sans l'implémenter
-4. ✅ Surveiller votre facture AWS QUOTIDIENNEMENT
-5. ✅ Détruire IMMÉDIATEMENT toute ressource après les tests
+1. Faire le TD6 Partie 2 et 3 SANS multi-comptes AWS
+2. Utiliser Kubernetes LOCAL (Docker Desktop)
+3. Documenter théoriquement la Partie 1 sans l'implémenter
+4. Surveiller votre facture AWS QUOTIDIENNEMENT
+5. Détruire IMMÉDIATEMENT toute ressource après les tests
 
 **RÈGLE D'OR**: Si vous voyez des frais, même minimes, ARRÊTEZ et nettoyez TOUT!
 

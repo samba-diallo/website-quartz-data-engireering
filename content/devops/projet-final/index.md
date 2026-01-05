@@ -11,25 +11,25 @@ Plateforme de collecte de données pour le calcul du bilan carbone.
 
 EcoData Platform est une application web full-stack permettant aux entreprises, partenaires et particuliers de déposer des fichiers CSV/Excel contenant des données pour le calcul du bilan carbone. L'équipe interne peut ensuite consulter, télécharger et gérer ces fichiers via une interface intuitive.
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
-│                 │      │                  │      │                 │
-│   Streamlit     │─────▶│   FastAPI        │─────▶│   PostgreSQL    │
-│   Frontend      │      │   Backend        │      │   Database      │
-│   (Port 8501)   │      │   (Port 8000)    │      │   (Port 5432)   │
-│                 │      │                  │      │                 │
-└─────────────────┘      └──────────────────┘      └─────────────────┘
-                                  │
-                                  ▼
-                         ┌──────────────────┐
-                         │  File Storage    │
-                         │  (uploads/)      │
-                         └──────────────────┘
+┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
+│ │ │ │ │ │
+│ Streamlit │─────▶│ FastAPI │─────▶│ PostgreSQL │
+│ Frontend │ │ Backend │ │ Database │
+│ (Port 8501) │ │ (Port 8000) │ │ (Port 5432) │
+│ │ │ │ │ │
+└─────────────────┘ └──────────────────┘ └─────────────────┘
+ │
+ ▼
+ ┌──────────────────┐
+ │ File Storage │
+ │ (uploads/) │
+ └──────────────────┘
 ```
 
-## 🛠️ Stack Technique
+## Stack Technique
 
 - **Backend**: Python FastAPI 0.104.1
 - **Frontend**: Streamlit 1.28.2
@@ -39,35 +39,35 @@ EcoData Platform est une application web full-stack permettant aux entreprises, 
 - **Orchestration**: Kubernetes
 - **CI/CD**: GitHub Actions
 
-## 📦 Structure du Projet
+## Structure du Projet
 
 ```
 ecodata-platform/
 ├── backend/
-│   ├── main.py              # API REST FastAPI
-│   ├── models.py            # Modèles SQLAlchemy
-│   ├── database.py          # Configuration DB
-│   ├── schemas.py           # Schémas Pydantic
-│   ├── requirements.txt     # Dépendances backend
-│   └── Dockerfile          # Image Docker backend
+│ ├── main.py # API REST FastAPI
+│ ├── models.py # Modèles SQLAlchemy
+│ ├── database.py # Configuration DB
+│ ├── schemas.py # Schémas Pydantic
+│ ├── requirements.txt # Dépendances backend
+│ └── Dockerfile # Image Docker backend
 ├── frontend/
-│   ├── app.py              # Application Streamlit
-│   ├── requirements.txt    # Dépendances frontend
-│   └── Dockerfile          # Image Docker frontend
+│ ├── app.py # Application Streamlit
+│ ├── requirements.txt # Dépendances frontend
+│ └── Dockerfile # Image Docker frontend
 ├── k8s/
-│   ├── namespace.yaml
-│   ├── backend-deployment.yaml
-│   ├── frontend-deployment.yaml
-│   ├── postgres-statefulset.yaml
-│   └── secrets-and-pvc.yaml
+│ ├── namespace.yaml
+│ ├── backend-deployment.yaml
+│ ├── frontend-deployment.yaml
+│ ├── postgres-statefulset.yaml
+│ └── secrets-and-pvc.yaml
 ├── .github/
-│   └── workflows/
-│       └── ci-cd.yml       # Pipeline CI/CD
-├── docker-compose.yml      # Orchestration locale
+│ └── workflows/
+│ └── ci-cd.yml # Pipeline CI/CD
+├── docker-compose.yml # Orchestration locale
 └── README.md
 ```
 
-## 🚀 Installation et Lancement
+## Installation et Lancement
 
 ### Prérequis
 
@@ -96,9 +96,9 @@ cd ecodata-platform/backend
 
 # Créer un environnement virtuel
 python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
+source venv/bin/activate # Linux/Mac
 # ou
-venv\Scriptsctivate  # Windows
+venv\Scriptsctivate # Windows
 
 # Installer les dépendances
 pip install -r requirements.txt
@@ -177,39 +177,39 @@ kubectl get services -n ecodata-platform
 - `GET /` - Page d'accueil de l'API
 - `GET /health` - Vérification de santé
 - `POST /api/upload` - Upload de fichier CSV/Excel
-  - Form data: `file`, `user_type`, `user_name`
+ - Form data: `file`, `user_type`, `user_name`
 - `GET /api/files` - Liste des fichiers
-  - Query params: `user_type` (optionnel), `skip`, `limit`
+ - Query params: `user_type` (optionnel), `skip`, `limit`
 - `GET /api/files/{id}` - Détails d'un fichier
 - `DELETE /api/files/{id}` - Supprimer un fichier
 - `GET /api/stats` - Statistiques globales
 
 Documentation interactive : `http://localhost:8000/docs`
 
-## 🎯 Fonctionnalités
+## Fonctionnalités
 
 ### Pour les Utilisateurs
 
 1. **Upload de fichiers**
-   - Support CSV, Excel (.xlsx, .xls)
-   - Types d'utilisateurs : métier, partenaire, particulier
-   - Aperçu des données avant upload
-   - Métadonnées automatiques (lignes, colonnes)
+ - Support CSV, Excel (.xlsx, .xls)
+ - Types d'utilisateurs : métier, partenaire, particulier
+ - Aperçu des données avant upload
+ - Métadonnées automatiques (lignes, colonnes)
 
 2. **Dashboard**
-   - Statistiques globales
-   - Répartition par type d'utilisateur
-   - Visualisations graphiques
+ - Statistiques globales
+ - Répartition par type d'utilisateur
+ - Visualisations graphiques
 
 3. **Gestion des fichiers**
-   - Liste filtrable par type
-   - Détails de chaque fichier
-   - Suppression sécurisée
+ - Liste filtrable par type
+ - Détails de chaque fichier
+ - Suppression sécurisée
 
 4. **Statistiques avancées**
-   - Évolution des uploads
-   - Top fichiers volumineux
-   - Analyses temporelles
+ - Évolution des uploads
+ - Top fichiers volumineux
+ - Analyses temporelles
 
 ## 🔒 Sécurité
 
@@ -230,17 +230,17 @@ pytest tests/
 flake8 .
 ```
 
-## 📝 Variables d'Environnement
+## Variables d'Environnement
 
 ### Backend
 
 - `DATABASE_URL`: URL de connexion PostgreSQL
-  - Format: `postgresql://user:password@host:port/database`
+ - Format: `postgresql://user:password@host:port/database`
 
 ### Frontend
 
 - `API_URL`: URL de l'API backend
-  - Défaut: `http://localhost:8000`
+ - Défaut: `http://localhost:8000`
 
 ## 🚦 CI/CD
 

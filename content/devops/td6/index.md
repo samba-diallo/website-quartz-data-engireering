@@ -1,9 +1,9 @@
 # TD6 - Multi-Environments et Multi-Services (NON RÉALISÉ)
 
-**Auteurs**: DIALLO Samba, DIOP Mouhamed  
-**Date**: 7 décembre 2025  
-**Cours**: DevOps - ESIEE PARIS  
-**Statut**: ❌ ABANDONNÉ pour raisons de coûts AWS
+**Auteurs**: DIALLO Samba, DIOP Mouhamed 
+**Date**: 7 décembre 2025 
+**Cours**: DevOps - ESIEE PARIS 
+**Statut**: ABANDONNÉ pour raisons de coûts AWS
 
 ## Raison de l'abandon
 
@@ -15,31 +15,31 @@ Ce TD nécessite la création d'AWS Organizations et de multiples comptes AWS (d
 ### Incident rencontré
 
 Lors de la tentative de création des comptes AWS Organizations:
-- ✅ Organisation créée: `o-f6p6stsx3q`
-- ✅ Compte STAGE créé: `717892305920` (mouhamed.diop@edu.esiee.fr)
-- ✅ Compte PROD créé: `097659826720` (production@esiee.fr)
-- ❌ Compte DEV échoué: Email déjà utilisé
-- ⚠️ **Mise à niveau automatique vers forfait payant**
+- Organisation créée: `o-f6p6stsx3q`
+- Compte STAGE créé: `717892305920` (mouhamed.diop@edu.esiee.fr)
+- Compte PROD créé: `097659826720` (production@esiee.fr)
+- Compte DEV échoué: Email déjà utilisé
+- **Mise à niveau automatique vers forfait payant**
 
 ### Actions correctives prises
 
 1. **Destruction immédiate des comptes créés**
-   ```bash
-   cd td6/scripts/tofu/live/child-accounts
-   tofu destroy -auto-approve
-   ```
-   - Comptes STAGE et PROD: Marqués pour suppression (90 jours)
-   - Organisation: Reste active jusqu'à fermeture complète des comptes
+ ```bash
+ cd td6/scripts/tofu/live/child-accounts
+ tofu destroy -auto-approve
+ ```
+ - Comptes STAGE et PROD: Marqués pour suppression (90 jours)
+ - Organisation: Reste active jusqu'à fermeture complète des comptes
 
 2. **Vérification complète des ressources AWS**
-   - Lambda functions: ✅ Aucune
-   - EC2 instances: ✅ Aucune active
-   - S3 buckets: ✅ Tous supprimés
-   - DynamoDB tables: ✅ Toutes supprimées
-   - API Gateway: ✅ Aucune
+ - Lambda functions: Aucune
+ - EC2 instances: Aucune active
+ - S3 buckets: Tous supprimés
+ - DynamoDB tables: Toutes supprimées
+ - API Gateway: Aucune
 
 3. **Documentation créée**
-   - `IMPORTANT_AWS_GRATUIT.md`: Guide de survie pour rester dans le Free Tier
+ - `IMPORTANT_AWS_GRATUIT.md`: Guide de survie pour rester dans le Free Tier
 
 ## Objectifs du TD6 (non réalisés)
 
@@ -74,30 +74,30 @@ Fichiers préparés mais non utilisés:
 
 ```
 td6/
-├── README_TD6.md                          # Ce fichier
-├── IMPORTANT_AWS_GRATUIT.md               # Guide de sécurité AWS
-├── lab6.pdf                                # Instructions originales
+├── README_TD6.md # Ce fichier
+├── IMPORTANT_AWS_GRATUIT.md # Guide de sécurité AWS
+├── lab6.pdf # Instructions originales
 └── scripts/
-    ├── sample-app-backend/                 # Application backend Node.js
-    │   ├── Dockerfile
-    │   ├── app.js
-    │   ├── server.js
-    │   └── package.json
-    ├── sample-app-frontend/                # Application frontend Node.js
-    │   ├── Dockerfile
-    │   ├── app.js
-    │   ├── server.js
-    │   └── package.json
-    └── tofu/
-        ├── live/
-        │   ├── child-accounts/             # Création de comptes AWS (utilisé puis détruit)
-        │   │   ├── main.tf
-        │   │   └── outputs.tf
-        │   ├── lambda-sample/              # Lambda pour workspaces
-        │   └── lambda-sample-with-config/  # Lambda avec configuration
-        └── modules/
-            ├── aws-organizations/          # Module pour AWS Organizations
-            └── test-endpoint/              # Module de test d'endpoints
+ ├── sample-app-backend/ # Application backend Node.js
+ │ ├── Dockerfile
+ │ ├── app.js
+ │ ├── server.js
+ │ └── package.json
+ ├── sample-app-frontend/ # Application frontend Node.js
+ │ ├── Dockerfile
+ │ ├── app.js
+ │ ├── server.js
+ │ └── package.json
+ └── tofu/
+ ├── live/
+ │ ├── child-accounts/ # Création de comptes AWS (utilisé puis détruit)
+ │ │ ├── main.tf
+ │ │ └── outputs.tf
+ │ ├── lambda-sample/ # Lambda pour workspaces
+ │ └── lambda-sample-with-config/ # Lambda avec configuration
+ └── modules/
+ ├── aws-organizations/ # Module pour AWS Organizations
+ └── test-endpoint/ # Module de test d'endpoints
 ```
 
 ## Leçons apprises
@@ -105,21 +105,21 @@ td6/
 ### Sur AWS Free Tier
 
 1. **Services qui SORTENT du Free Tier**:
-   - AWS Organizations
-   - Création de comptes multiples
-   - Services d'entreprise avancés
+ - AWS Organizations
+ - Création de comptes multiples
+ - Services d'entreprise avancés
 
 2. **Services qui RESTENT gratuits** (12 mois):
-   - EC2: 750h/mois t2.micro ou t3.micro
-   - Lambda: 1M requêtes/mois
-   - S3: 5 GB de stockage
-   - DynamoDB: 25 GB
-   - API Gateway: 1M appels/mois
+ - EC2: 750h/mois t2.micro ou t3.micro
+ - Lambda: 1M requêtes/mois
+ - S3: 5 GB de stockage
+ - DynamoDB: 25 GB
+ - API Gateway: 1M appels/mois
 
 3. **Règle d'or**: 
-   - Toujours détruire les ressources après les tests
-   - Configurer des alertes de facturation
-   - Vérifier quotidiennement les coûts
+ - Toujours détruire les ressources après les tests
+ - Configurer des alertes de facturation
+ - Vérifier quotidiennement les coûts
 
 ### Sur la gestion de projet DevOps
 
@@ -132,42 +132,42 @@ td6/
 ### Pour apprendre les multi-environnements:
 
 1. **Git Flow avec branches**
-   - Branch `dev` pour développement
-   - Branch `staging` pour tests
-   - Branch `main` pour production
+ - Branch `dev` pour développement
+ - Branch `staging` pour tests
+ - Branch `main` pour production
 
 2. **Docker Compose avec profiles**
-   ```yaml
-   services:
-     app:
-       profiles: ["dev", "staging", "prod"]
-   ```
+ ```yaml
+ services:
+ app:
+ profiles: ["dev", "staging", "prod"]
+ ```
 
 3. **Variables d'environnement**
-   - `.env.dev`
-   - `.env.staging`
-   - `.env.prod`
+ - `.env.dev`
+ - `.env.staging`
+ - `.env.prod`
 
 ### Pour apprendre Kubernetes:
 
 1. **Minikube** (recommandé pour débutants)
-   ```bash
-   minikube start
-   kubectl apply -f deployments/
-   ```
+ ```bash
+ minikube start
+ kubectl apply -f deployments/
+ ```
 
 2. **Docker Desktop Kubernetes**
-   - Activer dans Settings > Kubernetes
-   - Utilisation simple et intégrée
+ - Activer dans Settings > Kubernetes
+ - Utilisation simple et intégrée
 
 3. **Kind (Kubernetes in Docker)**
-   ```bash
-   kind create cluster
-   ```
+ ```bash
+ kind create cluster
+ ```
 
 ## Coût final du projet
 
-**Total dépensé**: $0.00 ✅
+**Total dépensé**: $0.00 
 
 Toutes les ressources ont été créées et détruites dans un délai très court:
 - Comptes Organizations: ~10 minutes d'existence
