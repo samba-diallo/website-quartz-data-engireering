@@ -1,0 +1,59 @@
+# Déploiement du frontend Streamlit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecodata-frontend
+  namespace: ecodata
+  labels:
+    app: ecodata
+    component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ecodata
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: ecodata
+        component: frontend
+    spec:
+      containers:
+      # Note: L'image sera mise à jour par le pipeline GitHub Actions avec l'URI ECR
+      - name: frontend
+        image: 511211062907.dkr.ecr.eu-north-1.amazonaws.com/ecodata-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
+        # Variables d'environnement pour se connecter au backend
+        env:
+        - name: API_URL
+          value: "http://ecodata-backend:8000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+# Service LoadBalancer pour accéder au frontend depuis internet
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecodata-frontend
+  namespace: ecodata
+  labels:
+    app: ecodata
+    component: frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8501
+    targetPort: 8501
+    protocol: TCP
+    name: http
+  selector:
+    app: ecodata
+    component: frontend

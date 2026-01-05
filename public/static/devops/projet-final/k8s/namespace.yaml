@@ -1,0 +1,7 @@
+# Namespace pour l'application EcoData Platform
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecodata
+  labels:
+    name: ecodata
