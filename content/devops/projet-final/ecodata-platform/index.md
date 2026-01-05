@@ -34,7 +34,15 @@ Manifestes pour le déploiement sur Kubernetes.
 - Services et Ingress
 - Configurations et Secrets
 
+### Automatisation & CI/CD
+Scripts et workflows pour l'automatisation complète du déploiement.
+- [[devops/projet-final/ecodata-platform/ci-cd-pipeline|Pipeline CI/CD GitHub Actions]]
+- [[devops/projet-final/ecodata-platform/deploy-from-ghcr|Script de déploiement automatique]]
+- [Télécharger ci-cd-ghcr.yml](/static/devops/projet-final/ci-cd-ghcr.yml)
+- [Télécharger deploy-from-ghcr.sh](/static/devops/projet-final/deploy-from-ghcr.sh)
+
 ### Documentation
+- [[devops/projet-final/ecodata-platform/documentation-projet-final-deploiement|Guide de déploiement complet]]
 - [[devops/projet-final/ecodata-platform/docs/DESIGN|Architecture et Design]]
 - [[devops/projet-final/ecodata-platform/docs/VISUAL_ASSETS|Assets Visuels]]
 
