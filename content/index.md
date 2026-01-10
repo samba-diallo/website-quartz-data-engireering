@@ -14,6 +14,12 @@ Ce site web présente l'ensemble des **travaux pratiques (labs)** et **projets f
 
 ---
 
+## 🎥 Démonstration vidéo du projet final
+
+**[Regarder la démonstration complète du projet EcoData Platform](https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBC7MzkNoZBQpI_PYogZVDzAc-JDt2-smdLTqqL-37tX1M?e=Io5aJT)**
+
+---
+
 ## Présentation du cours
 
 Le cours *Data Engineering 1* introduit les concepts fondamentaux de l’ingénierie des données à l’aide d’outils modernes tels que **Apache Spark**, **PySpark** et **SQL**.  
