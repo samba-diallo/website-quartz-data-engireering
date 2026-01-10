@@ -176,7 +176,7 @@ Déploiement d'une **plateforme complète** de collecte et visualisation de donn
 ## Ressources
 
 **Data Engineering :**  
-Dépôt GitHub : https://github.com/samba-diallo/data-engineering-1
+Dépôt GitHub : https://github.com/samba-diallo/website-quartz-data-engireering
 
 **DevOps :**  
 Dépôt GitHub : https://github.com/samba-diallo/Devops
