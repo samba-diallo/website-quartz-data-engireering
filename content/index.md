@@ -123,6 +123,12 @@ Lien : [[devops/td6/index|Accéder au TD6]]
 
 ## Projet Final DevOps – EcoData Platform
 
+### 🎥 Démonstration vidéo du projet
+
+**[Regarder la démonstration complète du projet EcoData Platform](https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBC7MzkNoZBQpI_PYogZVDzAc-JDt2-smdLTqqL-37tX1M?e=Io5aJT)**
+
+---
+
 Déploiement d'une **plateforme complète** de collecte et visualisation de données environnementales avec architecture cloud-native.
 
 **Architecture :**
