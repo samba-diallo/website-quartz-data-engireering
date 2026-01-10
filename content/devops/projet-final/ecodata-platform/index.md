@@ -41,6 +41,11 @@ Scripts et workflows pour l'automatisation complète du déploiement.
 - [Télécharger ci-cd-ghcr.yml](/static/devops/projet-final/ci-cd-ghcr.yml)
 - [Télécharger deploy-from-ghcr.sh](/static/devops/projet-final/deploy-from-ghcr.sh)
 
+### Reverse Proxy & Load Balancing
+Configuration Nginx pour le routing et load balancing.
+- [[devops/projet-final/ecodata-platform/nginx-configuration|Configuration Nginx complète]]
+- [Fichier nginx.conf](/static/devops/projet-final/ecodata-platform/nginx.conf)
+
 ### Documentation
 - [[devops/projet-final/ecodata-platform/documentation-projet-final-deploiement|Guide de déploiement complet]]
 - [[devops/projet-final/ecodata-platform/docs/DESIGN|Architecture et Design]]
