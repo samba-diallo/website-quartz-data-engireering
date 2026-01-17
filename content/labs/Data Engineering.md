@@ -5,6 +5,12 @@ publish: true
 
 # Labs - Data Engineering
 
+## Ressources
+
+- **Repository GitHub** : [DE1_Labs_Data_Engineering-1](https://github.com/samba-diallo/DE1_Labs_Data_Engineering-1)
+
+---
+
 ## Lab 1
 
 ### Travail Pratique - Lab 1
