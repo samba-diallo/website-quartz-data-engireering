@@ -35,10 +35,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -82,7 +82,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Configure Docker Buildx pour le build multi-plateforme
       - name: Set up Docker Buildx
@@ -111,7 +111,7 @@ jobs:
 
       # Build et pousse l'image backend vers GHCR
       - name: Build and push backend image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./projet-final-devops/ecodata-platform/backend
           push: true  # Pousse vers le registre
@@ -133,7 +133,7 @@ jobs:
 
       # Build et pousse l'image frontend vers GHCR
       - name: Build and push frontend image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./projet-final-devops/ecodata-platform/frontend
           push: true  # Pousse vers le registre
@@ -159,7 +159,7 @@ jobs:
       # Commente la PR avec le résumé du pipeline
       - name: Comment PR with deployment status
         if: steps.find-pr.outputs.number
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const message = `## ✅ Pipeline CI/CD Status
@@ -202,7 +202,7 @@ jobs:
 
       # Sauvegarde le rapport comme artefact (téléchargeable depuis GitHub)
       - name: Upload report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: deployment-report
           path: report.txt
