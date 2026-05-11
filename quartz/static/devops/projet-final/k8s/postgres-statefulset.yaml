@@ -1,0 +1,82 @@
+# StatefulSet pour PostgreSQL avec persistance de données
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ecodata-postgres
+  namespace: ecodata
+  labels:
+    app: ecodata
+    component: database
+spec:
+  serviceName: ecodata-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecodata
+      component: database
+  template:
+    metadata:
+      labels:
+        app: ecodata
+        component: database
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+          name: postgres
+        # Variables d'environnement pour initialiser PostgreSQL
+        env:
+        - name: POSTGRES_DB
+          value: "ecodata_db"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: ecodata-secrets
+              key: db-username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ecodata-secrets
+              key: db-password
+        # Volume pour persister les données
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+  # Template de volume pour le stockage persistant
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
+---
+# Service ClusterIP pour accéder à PostgreSQL depuis le cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecodata-postgres
+  namespace: ecodata
+  labels:
+    app: ecodata
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: ecodata
+    component: database

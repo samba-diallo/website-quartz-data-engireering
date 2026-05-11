@@ -41,7 +41,10 @@ INPUT_NB="${1:-}"
 TARGET_DIR="${2:-}"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-STATIC_NB_ROOT="${REPO_ROOT}/static/nb"
+# Quartz Plugin.Static() copie quartz/static/* vers public/* au build,
+# donc on ecrit le rendu HTML sous quartz/static/nb/ pour qu'il soit
+# accessible a /nb/... cote site.
+STATIC_NB_ROOT="${REPO_ROOT}/quartz/static/nb"
 CONTENT_ROOT="${REPO_ROOT}/content"
 
 # Python a utiliser pour nbconvert. Surcharge via :
@@ -109,8 +112,10 @@ fi
 
 WRAPPER_MD="${WRAPPER_DIR}/${NB_BASENAME}.md"
 
-# URL site-relative que l'iframe va charger
-IFRAME_URL="/nb/${SLUG_SOURCE}/${NB_BASENAME}.html"
+# URL site-relative que l'iframe va charger.
+# Quartz Plugin.Static() copie quartz/static/* -> public/static/*,
+# donc le prefixe URL est /static/.
+IFRAME_URL="/static/nb/${SLUG_SOURCE}/${NB_BASENAME}.html"
 
 # -------- Affichage du plan ----------------------------------
 echo "============================================================"

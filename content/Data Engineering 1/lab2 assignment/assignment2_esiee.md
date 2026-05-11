@@ -7,7 +7,7 @@ draft: false
 ---
 
 <iframe
-  src="/nb/Data-Engineering-1/lab2-assignment/assignment2_esiee.html"
+  src="/static/nb/Data-Engineering-1/lab2-assignment/assignment2_esiee.html"
   width="100%"
   height="900"
   style="border:1px solid #ccc; border-radius:6px;"

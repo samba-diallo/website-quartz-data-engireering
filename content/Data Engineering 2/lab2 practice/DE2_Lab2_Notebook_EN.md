@@ -7,7 +7,7 @@ draft: false
 ---
 
 <iframe
-  src="/nb/Data-Engineering-2/lab2-practice/DE2_Lab2_Notebook_EN.html"
+  src="/static/nb/Data-Engineering-2/lab2-practice/DE2_Lab2_Notebook_EN.html"
   width="100%"
   height="900"
   style="border:1px solid #ccc; border-radius:6px;"

@@ -39,8 +39,13 @@ Data Engineering 1/projet-final/outputs/
 **/derby.log
 **/metastore_db/
 
-# -------- Notebook HTML renders (regenerated at build) --------
-# Genere par tools/notebook_to_quartz.sh - jamais committe
+# -------- Notebook HTML renders ------------------------------
+# Generes par tools/notebook_to_quartz.sh. On les commit comme
+# website/ historique le faisait, car Quartz glob ignore les
+# fichiers gitignored et n'emettrait sinon pas vers public/static/.
+# (Si tu veux les exclure : git update-index --assume-unchanged ...)
+#
+# static/nb/ : ancien emplacement (non utilise)
 static/nb/
 
 # -------- Python ---------------------------------------------
