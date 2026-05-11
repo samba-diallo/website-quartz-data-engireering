@@ -1,0 +1,74 @@
+---
+title: "docker-compose.yml"
+date: 2026-05-11
+tags:
+  - devops
+  - project
+  - ecodata-platform
+draft: false
+---
+
+# docker-compose.yml
+
+Fichier : `docker-compose.yml`  (1185 octets, langage `yaml`)
+
+[Telecharger le fichier brut](./docker-compose.yml)
+
+## Contenu
+
+```yaml
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  db:
+    image: postgres:15
+    container_name: ecodata-postgres
+    environment:
+      POSTGRES_DB: ecodata_db
+      POSTGRES_USER: ecodata_user
+      POSTGRES_PASSWORD: ecodata_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecodata_user -d ecodata_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend FastAPI
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecodata-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://ecodata_user:ecodata_password@db:5432/ecodata_db
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Frontend Streamlit
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecodata-frontend
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```

@@ -1,0 +1,46 @@
+---
+title: "secrets-and-pvc.yaml"
+date: 2026-05-11
+tags:
+  - devops
+  - project
+  - ecodata-platform
+  - kubernetes
+draft: false
+---
+
+# secrets-and-pvc.yaml
+
+Fichier : `secrets-and-pvc.yaml`  (645 octets, langage `yaml`)
+
+[Telecharger le fichier brut](./secrets-and-pvc.yaml)
+
+## Contenu
+
+```yaml
+# Secret contenant les informations sensibles de la base de données
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ecodata-secrets
+  namespace: ecodata
+type: Opaque
+stringData:
+  db-username: ecodata_user
+  db-password: ecodata_password
+  database-url: postgresql://ecodata_user:ecodata_password@ecodata-postgres:5432/ecodata_db
+---
+# PersistentVolumeClaim pour stocker les fichiers uploadés
+# Note: ReadWriteOnce car EBS n'supporte que ce mode d'accès
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ecodata-uploads-pvc
+  namespace: ecodata
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+```
