@@ -17,3 +17,7 @@ tags:
 - [[DE1_Lab2_Notebook_EN|DE1_Lab2_Notebook_EN.ipynb]] *(notebook)*
 - `run_lab2.py`
 - `spark_metrics_collector.py`
+
+---
+
+> Preuves d'execution (screenshots, plans Spark) : [[../lab2 assignment/proof/index|preuves du lab 2]]

@@ -14,3 +14,7 @@ tags:
 ## Fichiers de ce dossier
 
 - [[DE1_Lab3_Notebook_EN|DE1_Lab3_Notebook_EN.ipynb]] *(notebook)*
+
+---
+
+> Preuves d'execution (screenshots, plans Spark) : [[../lab3 assignment/proof/index|preuves du lab 3]]

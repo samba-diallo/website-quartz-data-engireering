@@ -17,3 +17,7 @@ tags:
 - [[DE1_Lab1_Notebook_EN|DE1_Lab1_Notebook_EN.ipynb]] *(notebook)*
 - [[RDD_vs_DataFrame_NOTE|RDD_vs_DataFrame_NOTE.md]]
 - [[README|README.md]]
+
+---
+
+> Preuves d'execution (screenshots, plans Spark) : [[../lab1 assignment/proof/index|preuves du lab 1]]
