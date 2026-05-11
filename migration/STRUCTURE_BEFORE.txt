@@ -1,0 +1,302 @@
+.
+├── Data Engineering 1
+│   ├── DE1_Project_Notebook_EN.ipynb
+│   ├── lab1-practice
+│   │   ├── assets
+│   │   ├── assignment1_esiee.ipynb
+│   │   ├── assignment1_genai.md
+│   │   ├── DE1_Lab0_Starter.ipynb
+│   │   ├── DE1_Lab1_Notebook_EN.ipynb
+│   │   ├── proof
+│   │   ├── RDD_vs_DataFrame_NOTE.md
+│   │   └── README.md
+│   ├── lab2-practice
+│   │   ├── assets
+│   │   ├── assignment2_esiee.ipynb
+│   │   ├── assignment2_genai.md
+│   │   ├── capture_spark_ui.py
+│   │   ├── DE1_Lab2_Notebook_EN.ipynb
+│   │   ├── operational.db
+│   │   ├── output
+│   │   ├── proof
+│   │   ├── __pycache__
+│   │   ├── run_lab2.py
+│   │   └── spark_metrics_collector.py
+│   ├── lab3-practice
+│   │   ├── assets
+│   │   ├── assignment3_esiee.ipynb
+│   │   ├── DE1_Lab3_Notebook_EN.ipynb
+│   │   └── proof
+│   ├── projet-final
+│   │   ├── assets
+│   │   ├── data
+│   │   ├── de1_project_config.yml
+│   │   ├── de1_project_config.yml.backup
+│   │   ├── DE1_Project_Notebook_EN.ipynb
+│   │   ├── DE1_Project_Report.md
+│   │   ├── project_final_genai.md
+│   │   └── proof
+│   └── website1
+│       ├── build.log
+│       ├── CODE_OF_CONDUCT.md
+│       ├── content
+│       ├── Dockerfile
+│       ├── docs
+│       ├── fix_quartz_assets.sh
+│       ├── fix_quartz_notebooks.sh
+│       ├── fix_structure.sh
+│       ├── globals.d.ts
+│       ├── index.d.ts
+│       ├── LICENSE.txt
+│       ├── package.json
+│       ├── package-lock.json
+│       ├── prepare_quartz_full.sh
+│       ├── quartz
+│       ├── quartz.config.ts
+│       ├── quartz.layout.ts
+│       ├── README.md
+│       ├── static
+│       └── tsconfig.json
+├── Data Engineering 2
+│   ├── lab0 setup practice
+│   │   ├── data
+│   │   ├── DE2_Lab0_Starter.ipynb
+│   │   └── Proof
+│   ├── lab1 assignment
+│   │   ├── assignment1_esiee.ipynb
+│   │   ├── data
+│   │   ├── ENGINEERING_NOTE.md
+│   │   ├── GENAI.md
+│   │   ├── lab1_metrics_log.csv
+│   │   └── proof
+│   ├── lab1 practice
+│   │   ├── data
+│   │   ├── DE2_Lab1_Notebook_EN.ipynb
+│   │   ├── lab1_metrics_log.csv
+│   │   ├── proof
+│   │   └── Proof
+│   ├── lab2 assignment
+│   │   ├── assignment2_esiee.ipynb
+│   │   ├── lab2_metrics_log.csv
+│   │   └── proof
+│   ├── lab2 practice
+│   │   ├── artifacts
+│   │   ├── data
+│   │   ├── DE2_Lab2_Notebook_EN.ipynb
+│   │   ├── lab2_metrics_log.csv
+│   │   └── proof
+│   ├── lab3 assignment
+│   │   ├── artifacts
+│   │   ├── assignment3_esiee.ipynb
+│   │   ├── lab3_metrics_log.csv
+│   │   └── proof
+│   ├── lab3 practice
+│   │   ├── artifacts
+│   │   ├── DE2_Lab3_Notebook_EN.ipynb
+│   │   ├── DE2_Lab3_Notebook_EN.ipynb.bak
+│   │   ├── lab3_metrics_log.csv
+│   │   └── proof
+│   ├── project final
+│   └── roadmap-labs-project-DE2-FR.pdf
+├── de1-env
+│   ├── bin
+│   │   ├── activate
+│   │   ├── activate.csh
+│   │   ├── activate.fish
+│   │   ├── Activate.ps1
+│   │   ├── beeline
+│   │   ├── beeline.cmd
+│   │   ├── debugpy
+│   │   ├── debugpy-adapter
+│   │   ├── docker-image-tool.sh
+│   │   ├── dumppdf.py
+│   │   ├── f2py
+│   │   ├── find-spark-home
+│   │   ├── find-spark-home.cmd
+│   │   ├── find_spark_home.py
+│   │   ├── fonttools
+│   │   ├── httpx
+│   │   ├── ipython
+│   │   ├── ipython3
+│   │   ├── jlpm
+│   │   ├── jsonpointer
+│   │   ├── jsonschema
+│   │   ├── jupyter
+│   │   ├── jupyter-dejavu
+│   │   ├── jupyter-events
+│   │   ├── jupyter-execute
+│   │   ├── jupyter-kernel
+│   │   ├── jupyter-kernelspec
+│   │   ├── jupyter-lab
+│   │   ├── jupyter-labextension
+│   │   ├── jupyter-labhub
+│   │   ├── jupyter-migrate
+│   │   ├── jupyter-nbconvert
+│   │   ├── jupyter-run
+│   │   ├── jupyter-server
+│   │   ├── jupyter-troubleshoot
+│   │   ├── jupyter-trust
+│   │   ├── load-spark-env.cmd
+│   │   ├── load-spark-env.sh
+│   │   ├── normalizer
+│   │   ├── numpy-config
+│   │   ├── pdf2txt.py
+│   │   ├── pdfplumber
+│   │   ├── pip
+│   │   ├── pip3
+│   │   ├── pip3.12
+│   │   ├── pybabel
+│   │   ├── __pycache__
+│   │   ├── pyftmerge
+│   │   ├── pyftsubset
+│   │   ├── pygmentize
+│   │   ├── pyjson5
+│   │   ├── pypdfium2
+│   │   ├── pyspark
+│   │   ├── pyspark2.cmd
+│   │   ├── pyspark.cmd
+│   │   ├── python -> python3
+│   │   ├── python3 -> /usr/bin/python3
+│   │   ├── python3.12 -> python3
+│   │   ├── run-example
+│   │   ├── run-example.cmd
+│   │   ├── send2trash
+│   │   ├── spark-class
+│   │   ├── spark-class2.cmd
+│   │   ├── spark-class.cmd
+│   │   ├── spark-connect-shell
+│   │   ├── sparkR
+│   │   ├── sparkR2.cmd
+│   │   ├── sparkR.cmd
+│   │   ├── spark-shell
+│   │   ├── spark-shell2.cmd
+│   │   ├── spark-shell.cmd
+│   │   ├── spark-sql
+│   │   ├── spark-sql2.cmd
+│   │   ├── spark-sql.cmd
+│   │   ├── spark-submit
+│   │   ├── spark-submit2.cmd
+│   │   ├── spark-submit.cmd
+│   │   ├── ttx
+│   │   └── wsdump
+│   ├── etc
+│   │   └── jupyter
+│   ├── include
+│   │   └── python3.12
+│   ├── lib
+│   │   └── python3.12
+│   ├── lib64 -> lib
+│   ├── pyvenv.cfg
+│   └── share
+│       ├── applications
+│       ├── icons
+│       ├── jupyter
+│       ├── man
+│       └── py4j
+├── migration
+│   ├── de1-sources
+│   │   ├── DE1_Project_Notebook_EN_ROOT.ipynb
+│   │   └── de1_sources.tar.gz
+│   ├── de2-sources
+│   │   └── de2_sources.tar.gz
+│   ├── devops-export
+│   │   └── devops_base_source_files.tar.gz
+│   ├── STRUCTURE_BEFORE.txt
+│   └── website-export
+│       ├── package.json
+│       ├── quartz.config.ts
+│       ├── quartz.layout.ts
+│       └── website_content.tar.gz
+├── PLAN.md
+├── verify_spark.py
+└── website
+    ├── build.log
+    ├── CODE_OF_CONDUCT.md
+    ├── content
+    │   ├── devops
+    │   ├── index.md
+    │   ├── labs
+    │   ├── Labs - Data Engineering.md
+    │   ├── project
+    │   └── Project.md
+    ├── deploy-from-ghcr.sh
+    ├── devops_base
+    │   ├── create-k8s-manifests.sh
+    │   ├── IMPORTANT_AWS_GRATUIT.md
+    │   ├── node-trust-policy.json
+    │   ├── pilot.csv
+    │   ├── projet-final-devops
+    │   ├── README.md
+    │   ├── td0 (starter)
+    │   ├── td1
+    │   ├── td2
+    │   ├── td3
+    │   ├── td4
+    │   ├── td5
+    │   ├── td6
+    │   └── trust-policy.json
+    ├── Dockerfile
+    ├── docs
+    │   ├── advanced
+    │   ├── authoring content.md
+    │   ├── build.md
+    │   ├── configuration.md
+    │   ├── features
+    │   ├── hosting.md
+    │   ├── images
+    │   ├── index.md
+    │   ├── layout-components.md
+    │   ├── layout.md
+    │   ├── migrating from Quartz 3.md
+    │   ├── philosophy.md
+    │   ├── plugins
+    │   ├── setting up your GitHub repository.md
+    │   ├── showcase.md
+    │   ├── tags
+    │   └── upgrading.md
+    ├── fix_quartz_assets.sh
+    ├── fix_quartz_notebooks.sh
+    ├── fix_structure.sh
+    ├── globals.d.ts
+    ├── index.d.ts
+    ├── LICENSE.txt
+    ├── package.json
+    ├── package-lock.json
+    ├── prepare_quartz_full.sh
+    ├── proof
+    │   ├── baseline_q1_plan.txt
+    │   ├── baseline_q2_plan.txt
+    │   ├── baseline_q3_plan.txt
+    │   ├── metrics_10.png
+    │   ├── metrics_11.png
+    │   ├── metrics12.png
+    │   ├── metrics_13.png
+    │   ├── metrics_15.png
+    │   ├── metrics7.png
+    │   ├── metrics_8.png
+    │   ├── metrics_9.png
+    │   ├── optimized_q1_plan.txt
+    │   ├── optimized_q2_plan.txt
+    │   ├── optimized_q3_plan.txt
+    │   └── Sparkjob.png
+    ├── quartz
+    │   ├── bootstrap-cli.mjs
+    │   ├── bootstrap-worker.mjs
+    │   ├── build.ts
+    │   ├── cfg.ts
+    │   ├── cli
+    │   ├── components
+    │   ├── i18n
+    │   ├── plugins
+    │   ├── processors
+    │   ├── static
+    │   ├── styles
+    │   ├── util
+    │   └── worker.ts
+    ├── quartz.config.ts
+    ├── quartz.layout.ts
+    ├── README.md
+    ├── static
+    │   ├── labs
+    │   └── project
+    └── tsconfig.json
