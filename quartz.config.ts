@@ -14,11 +14,11 @@ const isProduction = process.env.NODE_ENV === "production"
 const getBaseUrl = (): string => {
   if (isProduction) {
     // Remplace avec ton domaine final si tu en as un
-    return "https://website-quartz-data-engireering.pages.dev"
+    return "website-quartz-data-engireering.pages.dev"
     // Ou si tu as un domaine personnalisé :
-    // return "https://data-engineering.com"
+    // return "data-engineering.com"
   }
-  return "http://localhost:8080"
+  return "localhost:8080"
 }
 
 const config: QuartzConfig = {
