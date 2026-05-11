@@ -39,6 +39,10 @@ Data Engineering 1/projet-final/outputs/
 **/derby.log
 **/metastore_db/
 
+# -------- Notebook HTML renders (regenerated at build) --------
+# Genere par tools/notebook_to_quartz.sh - jamais committe
+static/nb/
+
 # -------- Python ---------------------------------------------
 __pycache__/
 *.pyc
