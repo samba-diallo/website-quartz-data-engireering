@@ -7837,7 +7837,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -7919,7 +7919,7 @@ Dossiers de sortie prêts : outputs/lab3, proof
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">cumul_shuffle_bytes</span><span class="p">():</span>
@@ -7961,7 +7961,7 @@ Dossiers de sortie prêts : outputs/lab3, proof
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Shuffle cumule au demarrage : read=495839 bytes, write=495839 bytes
+<pre>Shuffle cumule au demarrage : read=27999 bytes, write=27999 bytes
 </pre>
 </div>
 </div>
@@ -7989,7 +7989,7 @@ Dossiers de sortie prêts : outputs/lab3, proof
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.ml.feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorAssembler</span><span class="p">,</span> <span class="n">StandardScaler</span>
@@ -8069,7 +8069,19 @@ Donnees chargees : 500 heros
 only showing top 5 rows
 
 Assemblage et normalisation des features...
-Features pretes et en cache : 500 lignes
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Features pretes et en cache : 500 lignes
 Nombre de partitions du DataFrame : 8
 </pre>
 </div>
@@ -8098,7 +8110,7 @@ Nombre de partitions du DataFrame : 8
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"=== Balayage KMeans et BisectingKMeans ===</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
@@ -8194,20 +8206,20 @@ Nombre de partitions du DataFrame : 8
 
 
 --- KMeans ---
-  k= 4 : silhouette=0.3971, temps=  2073.1 ms, shuffle_r=113095 B, shuffle_w=113095 B
-  k= 6 : silhouette=0.4635, temps=  1801.3 ms, shuffle_r=180056 B, shuffle_w=180056 B
-  k= 8 : silhouette=0.4489, temps=  1713.7 ms, shuffle_r=235986 B, shuffle_w=235986 B
-  k=10 : silhouette=0.4292, temps=  2100.0 ms, shuffle_r=359729 B, shuffle_w=359729 B
+  k= 4 : silhouette=0.3971, temps=  5563.4 ms, shuffle_r=113095 B, shuffle_w=113095 B
+  k= 6 : silhouette=0.4635, temps=  3062.1 ms, shuffle_r=180056 B, shuffle_w=180056 B
+  k= 8 : silhouette=0.4489, temps=  2525.7 ms, shuffle_r=235986 B, shuffle_w=235986 B
+  k=10 : silhouette=0.4292, temps=  2784.8 ms, shuffle_r=359729 B, shuffle_w=359729 B
 
 --- BisectingKMeans ---
     [warn] BisectingKMeans k=4 a produit seulement 1 cluster(s) - silhouette=NaN
-  k= 4 : silhouette=NaN, temps=  3992.6 ms, shuffle_r=230888 B, shuffle_w=230888 B
+  k= 4 : silhouette=NaN, temps=  8340.0 ms, shuffle_r=230888 B, shuffle_w=230888 B
     [warn] BisectingKMeans k=6 a produit seulement 1 cluster(s) - silhouette=NaN
-  k= 6 : silhouette=NaN, temps=  5847.5 ms, shuffle_r=381648 B, shuffle_w=381648 B
+  k= 6 : silhouette=NaN, temps= 11737.5 ms, shuffle_r=381648 B, shuffle_w=381648 B
     [warn] BisectingKMeans k=8 a produit seulement 1 cluster(s) - silhouette=NaN
-  k= 8 : silhouette=NaN, temps=  7146.2 ms, shuffle_r=532408 B, shuffle_w=532408 B
+  k= 8 : silhouette=NaN, temps= 13142.1 ms, shuffle_r=532408 B, shuffle_w=532408 B
     [warn] BisectingKMeans k=10 a produit seulement 1 cluster(s) - silhouette=NaN
-  k=10 : silhouette=NaN, temps=  7790.7 ms, shuffle_r=-749149 B, shuffle_w=-752918 B
+  k=10 : silhouette=NaN, temps= 13365.9 ms, shuffle_r=-311461 B, shuffle_w=-311461 B
 
 Balayage termine : 8 configurations testees
 Meilleure config : KMeans k=6 silhouette=0.4635
@@ -8238,7 +8250,7 @@ Meilleure config : KMeans k=6 silhouette=0.4635
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== Analyse de stabilite des seeds ==="</span><span class="p">)</span>
@@ -8319,11 +8331,11 @@ Meilleure config : KMeans k=6 silhouette=0.4635
 <pre>
 === Analyse de stabilite des seeds ===
 Meilleur k retenu : 6 (algorithme : KMeans) - test sur 5 seeds
-  Seed 42 : silhouette=0.4635, temps=1166.9 ms
-  Seed 43 : silhouette=0.4780, temps=1081.8 ms
-  Seed 44 : silhouette=0.4775, temps=973.4 ms
-  Seed 45 : silhouette=0.4629, temps=1275.2 ms
-  Seed 46 : silhouette=0.4633, temps=1311.5 ms
+  Seed 42 : silhouette=0.4635, temps=2076.2 ms
+  Seed 43 : silhouette=0.4780, temps=1826.7 ms
+  Seed 44 : silhouette=0.4775, temps=1820.4 ms
+  Seed 45 : silhouette=0.4629, temps=1950.9 ms
+  Seed 46 : silhouette=0.4633, temps=2306.1 ms
 
 Resultats de stabilite (k=6) sur 5 seeds valides :
   Moyenne Silhouette : 0.4691
@@ -8356,7 +8368,7 @@ Resultats de stabilite (k=6) sur 5 seeds valides :
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== Experience de partitionnement ==="</span><span class="p">)</span>
@@ -8433,15 +8445,15 @@ Resultats de stabilite (k=6) sur 5 seeds valides :
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>
 === Experience de partitionnement ===
-  partitions= 1 : silhouette=0.4532, temps=  1280.8 ms, shuffle_r=12125 B, shuffle_w=12125 B
-  partitions= 2 : silhouette=0.4785, temps=   966.1 ms, shuffle_r=27445 B, shuffle_w=27445 B
-  partitions= 4 : silhouette=0.4652, temps=   978.9 ms, shuffle_r=-24311 B, shuffle_w=-28080 B
-  partitions= 8 : silhouette=0.4725, temps=  1439.5 ms, shuffle_r=186387 B, shuffle_w=190156 B
-  partitions=16 : silhouette=0.4770, temps=  1568.8 ms, shuffle_r=187965 B, shuffle_w=187965 B
+  partitions= 1 : silhouette=0.4532, temps=  2234.3 ms, shuffle_r=-149942 B, shuffle_w=-146173 B
+  partitions= 2 : silhouette=0.4785, temps=  1471.9 ms, shuffle_r=-75297 B, shuffle_w=-75297 B
+  partitions= 4 : silhouette=0.4652, temps=  1628.9 ms, shuffle_r=-31849 B, shuffle_w=-31849 B
+  partitions= 8 : silhouette=0.4725, temps=  1916.9 ms, shuffle_r=186387 B, shuffle_w=186387 B
+  partitions=16 : silhouette=0.4770, temps=  1982.7 ms, shuffle_r=187965 B, shuffle_w=187965 B
 
 Resume avant/apres :
-  Reference (sweep)      : temps=1801.3 ms, shuffle_w=180056 B
-  Plus rapide repartition : repartition=2 clusters_reels=6, temps=966.1 ms, shuffle_w=27445 B
+  Reference (sweep)      : temps=3062.1 ms, shuffle_w=180056 B
+  Plus rapide repartition : repartition=2 clusters_reels=6, temps=1471.9 ms, shuffle_w=-75297 B
 </pre>
 </div>
 </div>
@@ -8469,7 +8481,7 @@ Resume avant/apres :
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># 1) Sauvegarde du plan d'execution du KMeans sur le meilleur k</span>
@@ -8560,18 +8572,31 @@ Tous les artefacts sont prets pour le rapport.
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b2c66219">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b2c66219">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1">#df_features.unpersist()</span>
-<span class="c1">#spark.stop()</span>
-<span class="c1">#print("Session Spark arretee. Lab 3 termine.")</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df_features</span><span class="o">.</span><span class="n">unpersist</span><span class="p">()</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Session Spark arretee. Lab 3 termine."</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Session Spark arretee. Lab 3 termine.
+</pre>
 </div>
 </div>
 </div>
