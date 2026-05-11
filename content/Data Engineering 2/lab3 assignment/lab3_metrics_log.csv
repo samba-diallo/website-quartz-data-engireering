@@ -1,0 +1,13 @@
+timestamp,phase,strategy,k,seed,num_partitions,elapsed_s,silhouette,training_cost,shuffle_read_bytes,shuffle_write_bytes
+2026-04-29 20:16:48,k_sweep,baseline,2,42,8,3.298,0.4158,2788.9724,,
+2026-04-29 20:16:48,k_sweep,baseline,3,42,8,1.465,0.6263,1403.9409,,
+2026-04-29 20:16:48,k_sweep,baseline,4,42,8,1.21,0.802,574.8977,,
+2026-04-29 20:16:48,k_sweep,baseline,5,42,8,1.534,0.9579,95.3184,,
+2026-04-29 20:16:48,k_sweep,baseline,6,42,8,2.318,0.8554,89.1422,,
+2026-04-29 20:16:48,partitioning,before_repartition_64,5,42,64,3.886,0.9579,,0,0
+2026-04-29 20:16:48,partitioning,after_coalesce_4,5,42,4,0.861,0.9579,,0,0
+2026-04-29 20:16:48,seed_stability,baseline,5,11,8,0.961,0.9579,95.3184,,
+2026-04-29 20:16:48,seed_stability,baseline,5,23,8,0.835,0.9579,95.3184,,
+2026-04-29 20:16:48,seed_stability,baseline,5,42,8,0.841,0.9579,95.3184,,
+2026-04-29 20:16:48,seed_stability,baseline,5,77,8,0.821,0.9579,95.3184,,
+2026-04-29 20:16:48,seed_stability,baseline,5,101,8,0.857,0.9579,95.3184,,

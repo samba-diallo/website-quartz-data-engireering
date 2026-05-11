@@ -10,7 +10,7 @@
 #   - Input  : chemin absolu vers un .ipynb
 #   - Output :
 #       static/nb/<rel-path>/<notebook>.html   (rendu HTML)
-#       docs/<rel-path>/<notebook>.md          (wrapper iframe)
+#       content/<rel-path>/<notebook>.md       (wrapper iframe)
 #
 # Prerequisites :
 #   - Python 3 + nbformat + nbconvert
@@ -27,11 +27,11 @@
 #
 #     bash tools/notebook_to_quartz.sh \
 #       "Data Engineering 1/lab1-practice/assignment1_esiee.ipynb" \
-#       "docs/DE1 - Data Engineering I/lab1 assignment"
+#       "content/Data Engineering 1/lab1 assignment"
 #
-# Si doc-target-dir n'est pas fourni, le script tente de deduire
-# la cible en remplacant "Data Engineering N" par
-# "docs/DEN - Data Engineering ..." et tirets par espaces.
+# Si doc-target-dir n'est pas fourni, le script ecrit le wrapper
+# dans content/<chemin-relatif-source>/ (peut etre utile pour
+# regenerer en place apres restructuration manuelle).
 # =============================================================
 
 set -euo pipefail
@@ -42,7 +42,11 @@ TARGET_DIR="${2:-}"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATIC_NB_ROOT="${REPO_ROOT}/static/nb"
-DOCS_ROOT="${REPO_ROOT}/docs"
+CONTENT_ROOT="${REPO_ROOT}/content"
+
+# Python a utiliser pour nbconvert. Surcharge via :
+#   PYTHON=de1-env/bin/python3 bash tools/notebook_to_quartz.sh ...
+PYTHON="${PYTHON:-python3}"
 
 # -------- Validations ----------------------------------------
 if [[ -z "${INPUT_NB}" ]]; then
@@ -61,14 +65,16 @@ if [[ "${INPUT_NB}" != *.ipynb ]]; then
   exit 1
 fi
 
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "ERREUR : python3 introuvable"
+if ! command -v "${PYTHON}" >/dev/null 2>&1; then
+  echo "ERREUR : python introuvable : ${PYTHON}"
+  echo "Surcharge possible : PYTHON=/path/to/python3 bash $0 ..."
   exit 1
 fi
 
-if ! python3 -c "import nbconvert, nbformat" 2>/dev/null; then
-  echo "ERREUR : nbconvert/nbformat absents."
-  echo "Installe : pip install nbformat nbconvert"
+if ! "${PYTHON}" -c "import nbconvert, nbformat" 2>/dev/null; then
+  echo "ERREUR : nbconvert/nbformat absents dans ${PYTHON}"
+  echo "Installe : ${PYTHON} -m pip install nbformat nbconvert"
+  echo "Ou utilise une autre env via PYTHON=... (ex: PYTHON=de1-env/bin/python3)"
   exit 1
 fi
 
@@ -78,8 +84,14 @@ NB_DIR="$(dirname "${INPUT_NB}")"
 
 # Chemin relatif source par rapport au repo (pour structurer static/nb/)
 REL_SOURCE="$(realpath --relative-to="${REPO_ROOT}" "${NB_DIR}")"
+
+# Si le notebook est deja dans content/, on enleve le prefixe content/
+# pour que l'URL soit propre (/nb/Data-Engineering-1/... au lieu de
+# /nb/content/Data-Engineering-1/...)
+REL_SOURCE_CLEAN="${REL_SOURCE#content/}"
+
 # Normalise pour URLs : remplace espaces par tirets, slashs preserves
-SLUG_SOURCE="$(echo "${REL_SOURCE}" | sed 's/ /-/g; s|/-|/|g')"
+SLUG_SOURCE="$(echo "${REL_SOURCE_CLEAN}" | sed 's/ /-/g; s|/-|/|g')"
 
 STATIC_TARGET="${STATIC_NB_ROOT}/${SLUG_SOURCE}"
 HTML_OUTPUT="${STATIC_TARGET}/${NB_BASENAME}.html"
@@ -87,9 +99,12 @@ HTML_OUTPUT="${STATIC_TARGET}/${NB_BASENAME}.html"
 # Determination du dossier wrapper .md
 if [[ -n "${TARGET_DIR}" ]]; then
   WRAPPER_DIR="${REPO_ROOT}/${TARGET_DIR#./}"
+elif [[ "${REL_SOURCE}" == content/* ]]; then
+  # Source deja dans content/ : on ecrit le wrapper a cote (in-place)
+  WRAPPER_DIR="${REPO_ROOT}/${REL_SOURCE}"
 else
-  # Heuristique : "Data Engineering N/lab*-practice" -> docs/DE<N> .../lab* practice
-  WRAPPER_DIR="${DOCS_ROOT}/${REL_SOURCE}"
+  # Source hors content/ : on ecrit sous content/<chemin-relatif>/
+  WRAPPER_DIR="${CONTENT_ROOT}/${REL_SOURCE}"
 fi
 
 WRAPPER_MD="${WRAPPER_DIR}/${NB_BASENAME}.md"
@@ -111,7 +126,7 @@ mkdir -p "${STATIC_TARGET}" "${WRAPPER_DIR}"
 
 # -------- Conversion nbconvert -------------------------------
 # Format HTML "lab" (par defaut), sortie ecrasee a chaque appel
-python3 -m nbconvert \
+"${PYTHON}" -m nbconvert \
   --to html \
   --output-dir "${STATIC_TARGET}" \
   --output "${NB_BASENAME}.html" \
