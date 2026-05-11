@@ -1,0 +1,65 @@
+== Physical Plan ==
+AdaptiveSparkPlan (11)
++- Sort (10)
+   +- Exchange (9)
+      +- ObjectHashAggregate (8)
+         +- Exchange (7)
+            +- ObjectHashAggregate (6)
+               +- Filter (5)
+                  +- Generate (4)
+                     +- Project (3)
+                        +- Filter (2)
+                           +- Scan ExistingRDD (1)
+
+
+(1) Scan ExistingRDD
+Output [2]: [doc_id#0, content#1]
+Arguments: [doc_id#0, content#1], MapPartitionsRDD[4] at applySchemaToPythonRDD at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
+
+(2) Filter
+Input [2]: [doc_id#0, content#1]
+Condition : (size(split(lower(regexp_replace(content#1, [^a-zA-Z0-9\s], , 1)), \s+, -1), false) > 0)
+
+(3) Project
+Output [2]: [doc_id#0, split(lower(regexp_replace(content#1, [^a-zA-Z0-9\s], , 1)), \s+, -1) AS tokens#16]
+Input [2]: [doc_id#0, content#1]
+
+(4) Generate
+Input [2]: [doc_id#0, tokens#16]
+Arguments: explode(tokens#16), [doc_id#0], false, [token#25]
+
+(5) Filter
+Input [2]: [doc_id#0, token#25]
+Condition : (NOT (token#25 = ) AND NOT token#25 INSET a, an, and, are, as, at, be, been, being, but, by, can, could, did, do, does, for, from, had, has, have, how, in, is, it, may, might, of, on, or, should, that, the, this, to, was, were, what, when, where, which, who, why, will, with, would)
+
+(6) ObjectHashAggregate
+Input [2]: [doc_id#0, token#25]
+Keys [1]: [token#25]
+Functions [2]: [partial_collect_list(doc_id#0, 0, 0), partial_count(1)]
+Aggregate Attributes [2]: [buf#55, count#56L]
+Results [3]: [token#25, buf#57, count#58L]
+
+(7) Exchange
+Input [3]: [token#25, buf#57, count#58L]
+Arguments: hashpartitioning(token#25, 200), ENSURE_REQUIREMENTS, [plan_id=1020]
+
+(8) ObjectHashAggregate
+Input [3]: [token#25, buf#57, count#58L]
+Keys [1]: [token#25]
+Functions [2]: [collect_list(doc_id#0, 0, 0), count(1)]
+Aggregate Attributes [2]: [collect_list(doc_id#0, 0, 0)#44, count(1)#43L]
+Results [3]: [token#25, collect_list(doc_id#0, 0, 0)#44 AS doc_ids#39, count(1)#43L AS freq#40L]
+
+(9) Exchange
+Input [3]: [token#25, doc_ids#39, freq#40L]
+Arguments: rangepartitioning(freq#40L DESC NULLS LAST, 200), ENSURE_REQUIREMENTS, [plan_id=1023]
+
+(10) Sort
+Input [3]: [token#25, doc_ids#39, freq#40L]
+Arguments: [freq#40L DESC NULLS LAST], true, 0
+
+(11) AdaptiveSparkPlan
+Output [3]: [token#25, doc_ids#39, freq#40L]
+Arguments: isFinalPlan=false
+
+

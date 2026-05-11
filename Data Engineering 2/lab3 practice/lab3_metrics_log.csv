@@ -1,0 +1,19 @@
+run_id,path,algorithm,task,notes,iteration_or_k,seed,metric_value,shuffle_read_bytes,shuffle_write_bytes,elapsed_ms,timestamp
+sweep_KMeans_k4,B,KMeans,kmeans_sweep,sweep k=4 clusters_reels=4,4,42,0.39714674088167995,113095,113095,2073.1022357940674,2026-05-03 15:26:14
+sweep_KMeans_k6,B,KMeans,kmeans_sweep,sweep k=6 clusters_reels=6,6,42,0.4634974531086031,180056,180056,1801.26953125,2026-05-03 15:26:14
+sweep_KMeans_k8,B,KMeans,kmeans_sweep,sweep k=8 clusters_reels=8,8,42,0.4488630490825062,235986,235986,1713.70530128479,2026-05-03 15:26:14
+sweep_KMeans_k10,B,KMeans,kmeans_sweep,sweep k=10 clusters_reels=10,10,42,0.4291635903341527,359729,359729,2099.9648571014404,2026-05-03 15:26:14
+sweep_BisectingKMeans_k4,B,BisectingKMeans,kmeans_sweep,sweep k=4 clusters_reels=1,4,42,nan,230888,230888,3992.5777912139893,2026-05-03 15:26:14
+sweep_BisectingKMeans_k6,B,BisectingKMeans,kmeans_sweep,sweep k=6 clusters_reels=1,6,42,nan,381648,381648,5847.470998764038,2026-05-03 15:26:14
+sweep_BisectingKMeans_k8,B,BisectingKMeans,kmeans_sweep,sweep k=8 clusters_reels=1,8,42,nan,532408,532408,7146.209955215454,2026-05-03 15:26:14
+sweep_BisectingKMeans_k10,B,BisectingKMeans,kmeans_sweep,sweep k=10 clusters_reels=1,10,42,nan,-749149,-752918,7790.6999588012695,2026-05-03 15:26:14
+stability_seed42,B,KMeans,seed_stability,k=6 seed=42 clusters_reels=6,6,42,0.4634974531086031,-856,2913,1166.867971420288,2026-05-03 15:26:14
+stability_seed43,B,KMeans,seed_stability,k=6 seed=43 clusters_reels=6,6,43,0.4780234171383676,163095,163095,1081.8283557891846,2026-05-03 15:26:14
+stability_seed44,B,KMeans,seed_stability,k=6 seed=44 clusters_reels=6,6,44,0.47753579473291813,116449,116449,973.4058380126953,2026-05-03 15:26:14
+stability_seed45,B,KMeans,seed_stability,k=6 seed=45 clusters_reels=6,6,45,0.462934618636871,99901,99901,1275.2478122711182,2026-05-03 15:26:14
+stability_seed46,B,KMeans,seed_stability,k=6 seed=46 clusters_reels=6,6,46,0.4632645991425651,90378,90378,1311.4585876464844,2026-05-03 15:26:14
+partition_n1,B,KMeans,partitioning,repartition=1 clusters_reels=6,6,42,0.4532313550187591,12125,12125,1280.7633876800537,2026-05-03 15:26:14
+partition_n2,B,KMeans,partitioning,repartition=2 clusters_reels=6,6,42,0.47848229207879556,27445,27445,966.1026000976562,2026-05-03 15:26:14
+partition_n4,B,KMeans,partitioning,repartition=4 clusters_reels=6,6,42,0.46521855282494995,-24311,-28080,978.856086730957,2026-05-03 15:26:14
+partition_n8,B,KMeans,partitioning,repartition=8 clusters_reels=6,6,42,0.4725286468307903,186387,190156,1439.4619464874268,2026-05-03 15:26:14
+partition_n16,B,KMeans,partitioning,repartition=16 clusters_reels=6,6,42,0.47704363175322384,187965,187965,1568.8350200653076,2026-05-03 15:26:14

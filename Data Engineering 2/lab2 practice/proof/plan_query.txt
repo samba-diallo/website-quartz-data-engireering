@@ -1,0 +1,29 @@
+== Physical Plan ==
+* Filter (5)
++- InMemoryTableScan (1)
+      +- InMemoryRelation (2)
+            +- * ColumnarToRow (4)
+               +- Scan parquet  (3)
+
+
+(1) InMemoryTableScan
+Output [3]: [token#188, doc_ids#189, freq#190L]
+Arguments: [token#188, doc_ids#189, freq#190L], [isnotnull(token#188), (token#188 = spark)]
+
+(2) InMemoryRelation
+Arguments: [token#188, doc_ids#189, freq#190L], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(3) Scan parquet 
+Output [3]: [token#188, doc_ids#189, freq#190L]
+Batched: true
+Location: InMemoryFileIndex [file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab2 practice/outputs/lab2/inverted_index]
+ReadSchema: struct<token:string,doc_ids:array<string>,freq:bigint>
+
+(4) ColumnarToRow [codegen id : 1]
+Input [3]: [token#188, doc_ids#189, freq#190L]
+
+(5) Filter [codegen id : 1]
+Input [3]: [token#188, doc_ids#189, freq#190L]
+Condition : (isnotnull(token#188) AND (token#188 = spark))
+
+

@@ -1,0 +1,71 @@
+# =============================================================
+# .gitignore - Data Engineering monorepo
+# Phase 1 backup config : exclut tout ce qui ne doit JAMAIS
+# entrer dans l'historique git (taille, secrets, environnements)
+# =============================================================
+
+# -------- Toxiques (9.4 GB + 446 MB + 931 MB) -----------------
+# devops_base contient .conda (6 GB) + .git nested (2 GB).
+# On le tient hors-git le temps de la migration ; le contenu utile
+# sera extrait dans migration/devops-export/ par la Phase 1.
+website/devops_base/
+
+# Python virtualenvs (931 MB)
+de1-env/
+.venv/
+venv/
+env/
+.conda/
+
+# Node modules (446 MB par site)
+node_modules/
+**/node_modules/
+
+# -------- Build / cache --------------------------------------
+public/
+**/public/
+dist/
+.next/
+.quartz-cache/
+**/.quartz-cache/
+.cache/
+*.cache
+
+# -------- Lab outputs (regenerable, lourds) -------------------
+# Sorties Spark/Hadoop du projet final DE1 (1.1 GB)
+Data Engineering 1/projet-final/outputs/
+**/outputs/spark-warehouse/
+**/outputs/checkpoint/
+**/derby.log
+**/metastore_db/
+
+# -------- Python ---------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# -------- Secrets / env --------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# -------- Système / IDE --------------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/settings.json
+.idea/
+
+# -------- Obsidian private (mais on garde la config) ---------
+.obsidian/workspace*
+.obsidian/private/
+
+# -------- Logs -----------------------------------------------
+*.log
+npm-debug.log*

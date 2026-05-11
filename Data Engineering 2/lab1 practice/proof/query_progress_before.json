@@ -1,0 +1,35 @@
+{
+  "id": "68628729-0ab5-4dda-a826-294b8c1bf980",
+  "runId": "2449abc1-b30a-48bf-a874-5c2334dc529e",
+  "name": null,
+  "timestamp": "2026-04-29T09:31:50.000Z",
+  "batchId": 0,
+  "batchDuration": 15,
+  "durationMs": {
+    "triggerExecution": 15,
+    "latestOffset": 14
+  },
+  "eventTime": {},
+  "stateOperators": [],
+  "sources": [
+    {
+      "description": "FileStreamSource[file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 practice/data/stream_input]",
+      "startOffset": "None",
+      "endOffset": "None",
+      "latestOffset": "None",
+      "numInputRows": 0,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 0.0,
+      "metrics": {}
+    }
+  ],
+  "sink": {
+    "description": "FileSink[file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 practice/outputs/lab1/stream_sink]",
+    "numOutputRows": -1,
+    "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+}

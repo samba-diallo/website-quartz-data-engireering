@@ -1,0 +1,41 @@
+0000000000000000000000000000000000000000 ee7c58342fa04a8b2f85caa59f543f53e6fc3245 Samba Diallo <samba.diallo@edu.esiee.fr> 1766991091 +0100	commit (initial): Initial commit: fichiers essentiels pour déploiement Quartz sur Cloudflare Pages
+ee7c58342fa04a8b2f85caa59f543f53e6fc3245 a75cc95893ae08f6b076e362e49db1ab6b89af48 Samba Diallo <samba.diallo@edu.esiee.fr> 1766993410 +0100	commit: Initial commit: ajout des fichiers nécessaires pour déploiement Quartz sur Cloudflare Pages
+a75cc95893ae08f6b076e362e49db1ab6b89af48 0000000000000000000000000000000000000000 Samba Diallo <samba.diallo@edu.esiee.fr> 1766993425 +0100	Branch: renamed refs/heads/main to refs/heads/main
+a75cc95893ae08f6b076e362e49db1ab6b89af48 a75cc95893ae08f6b076e362e49db1ab6b89af48 Samba Diallo <samba.diallo@edu.esiee.fr> 1766993425 +0100	Branch: renamed refs/heads/main to refs/heads/main
+a75cc95893ae08f6b076e362e49db1ab6b89af48 b1babeb02e35c6977e48121b43a4ed04bcd28582 Samba Diallo <samba.diallo@edu.esiee.fr> 1766993556 +0100	commit (merge): Résolution du conflit de fusion : garder la version locale complète du README.md
+b1babeb02e35c6977e48121b43a4ed04bcd28582 226d41af82e8ae8f2f9ae88b1ffd5bdbcac94a23 Samba Diallo <samba.diallo@edu.esiee.fr> 1766994827 +0100	commit: Supprimer le dossier quartz-min (plus de sous-module)
+226d41af82e8ae8f2f9ae88b1ffd5bdbcac94a23 ce5d2d79b2162460d089af8fc5422b24f6fb48e2 Samba Diallo <samba.diallo@edu.esiee.fr> 1766995942 +0100	commit: Ajout de .nvmrc et vérification engines dans package.json pour Node.js 22 et npm >=10.9.2 (Cloudflare Pages)
+ce5d2d79b2162460d089af8fc5422b24f6fb48e2 477b3bbe54cd59530cfcd079dcc07dcc010b3989 Samba Diallo <samba.diallo@edu.esiee.fr> 1767023915 +0100	commit: Ajout du script build pour Cloudflare Pages
+477b3bbe54cd59530cfcd079dcc07dcc010b3989 4c50db73ffbfcc05c566b46184d2da1a1f34f839 Samba Diallo <samba.diallo@edu.esiee.fr> 1767024505 +0100	commit: remove large data files from Pages build
+4c50db73ffbfcc05c566b46184d2da1a1f34f839 a5625ff8f9a854540b4ab58fbd843de1979232a7 Samba Diallo <samba.diallo@edu.esiee.fr> 1767025328 +0100	commit: remove all files >25MiB from Pages build (bronze, silver, silver_optimized)
+a5625ff8f9a854540b4ab58fbd843de1979232a7 19ba0e49a4bb4e931c6bbc3cff1ef74e877f8580 Samba Diallo <samba.diallo@edu.esiee.fr> 1767025434 +0100	pull --rebase (start): checkout 19ba0e49a4bb4e931c6bbc3cff1ef74e877f8580
+19ba0e49a4bb4e931c6bbc3cff1ef74e877f8580 255331c7ef61bd3cdc804e070ccab2bce89213e3 Samba Diallo <samba.diallo@edu.esiee.fr> 1767025436 +0100	pull --rebase (pick): remove all files >25MiB from Pages build (bronze, silver, silver_optimized)
+255331c7ef61bd3cdc804e070ccab2bce89213e3 255331c7ef61bd3cdc804e070ccab2bce89213e3 Samba Diallo <samba.diallo@edu.esiee.fr> 1767025436 +0100	pull --rebase (finish): returning to refs/heads/main
+255331c7ef61bd3cdc804e070ccab2bce89213e3 9880b215f0e2a54c381c519befb1e3ff8423a032 Samba Diallo <samba.diallo@edu.esiee.fr> 1767026259 +0100	commit: Suppression définitive des fichiers >25MiB dans content/ pour Cloudflare Pages
+9880b215f0e2a54c381c519befb1e3ff8423a032 05d3d5564b371fb2d3f193e64da858fff11423bd Samba Diallo <samba.diallo@edu.esiee.fr> 1767026302 +0100	pull --rebase (start): checkout 05d3d5564b371fb2d3f193e64da858fff11423bd
+05d3d5564b371fb2d3f193e64da858fff11423bd 05d3d5564b371fb2d3f193e64da858fff11423bd Samba Diallo <samba.diallo@edu.esiee.fr> 1767026302 +0100	pull --rebase (finish): returning to refs/heads/main
+05d3d5564b371fb2d3f193e64da858fff11423bd c75f02ae8b163121645f2ac81f9a00f46685c93d Samba Diallo <samba.diallo@edu.esiee.fr> 1767027129 +0100	commit: Mise à jour Node.js 22 pour Cloudflare Pages (compatibilité Quartz)
+c75f02ae8b163121645f2ac81f9a00f46685c93d fb16cdba0416cf81d90d8315392cef52842c6c3a Samba Diallo <samba.diallo@edu.esiee.fr> 1767027341 +0100	commit: Utilise npx quartz build pour compatibilité CI/CD
+fb16cdba0416cf81d90d8315392cef52842c6c3a 7784dcd6156ec08bd2600e1fa356ce09ff5d4eb8 Samba Diallo <samba.diallo@edu.esiee.fr> 1767030466 +0100	commit: Inclusion directe du HTML des notebooks dans les pages Quartz (labs et projet) selon le workflow du professeur
+7784dcd6156ec08bd2600e1fa356ce09ff5d4eb8 3db918e15b678e56d8abec172b0b3d01bc9493e1 Samba Diallo <samba.diallo@edu.esiee.fr> 1767034857 +0100	commit: Fix: projectName Cloudflare Pages -> website-quartz-data-engineering
+3db918e15b678e56d8abec172b0b3d01bc9493e1 26bb3f345f7aa3d8a7e58eb49aaa522e39925e09 Samba Diallo <samba.diallo@edu.esiee.fr> 1767035115 +0100	commit: Fix: typo in projectName (engireering) for Cloudflare Pages
+26bb3f345f7aa3d8a7e58eb49aaa522e39925e09 30ba2c021ee0fa193583f33e8d0c9ec147a5f0a7 Samba Diallo <samba.diallo@edu.esiee.fr> 1767035813 +0100	commit: feat: rendu HTML inline des notebooks pour tous les labs
+30ba2c021ee0fa193583f33e8d0c9ec147a5f0a7 4d7221388f1ccbef8e64ffe9f8cd24bf42f37467 Samba Diallo <samba.diallo@edu.esiee.fr> 1767036867 +0100	commit: docs: détails sur chaque lab et le projet + auteurs en intro
+4d7221388f1ccbef8e64ffe9f8cd24bf42f37467 64243918c318baa7f2df2971ac0063ca33f61d3a Samba Diallo <samba.diallo@edu.esiee.fr> 1767037867 +0100	commit: feat: affichage des notebooks via iframe HTML dans tous les labs et le projet
+64243918c318baa7f2df2971ac0063ca33f61d3a 8f5ed641dfb03d99f30705e21870352c2f29247e Samba Diallo <samba.diallo@edu.esiee.fr> 1767038156 +0100	commit: fix: supprime le contenu résiduel après l’iframe dans le projet (corrige l’erreur Quartz build)
+8f5ed641dfb03d99f30705e21870352c2f29247e 4876f780e752e25ca8ad1b35472d9d019190394d Samba Diallo <samba.diallo@edu.esiee.fr> 1767038827 +0100	commit: Lab 3: structure Quartz propre, deux iframes, notebooks dans static/assignments/lab3
+4876f780e752e25ca8ad1b35472d9d019190394d 75ff3d7b9c000d7cea4738a7d1279eb81276fc78 Samba Diallo <samba.diallo@edu.esiee.fr> 1767299307 +0100	commit: Mise en page sur Quartz
+75ff3d7b9c000d7cea4738a7d1279eb81276fc78 fce8e7d318ff5ce96f4c6204d26a0a9fb9854378 Samba Diallo <samba.diallo@edu.esiee.fr> 1767302258 +0100	commit: amélioration de la mise en forme des pages
+fce8e7d318ff5ce96f4c6204d26a0a9fb9854378 3cb8d2f730eede870c4aa7f87617439f93cfe523 Samba Diallo <samba.diallo@edu.esiee.fr> 1767304241 +0100	commit: Encore
+3cb8d2f730eede870c4aa7f87617439f93cfe523 9291797f56cd3268410604b52a1534e20272c9ea Samba Diallo <samba.diallo@edu.esiee.fr> 1767304259 +0100	commit: again
+9291797f56cd3268410604b52a1534e20272c9ea d4cbde0517fb11d3c2fa770ca55c09ff94d726da Samba Diallo <samba.diallo@edu.esiee.fr> 1767368019 +0100	commit: mise en format des images dans le dossier proof
+d4cbde0517fb11d3c2fa770ca55c09ff94d726da 34d6dd5cbca7e229f2b979fcb20041c08a62428e Samba Diallo <samba.diallo@edu.esiee.fr> 1767370294 +0100	commit: quelques modifs
+34d6dd5cbca7e229f2b979fcb20041c08a62428e ca6e3acccce16b435bd9c72e4c677448aaf37f55 Samba Diallo <samba.diallo@edu.esiee.fr> 1767371449 +0100	commit: on va voir
+ca6e3acccce16b435bd9c72e4c677448aaf37f55 d3daace5ce38913f517f4bd3a9e7a2246cbe795c Samba Diallo <samba.diallo@edu.esiee.fr> 1767373465 +0100	commit: encore des erreurs
+d3daace5ce38913f517f4bd3a9e7a2246cbe795c a8e95f34aa64d2cd3f69c4e8c64538b25f2c5365 Samba Diallo <samba.diallo@edu.esiee.fr> 1767376922 +0100	commit: j"espere
+a8e95f34aa64d2cd3f69c4e8c64538b25f2c5365 e1e9db8dab7503c8139f85a07e210bd5692e0f83 Samba Diallo <samba.diallo@edu.esiee.fr> 1767378261 +0100	commit: ok
+e1e9db8dab7503c8139f85a07e210bd5692e0f83 da038a3bee0f04abb2288ac57d3769f8bc5a3032 Samba Diallo <samba.diallo@edu.esiee.fr> 1767379751 +0100	commit: j'espere
+da038a3bee0f04abb2288ac57d3769f8bc5a3032 de55341fd3229616642f9a62101ab837ff137f61 Samba Diallo <samba.diallo@edu.esiee.fr> 1767383852 +0100	commit: okh
+de55341fd3229616642f9a62101ab837ff137f61 5c534a2146a150483ac760d41cda5aca3ff00697 Samba Diallo <samba.diallo@edu.esiee.fr> 1767396724 +0100	commit: encore des ameliorations du code
+5c534a2146a150483ac760d41cda5aca3ff00697 96031c03acceca1906e4b75d638df9efb00ef330 Samba Diallo <samba.diallo@edu.esiee.fr> 1767397331 +0100	commit: images et metrique du projet
+96031c03acceca1906e4b75d638df9efb00ef330 bfc2a2e9d1e0dcafec8405e20f465b2c022486b9 Samba Diallo <samba.diallo@edu.esiee.fr> 1767398711 +0100	commit: ajouts des images pour les labs

@@ -1,0 +1,17 @@
+PLAN DE REQUÊTE DE BASE
+================================================================================
+== Physical Plan ==
+* ColumnarToRow (2)
++- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [6]: [window_start#77, window_end#78, team_id#79, event_count#80L, total_gold#81, total_kills#82L]
+Batched: true
+Location: MetadataLogFileIndex [/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_baseline]
+ReadSchema: struct<window_start:timestamp,window_end:timestamp,team_id:string,event_count:bigint,total_gold:double,total_kills:bigint>
+
+(2) ColumnarToRow [codegen id : 1]
+Input [6]: [window_start#77, window_end#78, team_id#79, event_count#80L, total_gold#81, total_kills#82L]
+
+

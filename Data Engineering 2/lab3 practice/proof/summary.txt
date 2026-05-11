@@ -1,0 +1,5 @@
+Lab 3 - Resume - 2026-05-03 15:26:14
+Meilleure config sweep : KMeans k=6 silhouette=0.4635
+Stabilite (KMeans k=6) : moyenne=0.4691, ecart-type=0.0080
+Partition la plus rapide : repartition=2 clusters_reels=6 (966.1 ms)
+Total de runs enregistres : 18

@@ -1,0 +1,56 @@
+- name: Deploy multiple EC2 instances in AWS
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - amazon.aws
+  vars:
+    # Default values; override with -e option
+    instance_type: t3.micro
+    image_id: ami-0900fe555666598a2
+    instance_count: 2  # Nombre d'instances à créer (par défaut 2)
+    environment:
+      AWS_REGION: us-east-2
+  tasks:
+    - name: Create security group (if not exists)
+      amazon.aws.ec2_security_group:
+        name: sample-app-ansible
+        description: Allow HTTP and SSH traffic
+        rules:
+          - proto: tcp
+            ports: [8080]
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            ports: [22]
+            cidr_ip: 0.0.0.0/0
+        state: present
+      register: aws_security_group
+
+    - name: Create a new EC2 key pair
+      amazon.aws.ec2_key:
+        name: ansible-ch2
+        file_name: ansible-ch2.key
+        state: present
+      no_log: true
+      register: aws_ec2_key_pair
+
+    - name: Create multiple EC2 instances
+      amazon.aws.ec2_instance:
+        name: "sample-app-ansible-{{ item }}"
+        key_name: "{{ aws_ec2_key_pair.key.name }}"
+        instance_type: "{{ instance_type }}"
+        security_group: "{{ aws_security_group.group_id }}"
+        image_id: "{{ image_id }}"
+        wait: yes
+        wait_timeout: 500
+        tags:
+          Ansible: ch2_instances
+          Index: "{{ item }}"
+          Environment: lab
+      register: ec2_instances
+      loop: "{{ range(0, instance_count | int) | list }}"
+
+    - name: Display instance information
+      debug:
+        msg: "Instance {{ item.instances[0].instance_id }} ({{ item.instances[0].tags.Name }}) created with IP {{ item.instances[0].public_ip_address }}"
+      loop: "{{ ec2_instances.results }}"
+      when: item.instances is defined and item.instances | length > 0

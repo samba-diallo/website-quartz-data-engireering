@@ -1,0 +1,33 @@
+== Physical Plan ==
+* Project (6)
++- InMemoryTableScan (1)
+      +- InMemoryRelation (2)
+            +- * Project (5)
+               +- * Project (4)
+                  +- * Scan ExistingRDD (3)
+
+
+(1) InMemoryTableScan
+Output [2]: [features#71, true_cluster#2]
+Arguments: [features#71, true_cluster#2]
+
+(2) InMemoryRelation
+Arguments: [true_cluster#2, features#71], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(3) Scan ExistingRDD [codegen id : 1]
+Output [3]: [x#0, y#1, true_cluster#2]
+Arguments: [x#0, y#1, true_cluster#2], MapPartitionsRDD[4] at applySchemaToPythonRDD at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
+
+(4) Project [codegen id : 1]
+Output [2]: [true_cluster#2, UDF(struct(x, x#0, y, y#1)) AS features_raw#18]
+Input [3]: [x#0, y#1, true_cluster#2]
+
+(5) Project [codegen id : 1]
+Output [2]: [true_cluster#2, UDF(features_raw#18) AS features#71]
+Input [2]: [true_cluster#2, features_raw#18]
+
+(6) Project [codegen id : 1]
+Output [3]: [true_cluster#2, features#71, UDF(features#71) AS prediction#4100]
+Input [2]: [features#71, true_cluster#2]
+
+

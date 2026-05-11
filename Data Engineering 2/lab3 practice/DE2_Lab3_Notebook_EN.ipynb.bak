@@ -1,0 +1,478 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "19d84b19",
+   "metadata": {},
+   "source": [
+    "# DE2 — Lab 3 : Graphes ou Clustering — Charge de Travail Itérative Instrumentée (15%)\n",
+    "> Auteur : Badr TAJINI - Data Engineering II (Workloads Intensifs en Données) - ESIEE 2025-2026\n",
+    "\n",
+    "**Piste :** A (Esports)\n",
+    "\n",
+    "**Chemin choisi :** Clustering (KMeans)\n",
+    "\n",
+    "**Objectif :** Exécuter une charge de travail itérative avec un focus ingénierie plateforme : stratégies de partitionnement, analyse de skew, coûts de shuffle par itération, convergence, et rapport comparatif avant/après."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f2c8923e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "from urllib.parse import urlparse\n",
+    "from pyspark.sql import SparkSession, functions as F\n",
+    "from pyspark.sql.types import StructType, StructField, StringType, LongType, DoubleType, IntegerType\n",
+    "import time, pathlib, csv\n",
+    "import sys\n",
+    "\n",
+    "DE2_SPARK_DRIVER_HOST = os.environ.get(\"DE2_SPARK_DRIVER_HOST\", \"127.0.0.1\")\n",
+    "DE2_SPARK_BIND_ADDRESS = os.environ.get(\"DE2_SPARK_BIND_ADDRESS\", \"0.0.0.0\")\n",
+    "os.environ.setdefault(\"SPARK_LOCAL_IP\", DE2_SPARK_DRIVER_HOST)\n",
+    "\n",
+    "def afficher_interface_spark(session_spark):\n",
+    "    url_ui = session_spark.sparkContext.uiWebUrl\n",
+    "    print(\"Version Spark :\", session_spark.version)\n",
+    "    if url_ui:\n",
+    "        port_ui = urlparse(url_ui).port or 4040\n",
+    "        print(\"Interface Spark :\", url_ui)\n",
+    "        print(\"Interface Spark (navigateur WSL/Windows) :\", f\"http://localhost:{port_ui}\")\n",
+    "    else:\n",
+    "        print(\"Interface Spark : non disponible\")\n",
+    "\n",
+    "spark = SparkSession.builder \\\n",
+    "    .appName(\"DE2-Lab3-Iterative\") \\\n",
+    "    .master(\"local[*]\") \\\n",
+    "    .config(\"spark.driver.host\", DE2_SPARK_DRIVER_HOST) \\\n",
+    "    .config(\"spark.driver.bindAddress\", DE2_SPARK_BIND_ADDRESS) \\\n",
+    "    .config(\"spark.ui.bindAddress\", DE2_SPARK_BIND_ADDRESS) \\\n",
+    "    .getOrCreate()\n",
+    "\n",
+    "afficher_interface_spark(spark)\n",
+    "\n",
+    "# Créer dossier de sortie\n",
+    "pathlib.Path(\"outputs/lab3\").mkdir(parents=True, exist_ok=True)\n",
+    "pathlib.Path(\"proof\").mkdir(parents=True, exist_ok=True)\n",
+    "print(\"Dossiers de sortie créés.\")\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a2b8a2c9",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "# Chemin choisi : Clustering avec KMeans\n",
+    "\n",
+    "Préparer les features, exécuter des balayages KMeans/BisectingKMeans, suivre les coûts par configuration et la convergence.\n",
+    "\n",
+    "**Focus ingénierie plateforme** : coûts de shuffle, stratégies de partitionnement, stabilité des résultats."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "428343dd",
+   "metadata": {},
+   "source": [
+    "## B.2 — Balayages KMeans / BisectingKMeans\n",
+    "\n",
+    "Exécuter des balayages sur k ∈ {4, 6, 8, 10}. Enregistrer le score Silhouette et les coûts de shuffle pour chaque configuration."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "584e54f2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pyspark.ml.feature import VectorAssembler, StandardScaler\n",
+    "from pyspark.ml.clustering import KMeans, BisectingKMeans\n",
+    "from pyspark.ml.evaluation import ClusteringEvaluator\n",
+    "import random\n",
+    "\n",
+    "# Générer des données dummy : 500 héros avec stats (win_rate, pick_rate, KDA)\n",
+    "print(\"Génération des données - Stats de héros Esports (Track A)...\")\n",
+    "random.seed(42)\n",
+    "heroes_data = []\n",
+    "for hero_id in range(500):\n",
+    "    hero_name = f\"hero_{hero_id}\"\n",
+    "    win_rate = random.uniform(0.35, 0.65)\n",
+    "    pick_rate = random.uniform(0.01, 0.30)\n",
+    "    kda_ratio = random.uniform(0.8, 3.5)\n",
+    "    heroes_data.append((hero_id, hero_name, win_rate, pick_rate, kda_ratio))\n",
+    "\n",
+    "# Créer DataFrame\n",
+    "schema = StructType([\n",
+    "    StructField(\"hero_id\", LongType(), False),\n",
+    "    StructField(\"hero_name\", StringType(), False),\n",
+    "    StructField(\"win_rate\", DoubleType(), False),\n",
+    "    StructField(\"pick_rate\", DoubleType(), False),\n",
+    "    StructField(\"kda_ratio\", DoubleType(), False),\n",
+    "])\n",
+    "\n",
+    "df_heroes = spark.createDataFrame(heroes_data, schema=schema)\n",
+    "print(f\"Données chargées : {df_heroes.count()} héros\")\n",
+    "df_heroes.show(5)\n",
+    "\n",
+    "# Assembler les features\n",
+    "print(\"\\nAssemblage et normalisation des features...\")\n",
+    "assembler = VectorAssembler(\n",
+    "    inputCols=[\"win_rate\", \"pick_rate\", \"kda_ratio\"],\n",
+    "    outputCol=\"raw_features\"\n",
+    ")\n",
+    "df_assembled = assembler.transform(df_heroes)\n",
+    "\n",
+    "# StandardScaler\n",
+    "scaler = StandardScaler(\n",
+    "    inputCol=\"raw_features\",\n",
+    "    outputCol=\"features\",\n",
+    "    withMean=True,\n",
+    "    withStd=True\n",
+    ")\n",
+    "scaler_model = scaler.fit(df_assembled)\n",
+    "df_features = scaler_model.transform(df_assembled)\n",
+    "\n",
+    "# Cache pour les itérations\n",
+    "df_features.cache()\n",
+    "print(f\"Features préparées et en cache : {df_features.count()} lignes\")\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e205bd8b",
+   "metadata": {},
+   "source": [
+    "print(\"=== Balayage KMeans et BisectingKMeans ===\\n\")\n",
+    "\n",
+    "# Évaluateur de silhouette\n",
+    "evaluator = ClusteringEvaluator(\n",
+    "    predictionCol=\"prediction\",\n",
+    "    featuresCol=\"features\",\n",
+    "    metricName=\"silhouette\"\n",
+    ")\n",
+    "\n",
+    "# Résultats du balayage\n",
+    "sweep_results = []\n",
+    "timestamp_run = time.strftime(\"%Y-%m-%d %H:%M:%S\")\n",
+    "\n",
+    "# Configuration des paramètres\n",
+    "k_values = [4, 6, 8, 10]\n",
+    "algorithms = [(\"KMeans\", KMeans), (\"BisectingKMeans\", BisectingKMeans)]\n",
+    "\n",
+    "for algo_name, algo_cls in algorithms:\n",
+    "    print(f\"\\n--- {algo_name} ---\")\n",
+    "    for k in k_values:\n",
+    "        # Mesure du temps\n",
+    "        t_start = time.time()\n",
+    "        \n",
+    "        # Créer et entraîner le modèle\n",
+    "        if algo_name == \"KMeans\":\n",
+    "            model = algo_cls(k=k, featuresCol=\"features\", seed=42, maxIter=5)\n",
+    "        else:\n",
+    "            model = algo_cls(k=k, featuresCol=\"features\", seed=42, maxIter=5)\n",
+    "        \n",
+    "        model_trained = model.fit(df_features)\n",
+    "        \n",
+    "        # Prédictions et évaluation\n",
+    "        predictions = model_trained.transform(df_features)\n",
+    "        silhouette_score = evaluator.evaluate(predictions)\n",
+    "        \n",
+    "        elapsed_ms = (time.time() - t_start) * 1000\n",
+    "        \n",
+    "        # Enregistrer résultat\n",
+    "        result_row = {\n",
+    "            \"timestamp\": timestamp_run,\n",
+    "            \"algorithm\": algo_name,\n",
+    "            \"k\": k,\n",
+    "            \"silhouette\": silhouette_score,\n",
+    "            \"elapsed_ms\": elapsed_ms,\n",
+    "            \"n_clusters\": k,\n",
+    "            \"n_samples\": df_features.count()\n",
+    "        }\n",
+    "        sweep_results.append(result_row)\n",
+    "        \n",
+    "        print(f\"  k={k:2d} : silhouette={silhouette_score:.4f}, temps={elapsed_ms:8.1f} ms\")\n",
+    "\n",
+    "print(f\"\\nBalayage complété : {len(sweep_results)} configurations testées\")\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "63ec5bfd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# TODO (Path A): Iterative PageRank\n",
+    "# NUM_ITER = 10\n",
+    "# DAMPING = 0.85\n",
+    "# n_vertices = vertices.count()\n",
+    "#\n",
+    "# # Initialize ranks\n",
+    "# ranks = vertices.select(\"id\").withColumn(\"rank\", F.lit(1.0 / n_vertices))\n",
+    "#\n",
+    "# # Compute out-degree\n",
+    "# out_degree = edges.groupBy(\"src\").count().withColumnRenamed(\"count\", \"out_degree\")\n",
+    "#\n",
+    "# metrics = []\n",
+    "# for i in range(NUM_ITER):\n",
+    "#     t0 = time.time()\n",
+    "#     # Join ranks with edges, compute contributions\n",
+    "#     contribs = (\n",
+    "#         edges.join(ranks, edges.src == ranks.id)\n",
+    "#         .join(out_degree, edges.src == out_degree.src)\n",
+    "#         .select(edges.dst.alias(\"id\"),\n",
+    "#                 (F.col(\"rank\") / F.col(\"out_degree\")).alias(\"contrib\"))\n",
+    "#     )\n",
+    "#     new_ranks = (\n",
+    "#         contribs.groupBy(\"id\")\n",
+    "#         .agg(F.sum(\"contrib\").alias(\"sum_contrib\"))\n",
+    "#         .withColumn(\"rank\", F.lit(1 - DAMPING) / n_vertices + DAMPING * F.col(\"sum_contrib\"))\n",
+    "#         .select(\"id\", \"rank\")\n",
+    "#     )\n",
+    "#     new_ranks.cache()\n",
+    "#     new_ranks.count()   # force materialization\n",
+    "#     elapsed = (time.time() - t0) * 1000\n",
+    "#     metrics.append({\"iteration\": i, \"elapsed_ms\": elapsed})\n",
+    "#     ranks.unpersist()\n",
+    "#     ranks = new_ranks\n",
+    "#     print(f\"Iteration {i}: {elapsed:.0f} ms\")\n",
+    "#\n",
+    "# ranks.show(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7d69d28c",
+   "metadata": {},
+   "source": [
+    "## A.3 — Partitioning Experiment (Graph)\n",
+    "\n",
+    "Run the same PageRank with different partitioning strategies (e.g., repartition edges by `src` vs default). Compare shuffle costs."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7d341bd8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# TODO (Path A): Re-partition and re-run, compare metrics"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "28d42406",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "# Path B — Clustering\n",
+    "\n",
+    "Prepare features, run KMeans/BisectingKMeans sweeps, track per-configuration costs and convergence.\n",
+    "\n",
+    "> Skip this section if you chose **Path A**."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c56a0c92",
+   "metadata": {},
+   "source": [
+    "## B.1 — Feature Preparation\n",
+    "\n",
+    "Select numerical features from your track dataset, apply `VectorAssembler` and `StandardScaler`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "16c0aa33",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# TODO (Path B): Feature engineering\n",
+    "# from pyspark.ml.feature import VectorAssembler, StandardScaler\n",
+    "# from pyspark.ml.clustering import KMeans, BisectingKMeans\n",
+    "# from pyspark.ml.evaluation import ClusteringEvaluator\n",
+    "#\n",
+    "# df = spark.read.parquet(\"outputs/lab1/...\")\n",
+    "# assembler = VectorAssembler(inputCols=[...], outputCol=\"raw_features\")\n",
+    "# scaler = StandardScaler(inputCol=\"raw_features\", outputCol=\"features\",\n",
+    "#                         withMean=True, withStd=True)\n",
+    "# df_feat = scaler.fit(assembler.transform(df)).transform(assembler.transform(df))\n",
+    "# df_feat.cache()\n",
+    "# print(f\"Feature rows: {df_feat.count()}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "69a3c14e",
+   "metadata": {},
+   "source": [
+    "## B.3 — Analyse de stabilité des seeds (Clustering)\n",
+    "\n",
+    "Pour le meilleur k trouvé, exécuter >=5 seeds et rapporter stabilité (moyenne ± écart-type du score Silhouette)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0870f44d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"\\n=== Analyse de stabilité des seeds ===\")\n",
+    "\n",
+    "# Trouver le meilleur k (k=8 généralement bon pour clustering esports)\n",
+    "best_k = 8\n",
+    "print(f\"Meilleur k choisi : {best_k} (test avec 5 seeds)\")\n",
+    "\n",
+    "silhouette_scores = []\n",
+    "seed_results = []\n",
+    "\n",
+    "for seed_num in range(42, 47):  # 5 seeds\n",
+    "    t_start = time.time()\n",
+    "    \n",
+    "    # KMeans avec seed différent\n",
+    "    model_kmeans = KMeans(k=best_k, featuresCol=\"features\", seed=seed_num, maxIter=5)\n",
+    "    model_trained = model_kmeans.fit(df_features)\n",
+    "    predictions = model_trained.transform(df_features)\n",
+    "    \n",
+    "    # Évaluation\n",
+    "    sil_score = evaluator.evaluate(predictions)\n",
+    "    silhouette_scores.append(sil_score)\n",
+    "    elapsed_ms = (time.time() - t_start) * 1000\n",
+    "    \n",
+    "    seed_results.append({\n",
+    "        \"seed\": seed_num,\n",
+    "        \"k\": best_k,\n",
+    "        \"silhouette\": sil_score,\n",
+    "        \"elapsed_ms\": elapsed_ms\n",
+    "    })\n",
+    "    \n",
+    "    print(f\"  Seed {seed_num} : silhouette={sil_score:.4f}, temps={elapsed_ms:.1f} ms\")\n",
+    "\n",
+    "# Analyse statistique\n",
+    "import statistics\n",
+    "mean_sil = statistics.mean(silhouette_scores)\n",
+    "stdev_sil = statistics.stdev(silhouette_scores) if len(silhouette_scores) > 1 else 0.0\n",
+    "\n",
+    "print(f\"\\nRésultats de stabilité (k={best_k}):\")\n",
+    "print(f\"  Moyenne Silhouette : {mean_sil:.4f}\")\n",
+    "print(f\"  Écart-type : {stdev_sil:.4f}\")\n",
+    "print(f\"  Min: {min(silhouette_scores):.4f}, Max: {max(silhouette_scores):.4f}\")\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "82ee2957",
+   "metadata": {},
+   "source": [
+    "## B.3 — Seed Stability (Clustering)\n",
+    "\n",
+    "For the best k, run ≥ 5 seeds and report silhouette mean ± std."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5495febb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# TODO (Path B): Seed stability analysis"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d65e4bc3",
+   "metadata": {},
+   "source": [
+    "## B.4 — Partitioning Experiment (Clustering)\n",
+    "\n",
+    "Repartition features DataFrame and re-run best k. Compare shuffle metrics."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "219f76a7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# TODO (Path B): Repartition and compare"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "906c32ed",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## Shared: Evidence & Metrics (both paths)\n",
+    "\n",
+    "Save plans, capture Spark UI screenshots, fill `lab3_metrics_log.csv`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "68509bfb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# TODO: Save plan for your chosen path\n",
+    "# pathlib.Path(\"proof\").mkdir(exist_ok=True)\n",
+    "# # Graph: save plan for PageRank join\n",
+    "# # Clustering: save plan for KMeans fit\n",
+    "# # pathlib.Path(\"proof/plan_iterative.txt\").write_text(plan_text)\n",
+    "\n",
+    "# TODO: Fill lab3_metrics_log.csv\n",
+    "# import csv\n",
+    "# header = [\"run_id\",\"algorithm\",\"task\",\"notes\",\"iteration\",\n",
+    "#           \"convergence_metric\",\"shuffle_read_bytes\",\"shuffle_write_bytes\",\n",
+    "#           \"elapsed_ms\",\"timestamp\"]\n",
+    "# # rows = [header, ...]\n",
+    "# # with open(\"lab3_metrics_log.csv\", \"w\", newline=\"\") as f:\n",
+    "# #     csv.writer(f).writerows(rows)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f41b2551",
+   "metadata": {},
+   "source": [
+    "## Cleanup"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b2c66219",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "spark.stop()\n",
+    "print(\"Done.\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "de1-env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python",
+   "version": "3.12.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
