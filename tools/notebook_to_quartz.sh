@@ -138,25 +138,20 @@ mkdir -p "${STATIC_TARGET}" "${WRAPPER_DIR}"
   "${INPUT_NB}"
 
 # -------- Generation du wrapper Markdown ---------------------
-# Frontmatter minimal + iframe responsive
+# Iframe occupant toute la zone de contenu disponible (epouse la page).
+# height calc(100vh - 8rem) laisse juste la breadcrumb + titre en haut.
 cat > "${WRAPPER_MD}" <<EOF
 ---
 title: "${NB_BASENAME}"
 date: $(date +%Y-%m-%d)
-tags:
-  - notebook
 draft: false
 ---
 
 <iframe
   src="${IFRAME_URL}"
-  width="100%"
-  height="900"
-  style="border:1px solid #ccc; border-radius:6px;"
+  style="border:none; width:100%; height: calc(100vh - 8rem); display:block;"
   loading="lazy">
 </iframe>
-
-Source notebook : \`${REL_SOURCE}/${NB_BASENAME}.ipynb\`
 EOF
 
 echo ""

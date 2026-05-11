@@ -23,7 +23,8 @@ export const defaultContentPageLayout: PageLayout = {
     }),
     Component.ArticleTitle(),
     Component.ContentMeta(),
-    Component.TagList(),
+    // TagList retire : les tags servent a la recherche/filtrage
+    // mais ne sont plus affiches sous le titre des pages.
   ],
   left: [
     Component.PageTitle(),
