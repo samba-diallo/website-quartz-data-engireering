@@ -79,7 +79,7 @@ If you don't have a GitHub account, create one at github.com.
 
 ```bash
 # In your workspace
-cd /home/sable/devops_base/scripts/modules
+cd /home/sable/devops_base/td2/scripts/modules
 
 # Initialize git (if not already done)
 git init
@@ -130,7 +130,7 @@ git show v1.0.0
 Create different modules using different versions:
 
 ```bash
-cd /home/sable/devops_base/scripts/live/github-modules
+cd /home/sable/devops_base/td2/scripts/live/github-modules
 ```
 
 **File: test-v1.0.0.tf**
@@ -172,7 +172,7 @@ module "app_main" {
 #### Step 6: Initialize and Deploy (Optional)
 
 ```bash
-cd /home/sable/devops_base/scripts/live/github-modules
+cd /home/sable/devops_base/td2/scripts/live/github-modules
 
 # Initialize
 tofu init
@@ -418,7 +418,7 @@ tofu apply # Deploy (if approved)
 
 Here's a complete working example combining both exercises:
 
-**Directory:** `/home/sable/devops_base/scripts/live/github-modules/`
+**Directory:** `/home/sable/devops_base/td2/scripts/live/github-modules/`
 
 **Files:**
 - `example1-local-module.tf` - Using local module
@@ -433,7 +433,7 @@ Here's a complete working example combining both exercises:
 
 ```bash
 # Navigate to github-modules directory
-cd /home/sable/devops_base/scripts/live/github-modules
+cd /home/sable/devops_base/td2/scripts/live/github-modules
 
 # Initialize OpenTofu
 tofu init

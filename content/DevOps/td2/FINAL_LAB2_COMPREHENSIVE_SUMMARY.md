@@ -627,7 +627,7 @@ Team/Project Usage
 ├── SECTION_6_SUMMARY.md               # Section 6 detailed
 ├── SECTION_7_SUMMARY.md               # Section 7 concepts
 │
-└── td2/scripts/
+└── scripts/
     ├── bash/
     │   ├── deploy-ec2-instance.sh
     │   └── user-data.sh

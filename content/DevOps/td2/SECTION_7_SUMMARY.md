@@ -46,7 +46,7 @@ source = "github.com/user/repo.git//module?ref=abc123"
 ### Directory Structure
 
 ```
-/home/sable/devops_base/td2/scripts/live/github-modules/
+/home/sable/devops_base/scripts/live/github-modules/
 ├── main.tf                                    # Primary config
 ├── variables.tf                              # Input variables
 ├── outputs.tf                                # Output values
@@ -108,7 +108,7 @@ Learn to version modules using Git tags, branches, and commits.
 
 2. **Push Local Module**
    ```bash
-   cd /home/sable/devops_base/td2/scripts/modules
+   cd /home/sable/devops_base/scripts/modules
    git init
    git add -A
    git commit -m "Initial module structure"
@@ -296,7 +296,7 @@ version = "9.0.0"
 
 ```bash
 # Navigate to github-modules
-cd /home/sable/devops_base/td2/scripts/live/github-modules
+cd /home/sable/devops_base/scripts/live/github-modules
 
 # Initialize OpenTofu (downloads modules and plugins)
 tofu init

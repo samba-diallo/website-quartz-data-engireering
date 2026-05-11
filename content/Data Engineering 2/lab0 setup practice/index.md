@@ -16,4 +16,4 @@ tags:
 
 - [[data/index|data/]]
 - [[DE2_Lab0_Starter|DE2_Lab0_Starter.ipynb]] *(notebook)*
-- [[Proof/index|Proof/]]
+- [[proof/index|proof/]]

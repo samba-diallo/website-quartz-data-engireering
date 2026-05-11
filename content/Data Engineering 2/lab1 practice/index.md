@@ -15,4 +15,4 @@ tags:
 
 - [[DE2_Lab1_Notebook_EN|DE2_Lab1_Notebook_EN.ipynb]] *(notebook)*
 - `lab1_metrics_log.csv`
-- [[Proof/index|Proof/]]
+- [[proof/index|proof/]]

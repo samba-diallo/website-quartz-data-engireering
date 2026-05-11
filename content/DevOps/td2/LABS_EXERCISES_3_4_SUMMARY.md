@@ -15,7 +15,7 @@
 
 - **Script d'exécution** :
   ```bash
-  cd /home/sable/devops_base/td2/scripts/ansible
+  cd /home/sable/devops_base/scripts/ansible
   ./exercise_3_idempotency.sh
   ```
 
@@ -29,7 +29,7 @@
 
 - **Script d'exécution** :
   ```bash
-  cd /home/sable/devops_base/td2/scripts/ansible
+  cd /home/sable/devops_base/scripts/ansible
   ./exercise_4_multi_instance.sh [nombre_instances]
   # Exemple : ./exercise_4_multi_instance.sh 3
   ```
@@ -177,7 +177,7 @@ ansible-playbook -i inventory.aws_ec2.yml configure_sample_app_playbook.yml
 ### Test du déploiement multi-instance
 
 ```bash
-cd /home/sable/devops_base/td2/scripts/ansible
+cd /home/sable/devops_base/scripts/ansible
 
 # Déployer 3 instances (utilise le script)
 ./exercise_4_multi_instance.sh 3

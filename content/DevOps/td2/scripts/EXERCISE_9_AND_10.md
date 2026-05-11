@@ -4,7 +4,7 @@ Objective: Modify the module to accept additional parameters (instance_type, por
 
 Solution Implemented:
 
-In /home/sable/devops_base/scripts/modules/ec2-instance/variables.tf:
+In /home/sable/devops_base/td2/scripts/modules/ec2-instance/variables.tf:
 
 variable "instance_type" {
   description = "EC2 instance type"
@@ -18,7 +18,7 @@ variable "port" {
   default     = 8080
 }
 
-In /home/sable/devops_base/scripts/modules/ec2-instance/main.tf:
+In /home/sable/devops_base/td2/scripts/modules/ec2-instance/main.tf:
 
 resource "aws_instance" "sample_app" {
   ami           = var.ami_id
@@ -32,7 +32,7 @@ resource "aws_security_group_rule" "allow_http_inbound" {
   ...
 }
 
-In /home/sable/devops_base/scripts/live/sample-app/main.tf:
+In /home/sable/devops_base/td2/scripts/live/sample-app/main.tf:
 
 module "sample_app_1" {
   source        = "../../modules/ec2-instance"
@@ -75,7 +75,7 @@ Objective: Use for_each to deploy multiple instances without code duplication
 
 Implementation:
 
-Create new file: /home/sable/devops_base/scripts/live/sample-app-scalable/main.tf
+Create new file: /home/sable/devops_base/td2/scripts/live/sample-app-scalable/main.tf
 
 provider "aws" {
   region  = "us-east-2"

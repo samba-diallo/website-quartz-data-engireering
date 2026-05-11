@@ -17,11 +17,11 @@ Deployment Guides:
   SECTION_7_DEPLOYMENT_GUIDE.md         (GitHub modules practical)
 
 Exercise Explanations:
-  td2/scripts/EXERCISE_9_AND_10.md      (Parameterized & scalable)
-  td2/scripts/EXERCISE_11_AND_12.md     (Git versioning & public modules)
-  td2/scripts/packer/EXERCISE_5_EXPLANATION.md
-  td2/scripts/packer/EXERCISE_6_EXPLANATION.md
-  td2/scripts/tofu/EXERCISE_7_AND_8.md
+  scripts/EXERCISE_9_AND_10.md      (Parameterized & scalable)
+  scripts/EXERCISE_11_AND_12.md     (Git versioning & public modules)
+  scripts/packer/EXERCISE_5_EXPLANATION.md
+  scripts/packer/EXERCISE_6_EXPLANATION.md
+  scripts/tofu/EXERCISE_7_AND_8.md
 ```
 
 ---
@@ -30,44 +30,44 @@ Exercise Explanations:
 
 ### Bash (Section 1)
 ```bash
-cd /home/sable/devops_base/td2/scripts/bash
+cd /home/sable/devops_base/scripts/bash
 ls -la deploy-ec2-instance.sh user-data.sh
 ```
 
 ### Ansible (Section 2)
 ```bash
-cd /home/sable/devops_base/td2/scripts/ansible
+cd /home/sable/devops_base/scripts/ansible
 ls -la *.yml inventory.aws_ec2.yml roles/sample-app/
 ```
 
 ### Packer (Section 3)
 ```bash
-cd /home/sable/devops_base/td2/scripts/packer
+cd /home/sable/devops_base/scripts/packer
 ls -la *.pkr.hcl *.json EXERCISE_*.md
 ```
 
 ### OpenTofu Modules (Section 6)
 ```bash
-cd /home/sable/devops_base/td2/scripts/modules/ec2-instance
+cd /home/sable/devops_base/scripts/modules/ec2-instance
 cat main.tf variables.tf outputs.tf
 ```
 
 ### OpenTofu Live Configurations (Sections 4-7)
 ```bash
 # Single instance
-cd /home/sable/devops_base/td2/scripts/tofu/ec2-instance
+cd /home/sable/devops_base/scripts/tofu/ec2-instance
 
 # Multiple instances
-cd /home/sable/devops_base/td2/scripts/tofu/ec2-multi
+cd /home/sable/devops_base/scripts/tofu/ec2-multi
 
 # Static modules
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 
 # Scalable modules
-cd /home/sable/devops_base/td2/scripts/live/sample-app-scalable
+cd /home/sable/devops_base/scripts/live/sample-app-scalable
 
 # GitHub modules (Section 7)
-cd /home/sable/devops_base/td2/scripts/live/github-modules
+cd /home/sable/devops_base/scripts/live/github-modules
 ```
 
 ---
@@ -78,7 +78,7 @@ cd /home/sable/devops_base/td2/scripts/live/github-modules
 
 ```bash
 # Navigate to a configuration directory
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 
 # Initialize (download providers)
 tofu init
@@ -109,7 +109,7 @@ tofu state show aws_instance.sample_app
 ### Packer Commands
 
 ```bash
-cd /home/sable/devops_base/td2/scripts/packer
+cd /home/sable/devops_base/scripts/packer
 
 # Initialize plugins
 packer init sample-app.pkr.hcl
@@ -127,7 +127,7 @@ AWS_PROFILE=labs-devops_diallo AWS_REGION=us-east-2 packer build sample-app.pkr.
 ### Ansible Commands
 
 ```bash
-cd /home/sable/devops_base/td2/scripts/ansible
+cd /home/sable/devops_base/scripts/ansible
 
 # Test inventory (dynamic AWS)
 ansible-inventory -i inventory.aws_ec2.yml --list | head -20
@@ -204,7 +204,7 @@ done
 
 **Option 1: Deploy Section 6 (Modular Architecture)**
 ```bash
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 tofu apply -auto-approve
 # Creates: 2 EC2 instances, 2 security groups
 # Estimated cost: $0 (Free Tier) or ~$3/month per instance
@@ -212,7 +212,7 @@ tofu apply -auto-approve
 
 **Option 2: Deploy Section 6 Scalable**
 ```bash
-cd /home/sable/devops_base/td2/scripts/live/sample-app-scalable
+cd /home/sable/devops_base/scripts/live/sample-app-scalable
 tofu apply -auto-approve
 # Creates: 3 EC2 instances
 # Estimated cost: $0 (Free Tier) or ~$9/month total
@@ -220,7 +220,7 @@ tofu apply -auto-approve
 
 **Option 3: Custom Deployment Count**
 ```bash
-cd /home/sable/devops_base/td2/scripts/live/sample-app-scalable
+cd /home/sable/devops_base/scripts/live/sample-app-scalable
 # Edit main.tf, modify var.instances map to have desired number
 # Then:
 tofu apply -auto-approve
@@ -266,22 +266,22 @@ aws ec2 describe-instances --instance-ids $(tofu output instance_id) \
 
 ```bash
 # Sample-app deployment
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 tofu destroy -auto-approve
 
 # Sample-app-scalable deployment
-cd /home/sable/devops_base/td2/scripts/live/sample-app-scalable
+cd /home/sable/devops_base/scripts/live/sample-app-scalable
 tofu destroy -auto-approve
 
 # GitHub modules (Section 7)
-cd /home/sable/devops_base/td2/scripts/live/github-modules
+cd /home/sable/devops_base/scripts/live/github-modules
 tofu destroy -auto-approve
 
 # Any other deployments
-cd /home/sable/devops_base/td2/scripts/tofu/ec2-instance
+cd /home/sable/devops_base/scripts/tofu/ec2-instance
 tofu destroy -auto-approve
 
-cd /home/sable/devops_base/td2/scripts/tofu/ec2-multi
+cd /home/sable/devops_base/scripts/tofu/ec2-multi
 tofu destroy -auto-approve
 ```
 
@@ -289,10 +289,10 @@ tofu destroy -auto-approve
 
 ```bash
 # Warning: Only do this if you're sure you want to delete resources!
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 rm -rf .terraform* terraform.tfstate*
 
-cd /home/sable/devops_base/td2/scripts/live/sample-app-scalable
+cd /home/sable/devops_base/scripts/live/sample-app-scalable
 rm -rf .terraform* terraform.tfstate*
 ```
 
@@ -302,7 +302,7 @@ rm -rf .terraform* terraform.tfstate*
 
 ### Reusable Module (Foundation)
 ```
-/home/sable/devops_base/td2/scripts/modules/ec2-instance/
+/home/sable/devops_base/scripts/modules/ec2-instance/
 ├── main.tf              # EC2 + Security Group resources
 ├── variables.tf         # Input variables
 ├── outputs.tf           # Output values
@@ -348,7 +348,7 @@ variable "name" {
 ~/.aws/config              # Region: us-east-2
 
 # SSH Key for Ansible
-/home/sable/devops_base/td2/scripts/ansible/ansible-ch2.key
+/home/sable/devops_base/scripts/ansible/ansible-ch2.key
 # Keep secure! Use: chmod 600 ansible-ch2.key
 ```
 
@@ -501,7 +501,7 @@ aws ec2 describe-instances \
   --output text
 
 # Get instance details from OpenTofu state
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 tofu state show module.local_module_instance.aws_instance.sample_app
 ```
 
@@ -518,7 +518,7 @@ export AWS_REGION=us-east-2
 export AWS_PROFILE=labs-devops_diallo
 
 # List available configurations
-ls -la /home/sable/devops_base/td2/scripts/*/
+ls -la /home/sable/devops_base/scripts/*/
 ```
 
 ---

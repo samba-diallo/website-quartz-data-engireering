@@ -5,7 +5,7 @@ Refactored OpenTofu configuration to use modules for better code reuse and organ
 
 Directory Structure Created:
 
-/home/sable/devops_base/td2/scripts/
+/home/sable/devops_base/scripts/
 ├── modules/
 │   └── ec2-instance/
 │       ├── main.tf          (Resources: SG, SG rule, instance)

@@ -44,7 +44,7 @@ SECTIONS COMPLETED
 DIRECTORY STRUCTURE
 ========================================
 
-/home/sable/devops_base/td2/scripts/
+/home/sable/devops_base/scripts/
 ├── bash/
 │   └── deploy-ec2-instance.sh
 ├── ansible/
@@ -290,8 +290,8 @@ CLEANUP & NEXT STEPS
 Current State: 8 instances running
 
 Cleanup Command (all at once):
-cd /home/sable/devops_base/td2/scripts/live/sample-app && tofu destroy -auto-approve
-cd /home/sable/devops_base/td2/scripts/live/sample-app-scalable && tofu destroy -auto-approve
+cd /home/sable/devops_base/scripts/live/sample-app && tofu destroy -auto-approve
+cd /home/sable/devops_base/scripts/live/sample-app-scalable && tofu destroy -auto-approve
 
 Next Steps:
 1. Implement CI/CD pipeline (GitHub Actions / GitLab CI)
@@ -324,9 +324,9 @@ This lab provides foundation for enterprise infrastructure automation.
 Documentation Files:
 - /home/sable/devops_base/SUMMARY_LAB2.md (Sections 1-5)
 - /home/sable/devops_base/SECTION_6_SUMMARY.md (Section 6)
-- /home/sable/devops_base/td2/scripts/EXERCISE_9_AND_10.md (Exercises 9-10)
-- /home/sable/devops_base/td2/scripts/packer/EXERCISE_5_EXPLANATION.md
-- /home/sable/devops_base/td2/scripts/packer/EXERCISE_6_EXPLANATION.md
-- /home/sable/devops_base/td2/scripts/tofu/EXERCISE_7_AND_8.md
+- /home/sable/devops_base/scripts/EXERCISE_9_AND_10.md (Exercises 9-10)
+- /home/sable/devops_base/scripts/packer/EXERCISE_5_EXPLANATION.md
+- /home/sable/devops_base/scripts/packer/EXERCISE_6_EXPLANATION.md
+- /home/sable/devops_base/scripts/tofu/EXERCISE_7_AND_8.md
 
 END OF LAB 2

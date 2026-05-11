@@ -14,10 +14,10 @@
 
 ### For Learning (30 minutes per section)
 - **Section 1-2:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md)
-- **Section 3:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [Packer exercises](td2/scripts/packer/EXERCISE_5_EXPLANATION.md)
-- **Section 4-5:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [Exercises 7-8](td2/scripts/tofu/EXERCISE_7_AND_8.md)
-- **Section 6:** [SECTION_6_SUMMARY.md](SECTION_6_SUMMARY.md) + [Exercises 9-10](td2/scripts/EXERCISE_9_AND_10.md)
-- **Section 7:** [SECTION_7_SUMMARY.md](SECTION_7_SUMMARY.md) + [Exercises 11-12](td2/scripts/EXERCISE_11_AND_12.md)
+- **Section 3:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [Packer exercises](scripts/packer/EXERCISE_5_EXPLANATION.md)
+- **Section 4-5:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [Exercises 7-8](scripts/tofu/EXERCISE_7_AND_8.md)
+- **Section 6:** [SECTION_6_SUMMARY.md](SECTION_6_SUMMARY.md) + [Exercises 9-10](scripts/EXERCISE_9_AND_10.md)
+- **Section 7:** [SECTION_7_SUMMARY.md](SECTION_7_SUMMARY.md) + [Exercises 11-12](scripts/EXERCISE_11_AND_12.md)
 
 ### For Deep Dive (1-2 hours per section)
 - Read comprehensive summary
@@ -44,7 +44,7 @@
 ### 🛠️ Source Code Organization
 
 ```
-td2/scripts/
+scripts/
 │
 ├── bash/                                   (Section 1: Manual scripts)
 │   ├── deploy-ec2-instance.sh              # Main deployment script
@@ -144,25 +144,25 @@ td2/scripts/
 ### Tool-Specific Guides
 - **Bash:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) - Section 1
 - **Ansible:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) - Section 2
-- **Packer:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [Exercises 5-6](td2/scripts/packer/)
+- **Packer:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [Exercises 5-6](scripts/packer/)
 - **OpenTofu:** [SUMMARY_LAB2.md](SUMMARY_LAB2.md) + [SECTION_6_SUMMARY.md](SECTION_6_SUMMARY.md)
-- **Git/GitHub:** [SECTION_7_SUMMARY.md](SECTION_7_SUMMARY.md) + [EXERCISE_11_AND_12.md](td2/scripts/EXERCISE_11_AND_12.md)
+- **Git/GitHub:** [SECTION_7_SUMMARY.md](SECTION_7_SUMMARY.md) + [EXERCISE_11_AND_12.md](scripts/EXERCISE_11_AND_12.md)
 
 ### Exercise Walkthroughs
 - **Exercise 3:** Idempotence - [SUMMARY_LAB2.md](SUMMARY_LAB2.md)
 - **Exercise 4:** Multi-instance - [SUMMARY_LAB2.md](SUMMARY_LAB2.md)
-- **Exercise 5:** Non-idempotence - [EXERCISE_5_EXPLANATION.md](td2/scripts/packer/EXERCISE_5_EXPLANATION.md)
-- **Exercise 6:** Multi-provider - [EXERCISE_6_EXPLANATION.md](td2/scripts/packer/EXERCISE_6_EXPLANATION.md)
-- **Exercise 7:** Destroy behavior - [EXERCISE_7_AND_8.md](td2/scripts/tofu/EXERCISE_7_AND_8.md)
-- **Exercise 8:** Multiple instances - [EXERCISE_7_AND_8.md](td2/scripts/tofu/EXERCISE_7_AND_8.md)
-- **Exercise 9:** Parameterization - [EXERCISE_9_AND_10.md](td2/scripts/EXERCISE_9_AND_10.md)
-- **Exercise 10:** Scalability - [EXERCISE_9_AND_10.md](td2/scripts/EXERCISE_9_AND_10.md)
-- **Exercise 11:** Git versioning - [EXERCISE_11_AND_12.md](td2/scripts/EXERCISE_11_AND_12.md)
-- **Exercise 12:** Public modules - [EXERCISE_11_AND_12.md](td2/scripts/EXERCISE_11_AND_12.md)
+- **Exercise 5:** Non-idempotence - [EXERCISE_5_EXPLANATION.md](scripts/packer/EXERCISE_5_EXPLANATION.md)
+- **Exercise 6:** Multi-provider - [EXERCISE_6_EXPLANATION.md](scripts/packer/EXERCISE_6_EXPLANATION.md)
+- **Exercise 7:** Destroy behavior - [EXERCISE_7_AND_8.md](scripts/tofu/EXERCISE_7_AND_8.md)
+- **Exercise 8:** Multiple instances - [EXERCISE_7_AND_8.md](scripts/tofu/EXERCISE_7_AND_8.md)
+- **Exercise 9:** Parameterization - [EXERCISE_9_AND_10.md](scripts/EXERCISE_9_AND_10.md)
+- **Exercise 10:** Scalability - [EXERCISE_9_AND_10.md](scripts/EXERCISE_9_AND_10.md)
+- **Exercise 11:** Git versioning - [EXERCISE_11_AND_12.md](scripts/EXERCISE_11_AND_12.md)
+- **Exercise 12:** Public modules - [EXERCISE_11_AND_12.md](scripts/EXERCISE_11_AND_12.md)
 
 ### Practical Deployment Guides
 - [QUICK_REFERENCE_LAB2.md](QUICK_REFERENCE_LAB2.md) - All commands and paths
-- [SECTION_7_DEPLOYMENT_GUIDE.md](td2/scripts/SECTION_7_DEPLOYMENT_GUIDE.md) - GitHub modules hands-on
+- [SECTION_7_DEPLOYMENT_GUIDE.md](scripts/SECTION_7_DEPLOYMENT_GUIDE.md) - GitHub modules hands-on
 
 ---
 
@@ -198,7 +198,7 @@ cat QUICK_REFERENCE_LAB2.md
 ### Step 3: Deploy Something (30-60 min)
 ```bash
 # Navigate to a configuration
-cd /home/sable/devops_base/td2/scripts/live/sample-app
+cd /home/sable/devops_base/scripts/live/sample-app
 
 # Review configuration
 cat main.tf
@@ -325,19 +325,19 @@ By reading all documentation, you will have learned:
 - [SECTION_7_SUMMARY.md](SECTION_7_SUMMARY.md) - Section 7
 
 ### Exercises
-- [EXERCISE_5_EXPLANATION.md](td2/scripts/packer/EXERCISE_5_EXPLANATION.md)
-- [EXERCISE_6_EXPLANATION.md](td2/scripts/packer/EXERCISE_6_EXPLANATION.md)
-- [EXERCISE_7_AND_8.md](td2/scripts/tofu/EXERCISE_7_AND_8.md)
-- [EXERCISE_9_AND_10.md](td2/scripts/EXERCISE_9_AND_10.md)
-- [EXERCISE_11_AND_12.md](td2/scripts/EXERCISE_11_AND_12.md)
-- [SECTION_7_DEPLOYMENT_GUIDE.md](td2/scripts/SECTION_7_DEPLOYMENT_GUIDE.md)
+- [EXERCISE_5_EXPLANATION.md](scripts/packer/EXERCISE_5_EXPLANATION.md)
+- [EXERCISE_6_EXPLANATION.md](scripts/packer/EXERCISE_6_EXPLANATION.md)
+- [EXERCISE_7_AND_8.md](scripts/tofu/EXERCISE_7_AND_8.md)
+- [EXERCISE_9_AND_10.md](scripts/EXERCISE_9_AND_10.md)
+- [EXERCISE_11_AND_12.md](scripts/EXERCISE_11_AND_12.md)
+- [SECTION_7_DEPLOYMENT_GUIDE.md](scripts/SECTION_7_DEPLOYMENT_GUIDE.md)
 
 ### Source Code
-- [Modules](td2/scripts/modules/)
-- [Packer Templates](td2/scripts/packer/)
-- [Ansible Playbooks](td2/scripts/ansible/)
-- [Bash Scripts](td2/scripts/bash/)
-- [Live Configurations](td2/scripts/live/)
+- [Modules](scripts/modules/)
+- [Packer Templates](scripts/packer/)
+- [Ansible Playbooks](scripts/ansible/)
+- [Bash Scripts](scripts/bash/)
+- [Live Configurations](scripts/live/)
 
 ---
 

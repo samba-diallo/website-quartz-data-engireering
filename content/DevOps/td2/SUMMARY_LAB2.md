@@ -64,35 +64,35 @@ Exercise 8: Multiple Instances
 FICHIERS CRÉÉS:
 
 Bash Scripts:
-- /home/sable/devops_base/td2/scripts/bash/deploy-ec2-instance.sh
+- /home/sable/devops_base/scripts/bash/deploy-ec2-instance.sh
 
 Ansible:
-- /home/sable/devops_base/td2/scripts/ansible/configure_sample_app_playbook.yml
-- /home/sable/devops_base/td2/scripts/ansible/create_ec2_instance_playbook.yml
-- /home/sable/devops_base/td2/scripts/ansible/inventory.aws_ec2.yml
-- /home/sable/devops_base/td2/scripts/ansible/roles/sample-app/
+- /home/sable/devops_base/scripts/ansible/configure_sample_app_playbook.yml
+- /home/sable/devops_base/scripts/ansible/create_ec2_instance_playbook.yml
+- /home/sable/devops_base/scripts/ansible/inventory.aws_ec2.yml
+- /home/sable/devops_base/scripts/ansible/roles/sample-app/
 
 Packer:
-- /home/sable/devops_base/td2/scripts/packer/sample-app.pkr.hcl (HCL)
-- /home/sable/devops_base/td2/scripts/packer/sample-app.json (JSON)
-- /home/sable/devops_base/td2/scripts/packer/sample-app-virtualbox.pkr.hcl
-- /home/sable/devops_base/td2/scripts/packer/EXERCISE_5_EXPLANATION.md
-- /home/sable/devops_base/td2/scripts/packer/EXERCISE_6_EXPLANATION.md
+- /home/sable/devops_base/scripts/packer/sample-app.pkr.hcl (HCL)
+- /home/sable/devops_base/scripts/packer/sample-app.json (JSON)
+- /home/sable/devops_base/scripts/packer/sample-app-virtualbox.pkr.hcl
+- /home/sable/devops_base/scripts/packer/EXERCISE_5_EXPLANATION.md
+- /home/sable/devops_base/scripts/packer/EXERCISE_6_EXPLANATION.md
 
 OpenTofu:
-- /home/sable/devops_base/td2/scripts/tofu/ec2-instance/ (single instance)
+- /home/sable/devops_base/scripts/tofu/ec2-instance/ (single instance)
   - main.tf
   - variables.tf
   - outputs.tf
   - user-data.sh
 
-- /home/sable/devops_base/td2/scripts/tofu/ec2-multi/ (multiple instances)
+- /home/sable/devops_base/scripts/tofu/ec2-multi/ (multiple instances)
   - main.tf (with for_each)
   - variables.tf
   - outputs.tf
   - user-data.sh
 
-- /home/sable/devops_base/td2/scripts/tofu/EXERCISE_7_AND_8.md
+- /home/sable/devops_base/scripts/tofu/EXERCISE_7_AND_8.md
 
 ---
 

@@ -11,7 +11,7 @@
 ### Using Your Local Module (Already Working)
 
 ```bash
-cd /home/sable/devops_base/scripts/live/github-modules
+cd /home/sable/devops_base/td2/scripts/live/github-modules
 tofu init
 tofu plan
 tofu apply -auto-approve
@@ -22,7 +22,7 @@ tofu apply -auto-approve
 **Step 1: Push Module to GitHub**
 
 ```bash
-cd /home/sable/devops_base/scripts/modules
+cd /home/sable/devops_base/td2/scripts/modules
 git init
 git add -A
 git commit -m "Initial OpenTofu module"
@@ -201,7 +201,7 @@ module "app_main" {
 #### Phase 1: Development (Local)
 ```bash
 # Create module locally
-/home/sable/devops_base/scripts/modules/ec2-instance/
+/home/sable/devops_base/td2/scripts/modules/ec2-instance/
 ├── main.tf
 ├── variables.tf
 ├── outputs.tf

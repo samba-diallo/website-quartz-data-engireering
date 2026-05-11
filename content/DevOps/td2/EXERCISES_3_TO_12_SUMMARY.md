@@ -70,7 +70,7 @@
 - Code updated, v1.1 AMI built tomorrow
 - Instances can use either v1.0 or v1.1
 
-**Documentation:** [EXERCISE_5_EXPLANATION.md](td2/scripts/packer/EXERCISE_5_EXPLANATION.md)
+**Documentation:** [EXERCISE_5_EXPLANATION.md](scripts/packer/EXERCISE_5_EXPLANATION.md)
 
 ---
 
@@ -100,7 +100,7 @@
 - Disaster recovery: Build for secondary cloud
 - Cost optimization: Compare cloud providers
 
-**Documentation:** [EXERCISE_6_EXPLANATION.md](td2/scripts/packer/EXERCISE_6_EXPLANATION.md)
+**Documentation:** [EXERCISE_6_EXPLANATION.md](scripts/packer/EXERCISE_6_EXPLANATION.md)
 
 ---
 
@@ -132,7 +132,7 @@
 - Production: Keep running, careful updates
 - Disaster recovery: Rebuild from scratch
 
-**Documentation:** [EXERCISE_7_AND_8.md](td2/scripts/tofu/EXERCISE_7_AND_8.md)
+**Documentation:** [EXERCISE_7_AND_8.md](scripts/tofu/EXERCISE_7_AND_8.md)
 
 ---
 
@@ -166,7 +166,7 @@ module "app_instance" {
 - Both running and responding
 - Verified unique hostnames
 
-**Documentation:** [EXERCISE_7_AND_8.md](td2/scripts/tofu/EXERCISE_7_AND_8.md)
+**Documentation:** [EXERCISE_7_AND_8.md](scripts/tofu/EXERCISE_7_AND_8.md)
 
 ---
 
@@ -207,7 +207,7 @@ port          = var.port
 - Both using parameterized module
 - Verified unique configurations possible
 
-**Documentation:** [EXERCISE_9_AND_10.md](td2/scripts/EXERCISE_9_AND_10.md)
+**Documentation:** [EXERCISE_9_AND_10.md](scripts/EXERCISE_9_AND_10.md)
 
 ---
 
@@ -267,7 +267,7 @@ for_each = toset([for i in range(var.instance_count) : "instance-${i}"])
 - All endpoints responding
 - Verified scalability
 
-**Documentation:** [EXERCISE_9_AND_10.md](td2/scripts/EXERCISE_9_AND_10.md)
+**Documentation:** [EXERCISE_9_AND_10.md](scripts/EXERCISE_9_AND_10.md)
 
 ---
 
@@ -321,7 +321,7 @@ v2.0.0 (Breaking)   → Projects migrate gradually
 - Rollback capability
 - Team collaboration
 
-**Documentation:** [EXERCISE_11_AND_12.md](td2/scripts/EXERCISE_11_AND_12.md)
+**Documentation:** [EXERCISE_11_AND_12.md](scripts/EXERCISE_11_AND_12.md)
 
 ---
 
@@ -416,7 +416,7 @@ module "prod_vpc" {
 - Best practices built-in
 - Security-hardened configurations
 
-**Documentation:** [EXERCISE_11_AND_12.md](td2/scripts/EXERCISE_11_AND_12.md)
+**Documentation:** [EXERCISE_11_AND_12.md](scripts/EXERCISE_11_AND_12.md)
 
 ---
 
