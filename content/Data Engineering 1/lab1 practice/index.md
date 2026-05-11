@@ -1,12 +1,8 @@
 ---
-title: "Lab 1 - Practice"
-description: "Pratique guidee Lab 1 (RDD vs DataFrame, transformations Spark)"
 date: 2026-05-11
-tags:
-  - de1
-  - spark
-  - lab
-  - practice
+description: Pratique guidee Lab 1 (RDD vs DataFrame, transformations Spark)
+tags: []
+title: Lab 1 - Practice
 ---
 
 # Lab 1 - Practice

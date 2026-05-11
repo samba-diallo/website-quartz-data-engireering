@@ -1,10 +1,8 @@
 ---
-title: "Projet final DE1"
-description: "Projet final Data Engineering 1"
 date: 2026-05-11
-tags:
-  - de1
-  - project
+description: Projet final Data Engineering 1
+tags: []
+title: Projet final DE1
 ---
 
 # Projet final DE1

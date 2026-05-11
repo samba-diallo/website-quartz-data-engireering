@@ -1,11 +1,8 @@
 ---
-title: "project final - Preuves"
 date: 2026-05-11
-tags:
-  - proof
-  - de1
-  - project
 draft: false
+tags: []
+title: project final - Preuves
 ---
 
 # project final - Preuves

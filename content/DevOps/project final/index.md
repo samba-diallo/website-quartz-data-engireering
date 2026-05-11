@@ -1,11 +1,11 @@
 ---
-title: "Projet final DevOps - EcoData Platform"
-description: "Application EcoData Platform : backend, frontend, base de donnees, deploiement Docker + Kubernetes"
 date: 2026-05-11
+description: 'Application EcoData Platform : backend, frontend, base de donnees, deploiement
+  Docker + Kubernetes'
 tags:
-  - devops
-  - project
-  - ecodata-platform
+- devops
+- ecodata-platform
+title: Projet final DevOps - EcoData Platform
 ---
 
 # Projet final DevOps - EcoData Platform

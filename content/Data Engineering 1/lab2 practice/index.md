@@ -1,12 +1,8 @@
 ---
-title: "Lab 2 - Practice"
-description: "Pratique Lab 2 (Spark UI, metrics, optimisation)"
 date: 2026-05-11
-tags:
-  - de1
-  - spark
-  - lab
-  - practice
+description: Pratique Lab 2 (Spark UI, metrics, optimisation)
+tags: []
+title: Lab 2 - Practice
 ---
 
 # Lab 2 - Practice

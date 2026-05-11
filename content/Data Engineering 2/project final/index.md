@@ -1,10 +1,8 @@
 ---
-title: "Projet final DE2"
-description: "Projet final Data Engineering 2 (a recuperer aupres du prof)"
 date: 2026-05-11
-tags:
-  - de2
-  - project
+description: Projet final Data Engineering 2 (a recuperer aupres du prof)
+tags: []
+title: Projet final DE2
 ---
 
 # Projet final DE2

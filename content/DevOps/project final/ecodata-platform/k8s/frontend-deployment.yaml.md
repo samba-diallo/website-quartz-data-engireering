@@ -1,12 +1,11 @@
 ---
-title: "frontend-deployment.yaml"
 date: 2026-05-11
-tags:
-  - devops
-  - project
-  - ecodata-platform
-  - kubernetes
 draft: false
+tags:
+- devops
+- ecodata-platform
+- kubernetes
+title: frontend-deployment.yaml
 ---
 
 # frontend-deployment.yaml

@@ -1,12 +1,8 @@
 ---
-title: "Lab 1 - Practice"
-description: "Pratique Delta Lake basics"
 date: 2026-05-11
-tags:
-  - de2
-  - delta
-  - lab
-  - practice
+description: Pratique Delta Lake basics
+tags: []
+title: Lab 1 - Practice
 ---
 
 # Lab 1 - Practice

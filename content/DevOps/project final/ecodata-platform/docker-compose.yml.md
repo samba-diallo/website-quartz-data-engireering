@@ -1,11 +1,10 @@
 ---
-title: "docker-compose.yml"
 date: 2026-05-11
-tags:
-  - devops
-  - project
-  - ecodata-platform
 draft: false
+tags:
+- devops
+- ecodata-platform
+title: docker-compose.yml
 ---
 
 # docker-compose.yml

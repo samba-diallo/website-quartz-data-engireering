@@ -1,10 +1,9 @@
 ---
-title: "Support DE2"
-description: "Setup et troubleshooting"
 date: 2026-05-11
+description: Setup et troubleshooting
 tags:
-  - de2
-  - support
+- support
+title: Support DE2
 ---
 
 # Support DE2

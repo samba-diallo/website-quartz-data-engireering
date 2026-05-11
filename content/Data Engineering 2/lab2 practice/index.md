@@ -1,12 +1,8 @@
 ---
-title: "Lab 2 - Practice"
-description: "Pratique Time Travel et historique"
 date: 2026-05-11
-tags:
-  - de2
-  - delta
-  - lab
-  - practice
+description: Pratique Time Travel et historique
+tags: []
+title: Lab 2 - Practice
 ---
 
 # Lab 2 - Practice

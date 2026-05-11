@@ -1,10 +1,8 @@
 ---
-title: Data Engineering 1
-description: Cours DE1 - Spark, Hadoop, RDD/DataFrame, ETL distribue
 date: 2026-05-11
-tags:
-  - de1
-  - spark
+description: Cours DE1 - Spark, Hadoop, RDD/DataFrame, ETL distribue
+tags: []
+title: Data Engineering 1
 ---
 
 # Data Engineering 1

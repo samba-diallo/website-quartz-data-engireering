@@ -1,11 +1,8 @@
 ---
-title: "lab0 setup practice - Preuves"
 date: 2026-05-11
-tags:
-  - proof
-  - de2
-  - practice
 draft: false
+tags: []
+title: lab0 setup practice - Preuves
 ---
 
 # lab0 setup practice - Preuves

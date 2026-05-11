@@ -1,11 +1,8 @@
 ---
-title: "lab1 practice - Preuves"
 date: 2026-05-11
-tags:
-  - proof
-  - de2
-  - practice
 draft: false
+tags: []
+title: lab1 practice - Preuves
 ---
 
 # lab1 practice - Preuves

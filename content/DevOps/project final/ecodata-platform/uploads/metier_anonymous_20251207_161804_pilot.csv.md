@@ -1,11 +1,10 @@
 ---
-title: "metier_anonymous_20251207_161804_pilot.csv"
 date: 2026-05-11
-tags:
-  - devops
-  - project
-  - ecodata-platform
 draft: false
+tags:
+- devops
+- ecodata-platform
+title: metier_anonymous_20251207_161804_pilot.csv
 ---
 
 # metier_anonymous_20251207_161804_pilot.csv

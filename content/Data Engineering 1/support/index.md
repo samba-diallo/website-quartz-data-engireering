@@ -1,10 +1,9 @@
 ---
-title: "Support DE1"
-description: "Setup et troubleshooting (Node, nvm, zsh, etc.)"
 date: 2026-05-11
+description: Setup et troubleshooting (Node, nvm, zsh, etc.)
 tags:
-  - de1
-  - support
+- support
+title: Support DE1
 ---
 
 # Support DE1

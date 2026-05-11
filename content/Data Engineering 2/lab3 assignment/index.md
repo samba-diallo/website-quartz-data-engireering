@@ -1,12 +1,8 @@
 ---
-title: "Lab 3 - Assignment"
-description: "Devoir Lab 3 DE2"
 date: 2026-05-11
-tags:
-  - de2
-  - delta
-  - lab
-  - assignment
+description: Devoir Lab 3 DE2
+tags: []
+title: Lab 3 - Assignment
 ---
 
 # Lab 3 - Assignment

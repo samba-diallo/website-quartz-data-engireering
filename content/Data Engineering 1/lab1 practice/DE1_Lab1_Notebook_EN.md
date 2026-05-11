@@ -5,7 +5,7 @@ draft: false
 ---
 
 <iframe
-  src="/static/nb/Data-Engineering-1/lab1-practice/DE1_Lab1_Notebook_EN.html"
+  src="../../static/nb/Data-Engineering-1/lab1-practice/DE1_Lab1_Notebook_EN.html"
   style="border:none; width:100%; height: calc(100vh - 8rem); display:block;"
   loading="lazy">
 </iframe>

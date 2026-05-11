@@ -1,11 +1,8 @@
 ---
-title: "lab2 assignment - Preuves"
 date: 2026-05-11
-tags:
-  - proof
-  - de1
-  - assignment
 draft: false
+tags: []
+title: lab2 assignment - Preuves
 ---
 
 # lab2 assignment - Preuves

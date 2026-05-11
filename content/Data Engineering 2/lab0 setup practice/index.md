@@ -1,13 +1,9 @@
 ---
-title: "Lab 0 - Setup practice"
-description: "Mise en place de l'environnement Delta Lake"
 date: 2026-05-11
+description: Mise en place de l'environnement Delta Lake
 tags:
-  - de2
-  - delta
-  - lab
-  - practice
-  - setup
+- setup
+title: Lab 0 - Setup practice
 ---
 
 # Lab 0 - Setup practice
@@ -15,5 +11,5 @@ tags:
 ## Fichiers de ce dossier
 
 - [[data/index|data/]]
-- [[DE2_Lab0_Starter|DE2_Lab0_Starter.ipynb]] *(notebook)*
+- [[DE2_Lab0_Starter|DE2_Lab0_Starter.ipynb]]
 - [[proof/index|proof/]]

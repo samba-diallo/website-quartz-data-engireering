@@ -1,12 +1,8 @@
 ---
-title: "Lab 1 - Assignment"
-description: "Devoir Lab 1 a rendre"
 date: 2026-05-11
-tags:
-  - de1
-  - spark
-  - lab
-  - assignment
+description: Devoir Lab 1 a rendre
+tags: []
+title: Lab 1 - Assignment
 ---
 
 # Lab 1 - Assignment

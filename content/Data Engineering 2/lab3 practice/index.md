@@ -1,12 +1,8 @@
 ---
-title: "Lab 3 - Practice"
-description: "Pratique optimisation Delta"
 date: 2026-05-11
-tags:
-  - de2
-  - delta
-  - lab
-  - practice
+description: Pratique optimisation Delta
+tags: []
+title: Lab 3 - Practice
 ---
 
 # Lab 3 - Practice

@@ -1,10 +1,9 @@
 ---
-title: "docs"
 date: 2026-05-11
 tags:
-  - devops
-  - project
-  - ecodata-platform
+- devops
+- ecodata-platform
+title: docs
 ---
 
 # docs

@@ -1,11 +1,9 @@
 ---
-title: Data Engineering 2
-description: Cours DE2 - Delta Lake, Lakehouse, Time Travel
 date: 2026-05-11
+description: Cours DE2 - Delta Lake, Lakehouse, Time Travel
 tags:
-  - de2
-  - delta
-  - lakehouse
+- lakehouse
+title: Data Engineering 2
 ---
 
 # Data Engineering 2

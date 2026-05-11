@@ -1,12 +1,8 @@
 ---
-title: "Lab 3 - Practice"
-description: "Pratique Lab 3 (columnar, parquet, partitions)"
 date: 2026-05-11
-tags:
-  - de1
-  - spark
-  - lab
-  - practice
+description: Pratique Lab 3 (columnar, parquet, partitions)
+tags: []
+title: Lab 3 - Practice
 ---
 
 # Lab 3 - Practice
