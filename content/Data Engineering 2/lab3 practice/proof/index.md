@@ -26,9 +26,9 @@ Captures et plans d'execution generes lors du lab.
 
 ![jobs](./jobs.png)
 
-### jobs Sql
+### jobs-Sql
 
-![jobs Sql](./jobs Sql.png)
+![jobs-Sql](./jobs-Sql.png)
 
 ## Plans et logs
 
