@@ -1,7 +1,7 @@
 # Data Engineering Portfolio - ESIEE Paris
 
 > **Auteur:** DIALLO Samba
-> **Professeur:** DIALLO Samba Badr
+> **Professeur:** TAJINI Badr
 > **Formation:** Master Data Engineering - ESIEE Paris (2025-2026)
 > **Technologies:** Apache Spark, PySpark, Hadoop, Structured Streaming, MLlib, Quartz
 
@@ -463,19 +463,11 @@ open http://localhost:8080
 
 ---
 
-## Contact
-
-**DIALLO Samba**
-Email : [votre-email@example.com]
-LinkedIn : [Votre profil LinkedIn]
-GitHub : [Votre profil GitHub]
-
----
 
 ## Licence
 
-Ce projet est réalisé dans un cadre académique à ESIEE Paris sous la direction du professeur DIALLO Samba Badr.
-© 2025-2026 DIALLO Samba - Tous droits réservés.
+Ce projet est réalisé dans un cadre académique à ESIEE Paris sous la direction du professeur TAJINI Badr.
+© 2025-2026 DIALLO Samba @ DIOP Mouhamed- Tous droits réservés.
 
 ---
 
@@ -491,8 +483,7 @@ Ce projet est réalisé dans un cadre académique à ESIEE Paris sous la directi
 
 <div align="center">
 
-**Si ce projet vous a été utile, n'hésitez pas à lui donner une étoile !**
 
-Made by DIALLO Samba
+Made by DIALLO Samba @ DIOP Mouhamed
 
 </div>
