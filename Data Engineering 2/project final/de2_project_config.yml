@@ -1,0 +1,54 @@
+# ==========================================
+# Configuration - DE2 Final Project
+# Track B : GitHub Archive
+# ==========================================
+
+project:
+  name: "GitHub Archive Analytics Pipeline"
+  track: "Track B - Open Source"
+  author: "Samba DIALLO"
+
+paths:
+  # Entrées
+  raw_csv_glob: "data/archive/*.json"
+  streaming_landing: "data/landing/"
+  
+  # Sorties Medallion
+  bronze: "outputs/project/bronze"
+  silver: "outputs/project/silver"
+  gold: "outputs/project/gold"
+  
+  # Sorties Spécifiques
+  streaming: "outputs/project/streaming"
+  streaming_checkpoint: "outputs/project/streaming_checkpoint"
+  text: "outputs/project/text"
+  llm_ready: "outputs/project/llm_ready"
+  
+  # Preuves et logs
+  proof: "proof/"
+  metrics_log: "project_metrics_log.csv"
+
+# Service Level Objectives (SLOs) à prouver
+slos:
+  pipeline_latency_mins: 10          # Bronze -> Gold en moins de 10 min
+  streaming_trigger_sec: 30          # Agrégation fenêtrée <= 30s
+  text_query_latency_sec: 2          # Lookup index inversé <= 2s
+  storage_parquet_vs_csv_pct: 60     # Taille Parquet <= 60% de la taille brute
+  llm_quality_pass_rate_pct: 80      # >= 80% des textes passent les filtres LLM
+  clustering_silhouette_min: 0.25    # (Si on choisit clustering)
+
+spark:
+  master: "local[*]"
+  app_name: "DE2_GitHub_Archive_Pipeline"
+  partitions: 4                      # À ajuster selon les cœurs du CPU local
+
+streaming:
+  watermark: "10 minutes"
+  window_duration: "5 minutes"
+  trigger_interval: "30 seconds"
+
+layout:
+  partition_by: ["date"]
+
+text:
+  query_terms: ["fix", "bug", "feature"]

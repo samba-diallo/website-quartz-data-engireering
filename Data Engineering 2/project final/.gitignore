@@ -1,0 +1,18 @@
+# Ignore data folders (raw files, streaming landing)
+data/
+outputs/
+*.parquet
+*.json
+*.json.gz
+
+# Spark/Hadoop logs
+spark-warehouse/
+metastore_db/
+derby.log
+*.crc
+.ipynb_checkpoints/
+__pycache__/
+
+# Mac/Windows system files
+.DS_Store
+Thumbs.db
