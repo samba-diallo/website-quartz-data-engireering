@@ -482,7 +482,7 @@ Ce projet est réalisé dans un cadre académique à ESIEE Paris sous la directi
 ## Remerciements
 
 - **ESIEE Paris** : Formation Data Engineering
-- **Professeur DIALLO Samba Badr** : Encadrement et enseignement
+- **Professeur  Badr TAJINI** : Encadrement et enseignement
 - **Apache Spark Community** : Documentation et support
 - **Quartz** : Framework de documentation
 - **Cloudflare** : Hébergement gratuit
