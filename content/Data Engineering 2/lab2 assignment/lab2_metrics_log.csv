@@ -1,4 +1,4 @@
 timestamp,index_type,term,latency_ms,parquet_size_bytes,csv_size_bytes,unique_terms,doc_count,token_freq
-2026-04-29 12:25:11,Parquet,spark,614.93,1882,1068,57,6,6
-2026-04-29 12:25:11,Parquet,data,179.39,1882,1068,57,3,3
-2026-04-29 12:25:11,Parquet,processing,169.84,1882,1068,57,2,2
+2026-05-14 15:24:13,Parquet,pushevent,307.43,31162,65175,1398,714,714
+2026-05-14 15:24:13,Parquet,github,82.24,31162,65175,1398,0,0
+2026-05-14 15:24:13,Parquet,bot,69.18,31162,65175,1398,0,0

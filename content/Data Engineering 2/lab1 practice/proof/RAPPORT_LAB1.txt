@@ -1,0 +1,31 @@
+
+RAPPORT D'ANALYSE - Lab 1: GitHub Archive (Track B)
+================================================================================
+
+Dataset: sample_archive_github.json
+Taille: 1000 événements GitHub publics
+
+Résumé de l'agrégation:
+- Fenêtres d'1 heure: 793
+- Types d'événements uniques: 13
+- Repositories uniques: 738
+- Total d'événements traités: 1000
+- Acteurs uniques: 799
+
+Objectifs du Lab:
+- Construire un pipeline Spark Structured Streaming
+- Appliquer windowing et watermarks sur données réelles
+- Persister les résultats en Parquet
+- Capturer les métriques de performance
+
+Concepts validés:
+- Lecture de schéma JSON complexe avec structures imbriquées
+- Transformation de données (extraction de champs imbriqués)
+- Windowing temporel (tumbling windows)
+- Agrégations complexes (distinct, conditional sum)
+- Output Parquet avec mode append
+
+Preuves:
+- proof/aggregation_metrics.json: Métriques d'agrégation
+- proof/plan_streaming.txt: Plan de requête optimisé
+- outputs/lab1/stream_sink/: Fichiers Parquet des résultats

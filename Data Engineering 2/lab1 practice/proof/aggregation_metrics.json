@@ -1,0 +1,8 @@
+{
+  "total_windows": 793,
+  "event_types": 13,
+  "repositories": 738,
+  "total_events_processed": 1000,
+  "total_unique_actors": 799,
+  "avg_events_per_window": 1.2610340479192939
+}

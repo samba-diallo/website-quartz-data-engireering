@@ -1,0 +1,42 @@
+== Physical Plan ==
+InMemoryTableScan (1)
+   +- InMemoryRelation (2)
+         +- Coalesce (8)
+            +- InMemoryTableScan (3)
+                  +- InMemoryRelation (4)
+                        +- * Project (7)
+                           +- * Project (6)
+                              +- * Scan ExistingRDD (5)
+
+
+(1) InMemoryTableScan
+Output [2]: [true_cluster#2, features#71]
+Arguments: [true_cluster#2, features#71]
+
+(2) InMemoryRelation
+Arguments: [true_cluster#2, features#71], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(3) InMemoryTableScan
+Output [2]: [true_cluster#2, features#71]
+Arguments: [true_cluster#2, features#71]
+
+(4) InMemoryRelation
+Arguments: [true_cluster#2, features#71], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(5) Scan ExistingRDD [codegen id : 1]
+Output [3]: [x#0, y#1, true_cluster#2]
+Arguments: [x#0, y#1, true_cluster#2], MapPartitionsRDD[4] at applySchemaToPythonRDD at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
+
+(6) Project [codegen id : 1]
+Output [2]: [true_cluster#2, UDF(struct(x, x#0, y, y#1)) AS features_raw#18]
+Input [3]: [x#0, y#1, true_cluster#2]
+
+(7) Project [codegen id : 1]
+Output [2]: [true_cluster#2, UDF(features_raw#18) AS features#71]
+Input [2]: [true_cluster#2, features_raw#18]
+
+(8) Coalesce
+Input [2]: [true_cluster#2, features#71]
+Arguments: 4
+
+

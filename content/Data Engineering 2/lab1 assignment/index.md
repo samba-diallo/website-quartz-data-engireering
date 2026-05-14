@@ -10,7 +10,7 @@ title: Lab 1 - Assignment
 ## Fichiers de ce dossier
 
 - [[assignment1_esiee|assignment1_esiee.ipynb]] *(notebook)*
-- [[data/index|data/]]
 - [[ENGINEERING_NOTE|ENGINEERING_NOTE.md]]
 - [[GENAI|GENAI.md]]
+- [[proof/index|proof/]]
 - `lab1_metrics_log.csv`

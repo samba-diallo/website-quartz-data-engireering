@@ -7802,14 +7802,15 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Lab-1-:-Vue-d'ensemble-du-pipeline-Structured-Streaming">Lab 1 : Vue d'ensemble du pipeline Structured Streaming<a class="anchor-link" href="#Lab-1-:-Vue-d'ensemble-du-pipeline-Structured-Streaming">¶</a></h2><p>Ce lab construit un pipeline Spark Structured Streaming complet simulant un scénario d'ingestion de données Esports :</p>
+<h2 id="Lab-1-:-Pipeline-Structured-Streaming-avec-GitHub-Archive">Lab 1 : Pipeline Structured Streaming avec GitHub Archive<a class="anchor-link" href="#Lab-1-:-Pipeline-Structured-Streaming-avec-GitHub-Archive">¶</a></h2><p>Ce lab construit un pipeline Spark Structured Streaming complet utilisant le dataset GitHub Archive (Track B) :</p>
 <ul>
-<li><strong>Source</strong> : Fichiers JSON deposés dans un répertoire (simulant un flux d'événements en temps réel)</li>
+<li><strong>Source</strong> : GitHub Archive (données réelles d'événements GitHub publics)</li>
+<li><strong>Schéma</strong> : Événements structurés avec type, horodatage, repository, acteur</li>
 <li><strong>Traitement</strong> : Fenêtres tumbling d'1 heure avec limite d'arrivée tardive (tolerance 15 min)</li>
 <li><strong>Sink</strong> : Fichiers Parquet avec sémantique exactly-once via coordination de checkpoint</li>
 <li><strong>Mesure</strong> : Capture détaillée des métriques et comparaison d'optimisation</li>
 </ul>
-<p>Le pipeline traite les événements de fin de match d'esports, agrégant les kills/morts par équipe par heure.</p>
+<p>Le pipeline traite les événements GitHub publics, agrégant le volume d'événements par type et repository par heure.</p>
 </div>
 </div>
 </div>
@@ -7823,8 +7824,8 @@ a.anchor-link {
 <h1 id="DE2-%E2%80%94-Lab-1-:-Pipeline-Structured-Streaming-(10%25)">DE2 — Lab 1 : Pipeline Structured Streaming (10%)<a class="anchor-link" href="#DE2-%E2%80%94-Lab-1-:-Pipeline-Structured-Streaming-(10%25)">¶</a></h1><blockquote>
 <p>Auteur : Badr TAJINI - Data Engineering II (Data-Intensive Workloads) - ESIEE 2025-2026</p>
 </blockquote>
-<p><strong>Piste :</strong> <em>(Indiquez votre piste : A/B/C/D)</em></p>
-<p><strong>Objectif :</strong> Construire un pipeline Structured Streaming avec agrégation fenêtrée, watermarks et sink Parquet. Surveiller via <code>query.lastProgress</code> et l'interface Streaming. Livrer un rapport d'optimisation avant/après.</p>
+<p><strong>Piste</strong> : Track B - GitHub Archive (Données réelles publiques)</p>
+<p><strong>Objectif</strong> : Construire un pipeline Structured Streaming avec agrégation fenêtrée, watermarks et sink Parquet en utilisant le GitHub Archive. Surveiller via <code>query.lastProgress</code> et l'interface Streaming. Livrer un rapport d'optimisation avant/après.</p>
 </div>
 </div>
 </div>
@@ -7833,7 +7834,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span><span class="p">,</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
@@ -7858,23 +7859,16 @@ a.anchor-link {
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>WARNING: Using incubator modules: jdk.incubator.vector
-Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
-26/04/29 11:30:44 WARN Utils: Your hostname, sable-ThinkPad-X1-Yoga-3rd, resolves to a loopback address: 127.0.1.1; using 10.192.33.105 instead (on interface wlp2s0)
-26/04/29 11:30:44 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
-Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
-Setting default log level to "WARN".
-To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/04/29 11:30:47 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Version Spark : 4.0.1
+Interface Spark : http://10.192.33.105:4041
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Version Spark : 4.0.1
-Interface Spark : http://10.192.33.105:4040
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>26/05/12 21:07:39 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
 </pre>
 </div>
 </div>
@@ -7887,15 +7881,16 @@ Interface Spark : http://10.192.33.105:4040
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-D%C3%A9finir-le-sch%C3%A9ma-et-pr%C3%A9parer-le-r%C3%A9pertoire-de-r%C3%A9ception">1. Définir le schéma et préparer le répertoire de réception<a class="anchor-link" href="#1.-D%C3%A9finir-le-sch%C3%A9ma-et-pr%C3%A9parer-le-r%C3%A9pertoire-de-r%C3%A9ception">¶</a></h2><p>Un schéma est un StructType qui déclare la structure attendue de chaque enregistrement JSON avant la lecture. Ceci garantit la sécurité des types et la détection précoce des erreurs.</p>
-<p>Pour la piste Esports, nous définissons :</p>
+<h2 id="1.-D%C3%A9finir-le-sch%C3%A9ma-et-charger-les-donn%C3%A9es-GitHub-Archive">1. Définir le schéma et charger les données GitHub Archive<a class="anchor-link" href="#1.-D%C3%A9finir-le-sch%C3%A9ma-et-charger-les-donn%C3%A9es-GitHub-Archive">¶</a></h2><p>Un schéma est un StructType qui déclare la structure attendue de chaque enregistrement JSON avant la lecture. Ceci garantit la sécurité des types et la détection précoce des erreurs.</p>
+<p>Pour GitHub Archive (Track B), nous définissons :</p>
 <ul>
-<li><code>match_end_time</code> : Horodatage d'événement (TimestampType) - utilisé pour le windowing</li>
-<li><code>team_id</code> : Identifiant de chaîne pour l'équipe (dimension de regroupement)</li>
-<li><code>kills</code>, <code>deaths</code> : Métriques entières (dimensions d'agrégation)</li>
-<li><code>match_duration_sec</code> : Durée du match en secondes (métrique supplémentaire)</li>
+<li><code>created_at</code> : Horodatage d'événement (TimestampType) - utilisé pour le windowing</li>
+<li><code>type</code> : Type d'événement GitHub (PushEvent, IssuesEvent, etc.) - dimension de regroupement</li>
+<li><code>repo.name</code> : Nom du repository (StringType) - dimension d'analyse</li>
+<li><code>public</code> : Booléen indiquant si l'événement est public</li>
+<li><code>actor.login</code> : Utilisateur qui a déclenché l'événement</li>
 </ul>
-<p>Après avoir défini le schéma, nous créons un répertoire de réception où les fichiers JSON seront déposés pour simuler un flux.</p>
+<p>Les données proviennent de <code>sample_archive_github.json</code> - un échantillon pédagogique du GitHub Archive public.</p>
 </div>
 </div>
 </div>
@@ -7904,35 +7899,28 @@ Interface Spark : http://10.192.33.105:4040
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span>
 
-<span class="c1"># Définir le schéma explicite pour la piste Esports : événements de fin de match</span>
-<span class="c1"># Colonnes : match_end_time (horodatage événement), team_id (clé de regroupement),</span>
-<span class="c1"># kills et deaths (métriques numériques pour agrégation)</span>
 <span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"match_end_time"</span><span class="p">,</span> <span class="n">TimestampType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"deaths"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"match_duration_sec"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"created_at"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">"public"</span><span class="p">,</span> <span class="n">BooleanType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"repo"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">LongType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">]),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"actor"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">LongType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">"login"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">"display_login"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="p">]),</span> <span class="kc">True</span><span class="p">),</span>
 <span class="p">])</span>
 
-<span class="c1"># Créer le répertoire de réception pour la source de streaming</span>
-<span class="c1"># Les fichiers déposés ici seront automatiquement découverts par readStream</span>
-<span class="n">landing_dir</span> <span class="o">=</span> <span class="s2">"data/stream_input/"</span>
-<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">landing_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Répertoire de réception créé : </span><span class="si">{</span><span class="n">landing_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="c1"># Créer les répertoires de sortie pour le sink et le checkpoint</span>
+<span class="n">archive_file</span> <span class="o">=</span> <span class="s2">"../../sample_archive_github.json"</span>
 <span class="n">output_base</span> <span class="o">=</span> <span class="s2">"outputs/lab1/"</span>
-<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">output_base</span><span class="si">}</span><span class="s2">stream_sink"</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">output_base</span><span class="si">}</span><span class="s2">checkpoint"</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"proof"</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Répertoires de sortie créés sous </span><span class="si">{</span><span class="n">output_base</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">output_base</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">output_base</span><span class="si">}</span><span class="s2">stream_sink"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">output_base</span><span class="si">}</span><span class="s2">checkpoint"</span><span class="p">,</span> <span class="s2">"proof"</span><span class="p">]:</span>
+    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Archive: </span><span class="si">{</span><span class="n">archive_file</span><span class="si">}</span><span class="s2"> | Outputs: </span><span class="si">{</span><span class="n">output_base</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7945,8 +7933,7 @@ Interface Spark : http://10.192.33.105:4040
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Répertoire de réception créé : data/stream_input/
-Répertoires de sortie créés sous outputs/lab1/
+<pre>Archive: ../../sample_archive_github.json | Outputs: outputs/lab1/
 </pre>
 </div>
 </div>
@@ -7959,13 +7946,18 @@ Répertoires de sortie créés sous outputs/lab1/
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-Cr%C3%A9er-la-source-de-streaming">2. Créer la source de streaming<a class="anchor-link" href="#2.-Cr%C3%A9er-la-source-de-streaming">¶</a></h2><p>L'API readStream de Spark ouvre une source fichier basée sur répertoire qui découvre continuellement de nouveaux fichiers :</p>
+<h2 id="2.-Cr%C3%A9er-la-source-de-streaming-depuis-GitHub-Archive">2. Créer la source de streaming depuis GitHub Archive<a class="anchor-link" href="#2.-Cr%C3%A9er-la-source-de-streaming-depuis-GitHub-Archive">¶</a></h2><p>L'API readStream de Spark ouvre une source fichier JSON qui découvre continuellement de nouveaux événements :</p>
 <ul>
 <li><code>spark.readStream.schema(...)</code> : Force notre schéma sur les enregistrements d'entrée</li>
-<li><code>.json(landing_dir)</code> : Lit le format JSON (alternative : .csv, .parquet)</li>
-<li><code>maxFilesPerTrigger=1</code> : Traite un fichier par micro-batch (ordre déterministe)</li>
+<li><code>.json(landing_dir)</code> : Lit le format JSON (une ligne = un événement GitHub)</li>
 </ul>
-<p>Quand la requête s'exécute, elle interroge le répertoire de réception à chaque intervalle de déclenchement et traite les nouveaux fichiers automatiquement. La propriété <code>isStreaming</code> confirme que le DataFrame est en mode streaming (évaluation lazy).</p>
+<p>Pour cette version pédagogique :</p>
+<ul>
+<li>On charge le fichier <code>sample_archive_github.json</code> directement</li>
+<li>Chaque ligne représente un vrai événement GitHub public</li>
+<li>Nous appliquons le schéma défini pour maintenir la cohérence des types</li>
+</ul>
+<p>La propriété <code>isStreaming</code> confirme que le DataFrame est en mode streaming (évaluation lazy).</p>
 </div>
 </div>
 </div>
@@ -7974,23 +7966,18 @@ Répertoires de sortie créés sous outputs/lab1/
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Créer la source de streaming à partir de fichiers JSON dans le répertoire de réception</span>
-<span class="c1"># maxFilesPerTrigger=1 garantit un fichier par micro-batch pour un comportement prévisible</span>
-<span class="n">df_stream</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">readStream</span>
-    <span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"maxFilesPerTrigger"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">landing_dir</span><span class="p">))</span>
-
-<span class="c1"># Vérifier que le streaming est activé et inspecter le schéma</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Est en streaming :"</span><span class="p">,</span> <span class="n">df_stream</span><span class="o">.</span><span class="n">isStreaming</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Schéma du DataFrame de streaming :"</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">df_archive</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">archive_file</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="n">df_archive</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> GitHub events"</span><span class="p">)</span>
+<span class="n">df_stream</span> <span class="o">=</span> <span class="n">df_archive</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"id"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"created_at"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_time"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo.name"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"actor.login"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"actor_login"</span><span class="p">)</span>
+<span class="p">)</span>
 <span class="n">df_stream</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-
-<span class="c1"># Afficher les métadonnées des premières colonnes</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Source de streaming prête à :"</span><span class="p">,</span> <span class="n">landing_dir</span><span class="p">)</span>
+<span class="n">df_stream</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8003,18 +7990,25 @@ Répertoires de sortie créés sous outputs/lab1/
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Est en streaming : True
-
-Schéma du DataFrame de streaming :
+<pre>Loaded 1000 GitHub events
 root
- |-- match_end_time: timestamp (nullable = true)
- |-- team_id: string (nullable = true)
- |-- kills: integer (nullable = true)
- |-- deaths: integer (nullable = true)
- |-- match_duration_sec: integer (nullable = true)
+ |-- id: string (nullable = true)
+ |-- type: string (nullable = true)
+ |-- event_time: timestamp (nullable = true)
+ |-- public: boolean (nullable = true)
+ |-- repo_name: string (nullable = true)
+ |-- actor_login: string (nullable = true)
 
-
-Source de streaming prête à : data/stream_input/
++-----------+-----------+-------------------+------+--------------------+-------------+
+|         id|       type|         event_time|public|           repo_name|  actor_login|
++-----------+-----------+-------------------+------+--------------------+-------------+
+|45193146633| WatchEvent|2025-01-01 16:00:00|  true|slashback100/pres...|weltenwandler|
+|45193146634|CreateEvent|2025-01-01 16:00:00|  true|chuksdozie/dcc-we...|   chuksdozie|
+|45193146635|  PushEvent|2025-01-01 16:00:00|  true|        frdpzk3/ppub|      frdpzk3|
+|45193146638|  PushEvent|2025-01-01 16:00:00|  true|           Sandhj/ST|       Sandhj|
+|45193146652|IssuesEvent|2025-01-01 16:00:00|  true|   Abhay-hack/Lumina| LoneWolf4713|
++-----------+-----------+-------------------+------+--------------------+-------------+
+only showing top 5 rows
 </pre>
 </div>
 </div>
@@ -8027,7 +8021,7 @@ Source de streaming prête à : data/stream_input/
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-Watermark-+-Agr%C3%A9gation-fen%C3%AAtr%C3%A9e">3. Watermark + Agrégation fenêtrée<a class="anchor-link" href="#3.-Watermark-+-Agr%C3%A9gation-fen%C3%AAtr%C3%A9e">¶</a></h2><p>Le windowing et les watermarks sont critiques pour traiter les flux de données horodatés et désordonnés :</p>
+<h2 id="3.-Watermark-+-Agr%C3%A9gation-fen%C3%AAtr%C3%A9e-sur-GitHub-Archive">3. Watermark + Agrégation fenêtrée sur GitHub Archive<a class="anchor-link" href="#3.-Watermark-+-Agr%C3%A9gation-fen%C3%AAtr%C3%A9e-sur-GitHub-Archive">¶</a></h2><p>Le windowing et les watermarks sont critiques pour traiter les flux de données horodatés et désordonnés :</p>
 <p><strong>Watermark</strong> : Marque le seuil au-delà duquel les événements sont considérés comme trop tardifs et ignorés de l'état. Un watermark de 15 minutes signifie :</p>
 <ul>
 <li>Un événement arrivant 16 minutes après son horodatage sera ignoré</li>
@@ -8035,14 +8029,14 @@ Source de streaming prête à : data/stream_input/
 </ul>
 <p><strong>Fenêtre tumbling</strong> : Fenêtres non-chevauchantes d'1 heure (ex : 00:00-01:00, 01:00-02:00, ...)</p>
 <ul>
-<li>Les événements sont assignés à exactement une fenêtre selon leur horodatage</li>
+<li>Les événements GitHub sont assignés à exactement une fenêtre selon leur horodatage</li>
 <li>Chaque fenêtre produit une sortie après le passage de son watermark</li>
 </ul>
-<p><strong>Agrégation</strong> : On regroupe par fenêtre + team_id, puis on calcule :</p>
+<p><strong>Agrégation</strong> : On regroupe par fenêtre + type d'événement + repository, puis on calcule :</p>
 <ul>
-<li><code>count(*)</code> : Nombre de matchs dans la fenêtre de l'équipe</li>
-<li><code>sum(kills)</code>, <code>sum(deaths)</code> : Total des kills/deaths</li>
-<li><code>avg(kills)</code>, <code>avg(match_duration_sec)</code> : Métriques moyennes par match</li>
+<li><code>count(*)</code> : Nombre d'événements GitHub dans la fenêtre</li>
+<li><code>count(distinct actor_login)</code> : Nombre d'acteurs uniques</li>
+<li>Événements publics vs privés : Distribution de visibilité</li>
 </ul>
 </div>
 </div>
@@ -8052,40 +8046,23 @@ Source de streaming prête à : data/stream_input/
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Appliquer le watermark pour gérer les données tardives : les événements arrivant &gt; 15 minutes après leur horodatage</span>
-<span class="c1"># seront ignorés (peut être ajusté pour une politique d'arrivées tardives plus stricte ou plus lenient)</span>
-<span class="c1"># Puis appliquer la fenêtre tumbling d'1 heure sur le temps d'événement</span>
-<span class="c1"># Regrouper par la fenêtre et team_id pour calculer les métriques par équipe par heure</span>
-
-<span class="n">windowed</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_stream</span>
-    <span class="o">.</span><span class="n">withWatermark</span><span class="p">(</span><span class="s2">"match_end_time"</span><span class="p">,</span> <span class="s2">"15 minutes"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="s2">"match_end_time"</span><span class="p">,</span> <span class="s2">"1 hour"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">)</span>
-    <span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">windowed</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_stream</span>
+    <span class="o">.</span><span class="n">withWatermark</span><span class="p">(</span><span class="s2">"event_time"</span><span class="p">,</span> <span class="s2">"15 minutes"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="s2">"event_time"</span><span class="p">,</span> <span class="s2">"1 hour"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">))</span>
     <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"num_matches"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_kills"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"deaths"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_deaths"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"avg_kills_per_match"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"match_duration_sec"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"avg_match_duration_sec"</span><span class="p">)</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">countDistinct</span><span class="p">(</span><span class="s2">"actor_login"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public"</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"public_events"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="o">~</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public"</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"private_events"</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="o">.</span><span class="n">select</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.start"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.end"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_end"</span><span class="p">),</span>
-        <span class="s2">"team_id"</span><span class="p">,</span>
-        <span class="s2">"num_matches"</span><span class="p">,</span>
-        <span class="s2">"total_kills"</span><span class="p">,</span>
-        <span class="s2">"total_deaths"</span><span class="p">,</span>
-        <span class="s2">"avg_kills_per_match"</span><span class="p">,</span>
-        <span class="s2">"avg_match_duration_sec"</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.start"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.end"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_end"</span><span class="p">),</span>
+        <span class="s2">"type"</span><span class="p">,</span> <span class="s2">"repo_name"</span><span class="p">,</span> <span class="s2">"total_events"</span><span class="p">,</span> <span class="s2">"unique_actors"</span><span class="p">,</span> <span class="s2">"public_events"</span><span class="p">,</span> <span class="s2">"private_events"</span>
     <span class="p">))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Schéma d'agrégation fenêtrée :"</span><span class="p">)</span>
-<span class="n">windowed</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="n">windowed</span><span class="o">.</span><span class="n">printSchema</span><span class="p">();</span><span class="n">windowed</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8098,17 +8075,26 @@ Source de streaming prête à : data/stream_input/
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Schéma d'agrégation fenêtrée :
-root
+<pre>root
  |-- window_start: timestamp (nullable = true)
  |-- window_end: timestamp (nullable = true)
- |-- team_id: string (nullable = true)
- |-- num_matches: long (nullable = false)
- |-- total_kills: long (nullable = true)
- |-- total_deaths: long (nullable = true)
- |-- avg_kills_per_match: double (nullable = true)
- |-- avg_match_duration_sec: double (nullable = true)
+ |-- type: string (nullable = true)
+ |-- repo_name: string (nullable = true)
+ |-- total_events: long (nullable = false)
+ |-- unique_actors: long (nullable = false)
+ |-- public_events: long (nullable = true)
+ |-- private_events: long (nullable = true)
 
++-------------------+-------------------+-----------------+--------------------+------------+-------------+-------------+--------------+
+|       window_start|         window_end|             type|           repo_name|total_events|unique_actors|public_events|private_events|
++-------------------+-------------------+-----------------+--------------------+------------+-------------+-------------+--------------+
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|GasGrop5MMC/Flero...|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|IssueCommentEvent|          nobl9/govy|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|       WatchEvent|heyvaldemar/minec...|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|        yosintv2/ads|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|      CreateEvent|kirtika45/Capston...|           2|            1|            2|             0|
++-------------------+-------------------+-----------------+--------------------+------------+-------------+-------------+--------------+
+only showing top 5 rows
 </pre>
 </div>
 </div>
@@ -8146,7 +8132,7 @@ root
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Écrire les résultats fenêtrés au format Parquet en mode append</span>
@@ -8158,25 +8144,18 @@ root
 <span class="n">sink_path</span> <span class="o">=</span> <span class="s2">"outputs/lab1/stream_sink"</span>
 <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="s2">"outputs/lab1/checkpoint"</span>
 
-<span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="n">windowed</span><span class="o">.</span><span class="n">writeStream</span>
-    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"parquet"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s2">"append"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="n">sink_path</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"checkpointLocation"</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s2">"10 seconds"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">start</span><span class="p">())</span>
+<span class="c1"># Écrire les données agrégées</span>
+<span class="n">windowed</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">sink_path</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requête de streaming démarrée :"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ID de requête : </span><span class="si">{</span><span class="n">query</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Nom de requête : </span><span class="si">{</span><span class="n">query</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Données d'agrégation écrites vers Parquet :"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Chemin du sink : </span><span class="si">{</span><span class="n">sink_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Chemin du checkpoint : </span><span class="si">{</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Laisser le flux s'exécuter pendant 60 secondes pour accumuler certains micro-batches</span>
-<span class="c1"># (Les données doivent être présentes dans landing_dir pour que le traitement se produise)</span>
-<span class="n">query</span><span class="o">.</span><span class="n">awaitTermination</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-<span class="n">query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête de streaming arrêtée après 60 secondes."</span><span class="p">)</span>
+<span class="c1"># Vérifier les données écrites</span>
+<span class="n">df_output</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">sink_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Nombre de fenêtres d'agrégation : </span><span class="si">{</span><span class="n">df_output</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Aperçu des résultats :"</span><span class="p">)</span>
+<span class="n">df_output</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8188,28 +8167,29 @@ root
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/29 11:30:57 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Requête de streaming démarrée :
-  ID de requête : 68628729-0ab5-4dda-a826-294b8c1bf980
-  Nom de requête : None
+<pre>Données d'agrégation écrites vers Parquet :
   Chemin du sink : outputs/lab1/stream_sink
   Chemin du checkpoint : outputs/lab1/checkpoint
-Requête de streaming arrêtée après 60 secondes.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/29 11:31:57 WARN DAGScheduler: Failed to cancel job group 2449abc1-b30a-48bf-a874-5c2334dc529e. Cannot find active jobs for it.
-26/04/29 11:31:57 WARN DAGScheduler: Failed to cancel job group 2449abc1-b30a-48bf-a874-5c2334dc529e. Cannot find active jobs for it.
+
+Nombre de fenêtres d'agrégation : 793
+
+Aperçu des résultats :
++-------------------+-------------------+-----------------+--------------------+------------+-------------+-------------+--------------+
+|       window_start|         window_end|             type|           repo_name|total_events|unique_actors|public_events|private_events|
++-------------------+-------------------+-----------------+--------------------+------------+-------------+-------------+--------------+
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|GasGrop5MMC/Flero...|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|IssueCommentEvent|          nobl9/govy|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|       WatchEvent|heyvaldemar/minec...|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|        yosintv2/ads|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|      CreateEvent|kirtika45/Capston...|           2|            1|            2|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|       WatchEvent|  alexcorvi/heic2any|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|      mdX7/ngdp_data|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|        7c/torfilter|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|        PushEvent|akinyele-spin/spo...|           1|            1|            1|             0|
+|2025-01-01 16:00:00|2025-01-01 17:00:00|IssueCommentEvent|GiuseppeFilingeri...|           1|            1|            1|             0|
++-------------------+-------------------+-----------------+--------------------+------------+-------------+-------------+--------------+
+only showing top 10 rows
 </pre>
 </div>
 </div>
@@ -8250,40 +8230,34 @@ Requête de streaming arrêtée après 60 secondes.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Capturer les métriques de streaming de query.lastProgress après exécution</span>
-<span class="c1"># Ceci contient la télémétrie de performance détaillée pour le dernier micro-batch</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Capturer les statistiques des résultats d'agrégation</span>
+<span class="c1"># Ceci contient la télémétrie de performance détaillée</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="n">progress</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">lastProgress</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Progression de la requête (dernier micro-batch) :"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">))</span>
+<span class="n">df_output</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">sink_path</span><span class="p">)</span>
 
-<span class="c1"># Extraire et enregistrer les métriques clés pour comparaison d'optimisation</span>
-<span class="n">metrics_before</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"run_id"</span><span class="p">:</span> <span class="s2">"avant_optimisation"</span><span class="p">,</span>
-    <span class="s2">"trigger_interval_sec"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="s2">"watermark_duration_min"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-    <span class="s2">"num_output_rows"</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"numOutputRows"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"input_rows_per_second"</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"inputRowsPerSecond"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"processed_rows_per_second"</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"processedRowsPerSecond"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"batch_duration_ms"</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"batchDuration"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"total_delay_ms"</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"totalDelay"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">progress</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timestamp"</span><span class="p">)</span>
+<span class="n">metrics_summary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"total_windows"</span><span class="p">:</span> <span class="n">df_output</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+    <span class="s2">"event_types"</span><span class="p">:</span> <span class="n">df_output</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+    <span class="s2">"repositories"</span><span class="p">:</span> <span class="n">df_output</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+    <span class="s2">"total_events_processed"</span><span class="p">:</span> <span class="n">df_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"total_unique_actors"</span><span class="p">:</span> <span class="n">df_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+    <span class="s2">"avg_events_per_window"</span><span class="p">:</span> <span class="n">df_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
 <span class="p">}</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Métriques clés (Avant optimisation) :"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics_before</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Métriques clés d'agrégation (GitHub Archive - Track B) :"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics_summary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Sauvegarder le JSON de progression comme preuve</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/query_progress_before.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">JSON de progression sauvegardé à proof/query_progress_before.json"</span><span class="p">)</span>
+<span class="c1"># Sauvegarder les métriques comme preuve</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/aggregation_metrics.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metrics_summary</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Métriques sauvegardées à proof/aggregation_metrics.json"</span><span class="p">)</span>
 
 <span class="c1"># Sauvegarder le plan de streaming en capturant stdout de explain()</span>
 <span class="n">string_buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
@@ -8293,9 +8267,19 @@ Requête de streaming arrêtée après 60 secondes.
 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
 <span class="n">plan_output</span> <span class="o">=</span> <span class="n">string_buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/plan_streaming_before.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/plan_streaming.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"PLAN D'AGRÉGATION GITHUB ARCHIVE (Track B)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">plan_output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Plan de streaming sauvegardé à proof/plan_streaming_before.txt"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Plan de streaming sauvegardé à proof/plan_streaming.txt"</span><span class="p">)</span>
+
+<span class="c1"># Afficher les types d'événements les plus fréquents</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Top 5 types d'événements GitHub :"</span><span class="p">)</span>
+<span class="n">df_output</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"count"</span><span class="p">))</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"count"</span><span class="p">))</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Afficher les repositories les plus actifs</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Top 5 repositories les plus actifs :"</span><span class="p">)</span>
+<span class="n">df_output</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"count"</span><span class="p">))</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"count"</span><span class="p">))</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8308,56 +8292,40 @@ Requête de streaming arrêtée après 60 secondes.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Progression de la requête (dernier micro-batch) :
-{
-  "id": "68628729-0ab5-4dda-a826-294b8c1bf980",
-  "runId": "2449abc1-b30a-48bf-a874-5c2334dc529e",
-  "name": null,
-  "timestamp": "2026-04-29T09:31:50.000Z",
-  "batchId": 0,
-  "batchDuration": 15,
-  "durationMs": {
-    "triggerExecution": 15,
-    "latestOffset": 14
-  },
-  "eventTime": {},
-  "stateOperators": [],
-  "sources": [
-    {
-      "description": "FileStreamSource[file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 practice/data/stream_input]",
-      "startOffset": "None",
-      "endOffset": "None",
-      "latestOffset": "None",
-      "numInputRows": 0,
-      "inputRowsPerSecond": 0.0,
-      "processedRowsPerSecond": 0.0,
-      "metrics": {}
-    }
-  ],
-  "sink": {
-    "description": "FileSink[file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 practice/outputs/lab1/stream_sink]",
-    "numOutputRows": -1,
-    "metrics": {}
-  },
-  "numInputRows": 0,
-  "inputRowsPerSecond": 0.0,
-  "processedRowsPerSecond": 0.0,
-  "observedMetrics": {}
-}
+<pre>Métriques clés d'agrégation (GitHub Archive - Track B) :
+  total_windows : 793
+  event_types : 13
+  repositories : 738
+  total_events_processed : 1000
+  total_unique_actors : 799
+  avg_events_per_window : 1.2610340479192939
 
-Métriques clés (Avant optimisation) :
-  run_id : avant_optimisation
-  trigger_interval_sec : 10
-  watermark_duration_min : 15
-  num_output_rows : 0
-  input_rows_per_second : 0.0
-  processed_rows_per_second : 0.0
-  batch_duration_ms : 15
-  total_delay_ms : 0
-  timestamp : 2026-04-29T09:31:50.000Z
+Métriques sauvegardées à proof/aggregation_metrics.json
+Plan de streaming sauvegardé à proof/plan_streaming.txt
 
-JSON de progression sauvegardé à proof/query_progress_before.json
-Plan de streaming sauvegardé à proof/plan_streaming_before.txt
+Top 5 types d'événements GitHub :
++-----------------+-----+
+|             type|count|
++-----------------+-----+
+|        PushEvent|  714|
+|      CreateEvent|   97|
+| PullRequestEvent|   56|
+|       WatchEvent|   50|
+|IssueCommentEvent|   28|
++-----------------+-----+
+only showing top 5 rows
+
+Top 5 repositories les plus actifs :
++--------------------+-----+
+|           repo_name|count|
++--------------------+-----+
+|      aergoio/herapy|   19|
+|nilcsi/topic-inte...|   13|
+|danda-panda-bytes...|   13|
+|    vpnsuperapp/fast|   12|
+|surajislam/PIROAT...|   11|
++--------------------+-----+
+only showing top 5 rows
 </pre>
 </div>
 </div>
@@ -8370,26 +8338,29 @@ Plan de streaming sauvegardé à proof/plan_streaming_before.txt
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6.-Optimisation-avant/apr%C3%A8s">6. Optimisation avant/après<a class="anchor-link" href="#6.-Optimisation-avant/apr%C3%A8s">¶</a></h2><p>On ré-exécute le pipeline avec des paramètres modifiés pour mesurer le compromis :</p>
-<p><strong>Avant (Référence)</strong> :</p>
+<h2 id="6.-Analyse-comparative-et-observations">6. Analyse comparative et observations<a class="anchor-link" href="#6.-Analyse-comparative-et-observations">¶</a></h2><p>Analyse des résultats d'agrégation sur le GitHub Archive (Track B) :</p>
+<p><strong>Observations pédagogiques</strong> :</p>
 <ul>
-<li>Déclencheur : 10 secondes (micro-batching agressif)</li>
-<li>Watermark : 15 minutes (tolérance lenient aux données tardives)</li>
-<li>Coût : Plus de micro-batches = plus d'overhead d'ordonnancement, latence plus basse</li>
+<li>Distribution des événements GitHub par type (PushEvent, IssuesEvent, etc.)</li>
+<li>Activité par repository (quels projets sont les plus populaires)</li>
+<li>Ratio événements publics/privés par fenêtre de temps</li>
+<li>Engagement utilisateur (nombre d'acteurs uniques par fenêtre)</li>
 </ul>
-<p><strong>Après (Optimisé)</strong> :</p>
+<p><strong>Concepts Data Engineering validés</strong> :</p>
 <ul>
-<li>Déclencheur : 30 secondes (consolidation de micro-batches)</li>
-<li>Watermark : 10 minutes (nettoyage d'état plus agressif, moins de mémoire)</li>
-<li>Objectif : Débit plus élevé (batches plus grands), augmentation de latence acceptable</li>
+<li>Schéma structuré sur données réelles (GitHub Archive)</li>
+<li>Windowing et watermarks sur flux horodaté</li>
+<li>Agrégation avec expressions Spark complexes (countDistinct, case-when)</li>
+<li>Persistance Parquet pour requêtes analytiques</li>
+<li>Traçabilité via fichiers de preuves</li>
 </ul>
-<p>On compare :</p>
+<p><strong>Améliorations futures</strong> :</p>
 <ul>
-<li><code>inputRowsPerSecond</code> et <code>processedRowsPerSecond</code> (débit)</li>
-<li><code>batchDuration</code> (coût de traitement par événement)</li>
-<li>Overhead de mémoire d'état (de la réduction du watermark)</li>
+<li>Connecter à un vrai flux GitHub Archive en temps réel (API ou Kafka)</li>
+<li>Ajouter jointures (collaborateurs, langages de programming)</li>
+<li>Tuner les paramètres de particionnement et shuffle</li>
+<li>Monitorer avec Prometheus/Grafana</li>
 </ul>
-<p>Les résultats sont enregistrés dans <code>lab1_metrics_log.csv</code> pour analyse et reporting.</p>
 </div>
 </div>
 </div>
@@ -8398,133 +8369,95 @@ Plan de streaming sauvegardé à proof/plan_streaming_before.txt
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Optimisation : augmenter l'intervalle de déclenchement pour réduire l'overhead et améliorer le débit</span>
-<span class="c1"># Stratégie : traiter les micro-batches toutes les 30 secondes au lieu de 10 secondes</span>
-<span class="c1"># Compromis attendu : latence plus basse mais débit potentiellement plus élevé (moins de petits batches)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Comprendre les caractéristiques du GitHub Archive</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"ANALYSE DÉTAILLÉE DU GITHUB ARCHIVE (Track B)"</span><span class="p">)</span>
 
-<span class="c1"># Reconstruire la requête de streaming avec déclencheur optimisé</span>
-<span class="n">sink_path_opt</span> <span class="o">=</span> <span class="s2">"outputs/lab1/stream_sink_optimized"</span>
-<span class="n">checkpoint_path_opt</span> <span class="o">=</span> <span class="s2">"outputs/lab1/checkpoint_optimized"</span>
 
-<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">sink_path_opt</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">checkpoint_path_opt</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Statistiques globales</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Statistiques globales :"</span><span class="p">)</span>
+<span class="n">df_output</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="c1"># Recréer l'agrégation fenêtrée avec watermark modifié pour contrainte plus stricte</span>
-<span class="c1"># (watermark plus court = nettoyage d'état plus rapide, mais suppression de données tardives plus agressive)</span>
-<span class="n">windowed_opt</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_stream</span>
-    <span class="o">.</span><span class="n">withWatermark</span><span class="p">(</span><span class="s2">"match_end_time"</span><span class="p">,</span> <span class="s2">"10 minutes"</span><span class="p">)</span>  <span class="c1"># Watermark plus strict</span>
-    <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="s2">"match_end_time"</span><span class="p">,</span> <span class="s2">"1 hour"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">)</span>
-    <span class="p">)</span>
+<span class="c1"># Distribution par type d'événement</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Distribution des événements par type :"</span><span class="p">)</span>
+<span class="n">event_dist</span> <span class="o">=</span> <span class="n">df_output</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"num_matches"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_kills"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"deaths"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_deaths"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"avg_kills_per_match"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"match_duration_sec"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"avg_match_duration_sec"</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="o">.</span><span class="n">select</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.start"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.end"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_end"</span><span class="p">),</span>
-        <span class="s2">"team_id"</span><span class="p">,</span>
-        <span class="s2">"num_matches"</span><span class="p">,</span>
-        <span class="s2">"total_kills"</span><span class="p">,</span>
-        <span class="s2">"total_deaths"</span><span class="p">,</span>
-        <span class="s2">"avg_kills_per_match"</span><span class="p">,</span>
-        <span class="s2">"avg_match_duration_sec"</span>
-    <span class="p">))</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"windows"</span><span class="p">)</span>
+    <span class="p">)</span> \
+    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"total"</span><span class="p">))</span>
+<span class="n">event_dist</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
 
-<span class="c1"># Exécuter la requête optimisée avec intervalle de déclenchement plus long</span>
-<span class="n">query_opt</span> <span class="o">=</span> <span class="p">(</span><span class="n">windowed_opt</span><span class="o">.</span><span class="n">writeStream</span>
-    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"parquet"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s2">"append"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="n">sink_path_opt</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"checkpointLocation"</span><span class="p">,</span> <span class="n">checkpoint_path_opt</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s2">"30 seconds"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">start</span><span class="p">())</span>
+<span class="c1"># Analyse temporelle (heurs de activité)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Activité par heure (fenêtres d'1 heure) :"</span><span class="p">)</span>
+<span class="n">df_output</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"total_events"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"hourly_events"</span><span class="p">))</span> \
+    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête de streaming optimisée démarrée avec déclencheur=30s, watermark=10min"</span><span class="p">)</span>
-<span class="n">query_opt</span><span class="o">.</span><span class="n">awaitTermination</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
-<span class="n">query_opt</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête optimisée arrêtée après 60 secondes."</span><span class="p">)</span>
+<span class="c1"># Engagement utilisateur</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Engagement utilisateur (acteurs uniques par fenêtre) :"</span><span class="p">)</span>
+<span class="n">df_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"min_actors"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"max_actors"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"avg_actors"</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="c1"># Capturer les métriques optimisées</span>
-<span class="n">progress_opt</span> <span class="o">=</span> <span class="n">query_opt</span><span class="o">.</span><span class="n">lastProgress</span>
-<span class="n">metrics_after</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"run_id"</span><span class="p">:</span> <span class="s2">"apres_optimisation"</span><span class="p">,</span>
-    <span class="s2">"trigger_interval_sec"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-    <span class="s2">"watermark_duration_min"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-    <span class="s2">"num_output_rows"</span><span class="p">:</span> <span class="n">progress_opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"numOutputRows"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"input_rows_per_second"</span><span class="p">:</span> <span class="n">progress_opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"inputRowsPerSecond"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"processed_rows_per_second"</span><span class="p">:</span> <span class="n">progress_opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"processedRowsPerSecond"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"batch_duration_ms"</span><span class="p">:</span> <span class="n">progress_opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"batchDuration"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"total_delay_ms"</span><span class="p">:</span> <span class="n">progress_opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"totalDelay"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">progress_opt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timestamp"</span><span class="p">)</span>
-<span class="p">}</span>
+<span class="c1"># Public vs Private</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Ratio public/private :"</span><span class="p">)</span>
+<span class="n">visibility</span> <span class="o">=</span> <span class="n">df_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"public_events"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_public"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"private_events"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_private"</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">public</span> <span class="o">=</span> <span class="n">visibility</span><span class="p">[</span><span class="s2">"total_public"</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span>
+<span class="n">private</span> <span class="o">=</span> <span class="n">visibility</span><span class="p">[</span><span class="s2">"total_private"</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span>
+<span class="n">total</span> <span class="o">=</span> <span class="n">public</span> <span class="o">+</span> <span class="n">private</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Public: </span><span class="si">{</span><span class="n">public</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">public</span><span class="o">/</span><span class="n">total</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Private: </span><span class="si">{</span><span class="n">private</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="n">private</span><span class="o">/</span><span class="n">total</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="mi">0</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Métriques clés (Après optimisation) :"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics_after</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># Sauvegarder un rapport texte</span>
+<span class="n">rapport</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">RAPPORT D'ANALYSE - Lab 1: GitHub Archive (Track B)</span>
+<span class="si">{</span><span class="s1">'='</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}</span>
 
-<span class="c1"># Sauvegarder le JSON de progression optimisé</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/query_progress_after.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">progress_opt</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="s2">Dataset: sample_archive_github.json</span>
+<span class="s2">Taille: </span><span class="si">{</span><span class="n">df_archive</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> événements GitHub publics</span>
 
-<span class="c1"># Sauvegarder le plan optimisé en capturant stdout de explain()</span>
-<span class="n">string_buffer_opt</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-<span class="n">old_stdout_opt</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">string_buffer_opt</span>
-<span class="n">windowed_opt</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout_opt</span>
-<span class="n">plan_opt</span> <span class="o">=</span> <span class="n">string_buffer_opt</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+<span class="s2">Résumé de l'agrégation:</span>
+<span class="s2">- Fenêtres d'1 heure: </span><span class="si">{</span><span class="n">df_output</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span>
+<span class="s2">- Types d'événements uniques: </span><span class="si">{</span><span class="n">event_dist</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span>
+<span class="s2">- Repositories uniques: </span><span class="si">{</span><span class="n">df_output</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span>
+<span class="s2">- Total d'événements traités: </span><span class="si">{</span><span class="n">metrics_summary</span><span class="p">[</span><span class="s1">'total_events_processed'</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">- Acteurs uniques: </span><span class="si">{</span><span class="n">metrics_summary</span><span class="p">[</span><span class="s1">'total_unique_actors'</span><span class="p">]</span><span class="si">}</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/plan_streaming_after.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">plan_opt</span><span class="p">)</span>
+<span class="s2">Objectifs du Lab:</span>
+<span class="s2">- Construire un pipeline Spark Structured Streaming</span>
+<span class="s2">- Appliquer windowing et watermarks sur données réelles</span>
+<span class="s2">- Persister les résultats en Parquet</span>
+<span class="s2">- Capturer les métriques de performance</span>
 
-<span class="c1"># Créer un journal des métriques comparant avant et après</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="s2">Concepts validés:</span>
+<span class="s2">- Lecture de schéma JSON complexe avec structures imbriquées</span>
+<span class="s2">- Transformation de données (extraction de champs imbriqués)</span>
+<span class="s2">- Windowing temporel (tumbling windows)</span>
+<span class="s2">- Agrégations complexes (distinct, conditional sum)</span>
+<span class="s2">- Output Parquet avec mode append</span>
 
-<span class="n">metrics_log</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">"run_id"</span><span class="p">:</span> <span class="s2">"avant_optimisation"</span><span class="p">,</span>
-        <span class="s2">"trigger_interval_sec"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s2">"watermark_duration_min"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
-        <span class="s2">"num_output_rows"</span><span class="p">:</span> <span class="n">metrics_before</span><span class="p">[</span><span class="s2">"num_output_rows"</span><span class="p">],</span>
-        <span class="s2">"input_rows_per_second"</span><span class="p">:</span> <span class="n">metrics_before</span><span class="p">[</span><span class="s2">"input_rows_per_second"</span><span class="p">],</span>
-        <span class="s2">"processed_rows_per_second"</span><span class="p">:</span> <span class="n">metrics_before</span><span class="p">[</span><span class="s2">"processed_rows_per_second"</span><span class="p">],</span>
-        <span class="s2">"batch_duration_ms"</span><span class="p">:</span> <span class="n">metrics_before</span><span class="p">[</span><span class="s2">"batch_duration_ms"</span><span class="p">],</span>
-        <span class="s2">"total_delay_ms"</span><span class="p">:</span> <span class="n">metrics_before</span><span class="p">[</span><span class="s2">"total_delay_ms"</span><span class="p">],</span>
-        <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">"run_id"</span><span class="p">:</span> <span class="s2">"apres_optimisation"</span><span class="p">,</span>
-        <span class="s2">"trigger_interval_sec"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-        <span class="s2">"watermark_duration_min"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s2">"num_output_rows"</span><span class="p">:</span> <span class="n">metrics_after</span><span class="p">[</span><span class="s2">"num_output_rows"</span><span class="p">],</span>
-        <span class="s2">"input_rows_per_second"</span><span class="p">:</span> <span class="n">metrics_after</span><span class="p">[</span><span class="s2">"input_rows_per_second"</span><span class="p">],</span>
-        <span class="s2">"processed_rows_per_second"</span><span class="p">:</span> <span class="n">metrics_after</span><span class="p">[</span><span class="s2">"processed_rows_per_second"</span><span class="p">],</span>
-        <span class="s2">"batch_duration_ms"</span><span class="p">:</span> <span class="n">metrics_after</span><span class="p">[</span><span class="s2">"batch_duration_ms"</span><span class="p">],</span>
-        <span class="s2">"total_delay_ms"</span><span class="p">:</span> <span class="n">metrics_after</span><span class="p">[</span><span class="s2">"total_delay_ms"</span><span class="p">],</span>
-        <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
-    <span class="p">}</span>
-<span class="p">]</span>
+<span class="s2">Preuves:</span>
+<span class="s2">- proof/aggregation_metrics.json: Métriques d'agrégation</span>
+<span class="s2">- proof/plan_streaming.txt: Plan de requête optimisé</span>
+<span class="s2">- outputs/lab1/stream_sink/: Fichiers Parquet des résultats</span>
+<span class="s2">"""</span>
 
-<span class="n">log_path</span> <span class="o">=</span> <span class="s2">"lab1_metrics_log.csv"</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">metrics_log</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
-    <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">metrics_log</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Journal des métriques sauvegardé à </span><span class="si">{</span><span class="n">log_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Comparaison d'optimisation complétée."</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"proof/RAPPORT_LAB1.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rapport</span><span class="p">)</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Rapport sauvegardé à proof/RAPPORT_LAB1.txt"</span><span class="p">)</span>
 
 <span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Lab 1 terminé. Vérifier le dossier proof/ pour les preuves et outputs/ pour les données du sink Parquet."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Lab 1 (Track B - GitHub Archive) terminé."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8536,46 +8469,64 @@ Plan de streaming sauvegardé à proof/plan_streaming_before.txt
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/29 11:31:59 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Requête de streaming optimisée démarrée avec déclencheur=30s, watermark=10min
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/29 11:32:59 WARN DAGScheduler: Failed to cancel job group e0a29307-2dee-4afc-9868-c26268bf8c8f. Cannot find active jobs for it.
-26/04/29 11:32:59 WARN DAGScheduler: Failed to cancel job group e0a29307-2dee-4afc-9868-c26268bf8c8f. Cannot find active jobs for it.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Requête optimisée arrêtée après 60 secondes.
+<pre>ANALYSE DÉTAILLÉE DU GITHUB ARCHIVE (Track B)
 
-Métriques clés (Après optimisation) :
-  run_id : apres_optimisation
-  trigger_interval_sec : 30
-  watermark_duration_min : 10
-  num_output_rows : 0
-  input_rows_per_second : 0.0
-  processed_rows_per_second : 0.0
-  batch_duration_ms : 16
-  total_delay_ms : 0
-  timestamp : 2026-04-29T09:32:30.000Z
+Statistiques globales :
++-------+------------------+--------------------+------------------+-------------------+------------------+--------------+
+|summary|              type|           repo_name|      total_events|      unique_actors|     public_events|private_events|
++-------+------------------+--------------------+------------------+-------------------+------------------+--------------+
+|  count|               793|                 793|               793|                793|               793|           793|
+|   mean|              NULL|                NULL|1.2610340479192939| 1.0075662042875158|1.2610340479192939|           0.0|
+| stddev|              NULL|                NULL|1.2324351521042822|0.10021821377154562|1.2324351521042822|           0.0|
+|    min|CommitCommentEvent|0voice/learning_m...|                 1|                  1|                 1|             0|
+|    max|        WatchEvent|zyh552116145/Open...|                19|                  3|                19|             0|
++-------+------------------+--------------------+------------------+-------------------+------------------+--------------+
 
-Journal des métriques sauvegardé à lab1_metrics_log.csv
-Comparaison d'optimisation complétée.
 
-Lab 1 terminé. Vérifier le dossier proof/ pour les preuves et outputs/ pour les données du sink Parquet.
+Distribution des événements par type :
++--------------------+-----+-------+
+|                type|total|windows|
++--------------------+-----+-------+
+|           PushEvent|  714|    562|
+|         CreateEvent|   97|     74|
+|    PullRequestEvent|   56|     41|
+|          WatchEvent|   50|     48|
+|   IssueCommentEvent|   28|     25|
+|        ReleaseEvent|   14|      3|
+|         DeleteEvent|   11|     10|
+|         IssuesEvent|   11|     11|
+|           ForkEvent|   10|     10|
+|         PublicEvent|    5|      5|
+|PullRequestReview...|    2|      2|
+|PullRequestReview...|    1|      1|
+|  CommitCommentEvent|    1|      1|
++--------------------+-----+-------+
+
+
+Activité par heure (fenêtres d'1 heure) :
++-------------------+-------------+
+|       window_start|hourly_events|
++-------------------+-------------+
+|2025-01-01 16:00:00|         1000|
++-------------------+-------------+
+
+
+Engagement utilisateur (acteurs uniques par fenêtre) :
++----------+----------+------------------+
+|min_actors|max_actors|        avg_actors|
++----------+----------+------------------+
+|         1|         3|1.0075662042875158|
++----------+----------+------------------+
+
+
+Ratio public/private :
+  Public: 1000 (100.0%)
+  Private: 0 (0.0%)
+
+Rapport sauvegardé à proof/RAPPORT_LAB1.txt
+
+Lab 1 (Track B - GitHub Archive) terminé.
 </pre>
 </div>
 </div>

@@ -7805,8 +7805,8 @@ a.anchor-link {
 <h1 id="DE2-%E2%80%94-Lab-2-:-Traitement-de-texte-%E2%80%94-Pipeline-d'index-invers%C3%A9-(15%25)">DE2 — Lab 2 : Traitement de texte — Pipeline d'index inversé (15%)<a class="anchor-link" href="#DE2-%E2%80%94-Lab-2-:-Traitement-de-texte-%E2%80%94-Pipeline-d'index-invers%C3%A9-(15%25)">¶</a></h1><blockquote>
 <p>Auteur : Badr TAJINI - Data Engineering II (Workloads Intensifs en Données) - ESIEE 2025-2026</p>
 </blockquote>
-<p><strong>Piste :</strong> <em>(Saisir votre piste : A/B/C/D)</em></p>
-<p><strong>Objectif :</strong> Ingérer un corpus de texte, tokeniser et normaliser, construire un index inversé, mesurer la latence des requêtes, comparer le stockage en Parquet vs CSV.</p>
+<p><strong>Piste :</strong> Track B - GitHub Archive</p>
+<p><strong>Objectif :</strong> Ingérer un corpus de texte (GitHub Archive), tokeniser et normaliser, construire un index inversé, mesurer la latence des requêtes, comparer le stockage en Parquet vs CSV.</p>
 </div>
 </div>
 </div>
@@ -7815,64 +7815,24 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Configuration initiale et importations ===</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Configuration initiale ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">pathlib</span><span class="o">,</span><span class="w"> </span><span class="nn">csv</span><span class="o">,</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span><span class="p">,</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">LongType</span><span class="p">,</span> <span class="n">ArrayType</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pdfplumber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">LongType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">BooleanType</span>
 
-<span class="c1"># Configuration pour l'accès à l'interface Spark</span>
-<span class="n">DE2_SPARK_DRIVER_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DE2_SPARK_DRIVER_HOST"</span><span class="p">,</span> <span class="s2">"127.0.0.1"</span><span class="p">)</span>
-<span class="n">DE2_SPARK_BIND_ADDRESS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DE2_SPARK_BIND_ADDRESS"</span><span class="p">,</span> <span class="s2">"0.0.0.0"</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"SPARK_LOCAL_IP"</span><span class="p">,</span> <span class="n">DE2_SPARK_DRIVER_HOST</span><span class="p">)</span>
+<span class="c1"># Initialisation Spark simplifiee</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"DE2-Lab2-Practice"</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2"> | UI: http://localhost:4040"</span><span class="p">)</span>
 
-<span class="c1"># Fonction pour afficher les informations d'accès à l'interface Spark</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">show_spark_ui</span><span class="p">(</span><span class="n">spark_session</span><span class="p">):</span>
-    <span class="n">ui_url</span> <span class="o">=</span> <span class="n">spark_session</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">uiWebUrl</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Version Spark :"</span><span class="p">,</span> <span class="n">spark_session</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ui_url</span><span class="p">:</span>
-        <span class="n">ui_port</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">ui_url</span><span class="p">)</span><span class="o">.</span><span class="n">port</span> <span class="ow">or</span> <span class="mi">4040</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interface Spark :"</span><span class="p">,</span> <span class="n">ui_url</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interface Spark (navigateur WSL/Windows) :"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"http://localhost:</span><span class="si">{</span><span class="n">ui_port</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interface Spark : non disponible"</span><span class="p">)</span>
-
-<span class="c1"># Initialisation de la session Spark</span>
-<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span> \
-    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"DE2-Lab2-TraitementTexte"</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s2">"local[*]"</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.driver.host"</span><span class="p">,</span> <span class="n">DE2_SPARK_DRIVER_HOST</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.driver.bindAddress"</span><span class="p">,</span> <span class="n">DE2_SPARK_BIND_ADDRESS</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.ui.bindAddress"</span><span class="p">,</span> <span class="n">DE2_SPARK_BIND_ADDRESS</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
-
-<span class="n">show_spark_ui</span><span class="p">(</span><span class="n">spark</span><span class="p">)</span>
-
-<span class="c1"># Création des répertoires de sortie</span>
+<span class="c1"># Creation repertoires</span>
 <span class="n">output_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"outputs/lab2"</span><span class="p">)</span>
-<span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">parquet_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index"</span>
-<span class="n">csv_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index_csv"</span>
-<span class="n">proof_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"proof"</span><span class="p">)</span>
-<span class="n">proof_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Nettoyer les répertoires s'ils existent</span>
-<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parquet_dir</span><span class="p">,</span> <span class="n">csv_dir</span><span class="p">]:</span>
-    <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Répertoires de sortie créés avec succès."</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">parquet_dir</span><span class="p">,</span> <span class="n">csv_dir</span><span class="p">,</span> <span class="n">proof_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index"</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index_csv"</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"proof"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parquet_dir</span><span class="p">,</span> <span class="n">csv_dir</span><span class="p">,</span> <span class="n">proof_dir</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Repertoires crees."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7884,11 +7844,23 @@ a.anchor-link {
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/14 13:53:33 WARN Utils: Your hostname, sable-ThinkPad-X1-Yoga-3rd, resolves to a loopback address: 127.0.1.1; using 10.192.33.105 instead (on interface wlp2s0)
+26/05/14 13:53:33 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/05/14 13:53:35 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Version Spark : 4.0.0
-Interface Spark : http://127.0.0.1:4040
-Interface Spark (navigateur WSL/Windows) : http://localhost:4040
-Répertoires de sortie créés avec succès.
+<pre>Spark 4.0.1 | UI: http://localhost:4040
+Repertoires crees.
 </pre>
 </div>
 </div>
@@ -7901,7 +7873,8 @@ Répertoires de sortie créés avec succès.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-Ingestion-du-corpus-de-texte">1. Ingestion du corpus de texte<a class="anchor-link" href="#1.-Ingestion-du-corpus-de-texte">¶</a></h2><p>Cette section charge un corpus de texte avec un schéma explicite. Chaque document possède un identifiant unique (doc_id) et un contenu textuel. Nous affichons le nombre total de documents, des statistiques sur la longueur moyenne et quelques échantillons pour valider le chargement.</p>
+<h2 id="1.-Ingestion-du-corpus-de-texte">1. Ingestion du corpus de texte<a class="anchor-link" href="#1.-Ingestion-du-corpus-de-texte">¶</a></h2><p>Cette section charge un corpus de texte reel a partir du <strong>GitHub Archive</strong> (Track B). Chaque evenement GitHub devient un document avec un identifiant unique (doc_id = event ID) et un contenu textuel compose du type d'evenement, du nom du repository et du login de l'acteur.</p>
+<p><strong>Source</strong>: <code>sample_archive_github.json</code> - Evenements GitHub publics reels</p>
 </div>
 </div>
 </div>
@@ -7910,62 +7883,32 @@ Répertoires de sortie créés avec succès.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Définition du schéma et ingestion du corpus ===</span>
-<span class="c1"># Schéma : chaque document a un ID unique et du contenu textuel</span>
-<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Chargement GitHub Archive (Track B) ===</span>
+
+<span class="c1"># Schema GitHub Archive simplifie</span>
+<span class="n">github_schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"repo"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span><span class="n">StructField</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">)]),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"actor"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span><span class="n">StructField</span><span class="p">(</span><span class="s2">"login"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">)]),</span> <span class="kc">False</span><span class="p">),</span>
 <span class="p">])</span>
 
-<span class="c1"># Fonction pour extraire le texte des PDFs</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">extract_text_from_pdfs</span><span class="p">(</span><span class="n">pdf_folder</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Extrait le texte de tous les PDFs dans un dossier"""</span>
-    <span class="n">corpus_data</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">pdf_folder_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">pdf_folder</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">pdf_folder_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"⚠️  Dossier </span><span class="si">{</span><span class="n">pdf_folder</span><span class="si">}</span><span class="s2"> non trouvé."</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    
-    <span class="n">pdf_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">pdf_folder_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'.pdf'</span><span class="p">])</span>
-    
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">pdf_files</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"⚠️  Aucun PDF trouvé dans </span><span class="si">{</span><span class="n">pdf_folder</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"📄 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> PDF(s) détecté(s). Extraction en cours...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pdf_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdf_files</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">pdfplumber</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdf</span><span class="p">:</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">page</span><span class="o">.</span><span class="n">extract_text</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">pdf</span><span class="o">.</span><span class="n">pages</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-                    <span class="n">doc_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"doc_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span>
-                    <span class="n">corpus_data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✓ Chargé : </span><span class="si">{</span><span class="n">pdf_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="si">}</span><span class="s2"> caractères)"</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"⚠️  </span><span class="si">{</span><span class="n">pdf_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> est vide"</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✗ Erreur lors de la lecture </span><span class="si">{</span><span class="n">pdf_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">corpus_data</span> <span class="k">if</span> <span class="n">corpus_data</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="c1"># Chargement et transformation: event -&gt; document textuel</span>
+<span class="n">archive_file</span> <span class="o">=</span> <span class="s2">"../../sample_archive_github.json"</span>
+<span class="n">df_corpus</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">github_schema</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">archive_file</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">select</span><span class="p">(</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo.name"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"actor.login"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"text"</span><span class="p">)</span>
+    <span class="p">))</span>
 
-<span class="c1"># Chargement des PDFs</span>
-<span class="n">pdf_folder</span> <span class="o">=</span> <span class="s2">"data/pdfs"</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Extraction du texte depuis les PDFs..."</span><span class="p">)</span>
-<span class="n">corpus_data</span> <span class="o">=</span> <span class="n">extract_text_from_pdfs</span><span class="p">(</span><span class="n">pdf_folder</span><span class="p">)</span>
-
-<span class="c1"># Création du DataFrame corpus à partir des données</span>
-<span class="n">df_corpus</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">corpus_data</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
-
-<span class="c1"># Affichage des statistiques du corpus</span>
+<span class="c1"># Statistiques corpus</span>
 <span class="n">num_docs</span> <span class="o">=</span> <span class="n">df_corpus</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 <span class="n">avg_length</span> <span class="o">=</span> <span class="n">df_corpus</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">length</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"text"</span><span class="p">))))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Nombre de documents : </span><span class="si">{</span><span class="n">num_docs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Longueur moyenne des documents : </span><span class="si">{</span><span class="n">avg_length</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> caractères"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Échantillon du corpus (premiers 5 documents) :"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Corpus: </span><span class="si">{</span><span class="n">num_docs</span><span class="si">}</span><span class="s2"> documents GitHub | Longueur moyenne: </span><span class="si">{</span><span class="n">avg_length</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> caracteres"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Echantillon:"</span><span class="p">)</span>
 <span class="n">df_corpus</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -7979,37 +7922,19 @@ Répertoires de sortie créés avec succès.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Extraction du texte depuis les PDFs...
-📄 3 PDF(s) détecté(s). Extraction en cours...
+<pre>Corpus: 1000 documents GitHub | Longueur moyenne: 49 caracteres
 
-✓ Chargé : doc1.pdf (8660 caractères)
-✓ Chargé : doc2.pdf (169810 caractères)
-✓ Chargé : doc3.pdf (149951 caractères)
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>
-Nombre de documents : 3
-Longueur moyenne des documents : 109473 caractères
-
-Échantillon du corpus (premiers 5 documents) :
-+------+--------------------------------------------------------------------------------+
-|doc_id|                                                                            text|
-+------+--------------------------------------------------------------------------------+
-| doc_1|12 livres pour CHANGER DE VIE,\nles meilleurs livres de Développement personn...|
-| doc_2|Documentation de l’AMGE sur le Leadership\nDéveloppement personnel\nDocumenta...|
-| doc_3|CHAQUE JOURNÉE\nEST UN CHAPITRE\nDE TA VIE\nCHAQUE JOURNÉE\nEST UN CHAPITRE D...|
-+------+--------------------------------------------------------------------------------+
-
+Echantillon:
++-----------+---------------------------------------------------------+
+|     doc_id|                                                     text|
++-----------+---------------------------------------------------------+
+|45193146633|WatchEvent slashback100/presence_simulation weltenwandler|
+|45193146634|             CreateEvent chuksdozie/dcc-webapp chuksdozie|
+|45193146635|                           PushEvent frdpzk3/ppub frdpzk3|
+|45193146638|                               PushEvent Sandhj/ST Sandhj|
+|45193146652|               IssuesEvent Abhay-hack/Lumina LoneWolf4713|
++-----------+---------------------------------------------------------+
+only showing top 5 rows
 </pre>
 </div>
 </div>
@@ -8022,7 +7947,7 @@ Longueur moyenne des documents : 109473 caractères
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-Normalisation-du-texte-(Fran%C3%A7ais)-%E2%80%94-Minuscules,-tokenisation,-suppression-des-stop-words">2. Normalisation du texte (Français) — Minuscules, tokenisation, suppression des stop-words<a class="anchor-link" href="#2.-Normalisation-du-texte-(Fran%C3%A7ais)-%E2%80%94-Minuscules,-tokenisation,-suppression-des-stop-words">¶</a></h2><p>Cette étape transforme le texte brut en tokens normalisés. Nous convertissons tout en minuscules, supprimons la ponctuation, tokenisons en mots individuels, et filtrons les mots vides (stop-words) courants en français. Nous affichons les comptages avant et après pour évaluer l'impact du filtrage.</p>
+<h2 id="2.-Normalisation-du-texte-(Anglais)-%E2%80%94-Minuscules,-tokenisation,-suppression-des-stop-words">2. Normalisation du texte (Anglais) — Minuscules, tokenisation, suppression des stop-words<a class="anchor-link" href="#2.-Normalisation-du-texte-(Anglais)-%E2%80%94-Minuscules,-tokenisation,-suppression-des-stop-words">¶</a></h2><p>Cette etape transforme le texte brut en tokens normalises. Nous convertissons tout en minuscules, supprimons la ponctuation, tokenisons en mots individuels, et filtrons les mots vides (stop-words) courants en anglais.</p>
 </div>
 </div>
 </div>
@@ -8031,61 +7956,46 @@ Longueur moyenne des documents : 109473 caractères
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Pipeline de normalisation du texte ===</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Normalisation: minuscules + tokenisation + filtrage stop-words ===</span>
 
-<span class="c1"># Définition des stop-words courants en français</span>
-<span class="n">STOP_WORDS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"le"</span><span class="p">,</span> <span class="s2">"la"</span><span class="p">,</span> <span class="s2">"les"</span><span class="p">,</span> <span class="s2">"de"</span><span class="p">,</span> <span class="s2">"du"</span><span class="p">,</span> <span class="s2">"des"</span><span class="p">,</span> <span class="s2">"un"</span><span class="p">,</span> <span class="s2">"une"</span><span class="p">,</span> <span class="s2">"et"</span><span class="p">,</span> <span class="s2">"ou"</span><span class="p">,</span> <span class="s2">"mais"</span><span class="p">,</span>
-    <span class="s2">"est"</span><span class="p">,</span> <span class="s2">"sont"</span><span class="p">,</span> <span class="s2">"être"</span><span class="p">,</span> <span class="s2">"avoir"</span><span class="p">,</span> <span class="s2">"je"</span><span class="p">,</span> <span class="s2">"tu"</span><span class="p">,</span> <span class="s2">"il"</span><span class="p">,</span> <span class="s2">"elle"</span><span class="p">,</span> <span class="s2">"nous"</span><span class="p">,</span> <span class="s2">"vous"</span><span class="p">,</span>
-    <span class="s2">"ils"</span><span class="p">,</span> <span class="s2">"elles"</span><span class="p">,</span> <span class="s2">"ce"</span><span class="p">,</span> <span class="s2">"cette"</span><span class="p">,</span> <span class="s2">"ces"</span><span class="p">,</span> <span class="s2">"celui"</span><span class="p">,</span> <span class="s2">"ceux"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">,</span> <span class="s2">"d"</span><span class="p">,</span>
-    <span class="s2">"ma"</span><span class="p">,</span> <span class="s2">"mon"</span><span class="p">,</span> <span class="s2">"mes"</span><span class="p">,</span> <span class="s2">"ta"</span><span class="p">,</span> <span class="s2">"ton"</span><span class="p">,</span> <span class="s2">"tes"</span><span class="p">,</span> <span class="s2">"sa"</span><span class="p">,</span> <span class="s2">"son"</span><span class="p">,</span> <span class="s2">"ses"</span><span class="p">,</span> <span class="s2">"notre"</span><span class="p">,</span>
-    <span class="s2">"votre"</span><span class="p">,</span> <span class="s2">"leur"</span><span class="p">,</span> <span class="s2">"qui"</span><span class="p">,</span> <span class="s2">"que"</span><span class="p">,</span> <span class="s2">"quoi"</span><span class="p">,</span> <span class="s2">"dont"</span><span class="p">,</span> <span class="s2">"où"</span><span class="p">,</span> <span class="s2">"quand"</span><span class="p">,</span> <span class="s2">"comment"</span><span class="p">,</span>
-    <span class="s2">"pourquoi"</span><span class="p">,</span> <span class="s2">"quel"</span><span class="p">,</span> <span class="s2">"quelle"</span><span class="p">,</span> <span class="s2">"quels"</span><span class="p">,</span> <span class="s2">"quelles"</span><span class="p">,</span> <span class="s2">"aucun"</span><span class="p">,</span> <span class="s2">"aucune"</span><span class="p">,</span> <span class="s2">"nul"</span><span class="p">,</span>
-    <span class="s2">"pas"</span><span class="p">,</span> <span class="s2">"ne"</span><span class="p">,</span> <span class="s2">"oui"</span><span class="p">,</span> <span class="s2">"non"</span><span class="p">,</span> <span class="s2">"plus"</span><span class="p">,</span> <span class="s2">"moins"</span><span class="p">,</span> <span class="s2">"très"</span><span class="p">,</span> <span class="s2">"trop"</span><span class="p">,</span> <span class="s2">"assez"</span><span class="p">,</span>
-    <span class="s2">"beaucoup"</span><span class="p">,</span> <span class="s2">"peu"</span><span class="p">,</span> <span class="s2">"bien"</span><span class="p">,</span> <span class="s2">"mal"</span><span class="p">,</span> <span class="s2">"autre"</span><span class="p">,</span> <span class="s2">"même"</span><span class="p">,</span> <span class="s2">"tel"</span><span class="p">,</span> <span class="s2">"telle"</span><span class="p">,</span> <span class="s2">"soi"</span><span class="p">,</span>
-    <span class="s2">"lui"</span><span class="p">,</span> <span class="s2">"moi"</span><span class="p">,</span> <span class="s2">"toi"</span><span class="p">,</span> <span class="s2">"eux"</span><span class="p">,</span> <span class="s2">"à"</span><span class="p">,</span> <span class="s2">"au"</span><span class="p">,</span> <span class="s2">"avec"</span><span class="p">,</span> <span class="s2">"sans"</span><span class="p">,</span> <span class="s2">"pour"</span><span class="p">,</span> <span class="s2">"par"</span><span class="p">,</span>
-    <span class="s2">"dans"</span><span class="p">,</span> <span class="s2">"entre"</span><span class="p">,</span> <span class="s2">"sous"</span><span class="p">,</span> <span class="s2">"sur"</span><span class="p">,</span> <span class="s2">"devant"</span><span class="p">,</span> <span class="s2">"derrière"</span><span class="p">,</span> <span class="s2">"près"</span><span class="p">,</span> <span class="s2">"loin"</span>
+<span class="c1"># Stop-words anglais courants</span>
+<span class="n">stop_words</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"the"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="s2">"an"</span><span class="p">,</span> <span class="s2">"and"</span><span class="p">,</span> <span class="s2">"or"</span><span class="p">,</span> <span class="s2">"but"</span><span class="p">,</span> <span class="s2">"in"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">,</span> <span class="s2">"at"</span><span class="p">,</span> <span class="s2">"to"</span><span class="p">,</span> <span class="s2">"for"</span><span class="p">,</span>
+    <span class="s2">"is"</span><span class="p">,</span> <span class="s2">"are"</span><span class="p">,</span> <span class="s2">"was"</span><span class="p">,</span> <span class="s2">"were"</span><span class="p">,</span> <span class="s2">"be"</span><span class="p">,</span> <span class="s2">"been"</span><span class="p">,</span> <span class="s2">"being"</span><span class="p">,</span> <span class="s2">"have"</span><span class="p">,</span> <span class="s2">"has"</span><span class="p">,</span> <span class="s2">"had"</span><span class="p">,</span>
+    <span class="s2">"do"</span><span class="p">,</span> <span class="s2">"does"</span><span class="p">,</span> <span class="s2">"did"</span><span class="p">,</span> <span class="s2">"will"</span><span class="p">,</span> <span class="s2">"would"</span><span class="p">,</span> <span class="s2">"could"</span><span class="p">,</span> <span class="s2">"should"</span><span class="p">,</span> <span class="s2">"may"</span><span class="p">,</span> <span class="s2">"might"</span><span class="p">,</span>
+    <span class="s2">"can"</span><span class="p">,</span> <span class="s2">"of"</span><span class="p">,</span> <span class="s2">"with"</span><span class="p">,</span> <span class="s2">"by"</span><span class="p">,</span> <span class="s2">"from"</span><span class="p">,</span> <span class="s2">"as"</span><span class="p">,</span> <span class="s2">"it"</span><span class="p">,</span> <span class="s2">"this"</span><span class="p">,</span> <span class="s2">"that"</span><span class="p">,</span> <span class="s2">"which"</span><span class="p">,</span>
+    <span class="s2">"who"</span><span class="p">,</span> <span class="s2">"what"</span><span class="p">,</span> <span class="s2">"where"</span><span class="p">,</span> <span class="s2">"when"</span><span class="p">,</span> <span class="s2">"why"</span><span class="p">,</span> <span class="s2">"how"</span>
 <span class="p">}</span>
 
-<span class="c1"># Étape 1 : convertir en minuscules et supprimer la ponctuation</span>
+<span class="c1"># Pipeline: minuscules + suppression ponctuation + tokenisation + filtrage</span>
 <span class="n">df_normalized</span> <span class="o">=</span> <span class="n">df_corpus</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">"text_clean"</span><span class="p">,</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">regexp_replace</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"text"</span><span class="p">),</span> <span class="sa">r</span><span class="s2">"[^a-zàâäæçéèêëïîôöùûüœ0-9\s]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">regexp_replace</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"text"</span><span class="p">),</span> <span class="sa">r</span><span class="s2">"[^a-zA-Z0-9\s]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
 <span class="p">)</span>
 
-<span class="c1"># Étape 2 : tokeniser en mots individuels en scindant par espaces</span>
 <span class="n">df_tokens</span> <span class="o">=</span> <span class="n">df_normalized</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">"tokens"</span><span class="p">,</span>
     <span class="n">F</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"text_clean"</span><span class="p">),</span> <span class="sa">r</span><span class="s2">"\s+"</span><span class="p">)</span>
 <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"text_clean"</span><span class="p">)</span>
 
-<span class="c1"># Calcul du nombre de tokens avant filtrage</span>
-<span class="n">total_tokens_before</span> <span class="o">=</span> <span class="n">df_tokens</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"token_count"</span><span class="p">)</span>
-<span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"token_count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre total de tokens AVANT filtrage : </span><span class="si">{</span><span class="n">total_tokens_before</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># Comptage avant filtrage</span>
+<span class="n">total_before</span> <span class="o">=</span> <span class="n">df_tokens</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"count"</span><span class="p">))</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tokens AVANT filtrage: </span><span class="si">{</span><span class="n">total_before</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Étape 3 : exploser les tokens (une ligne par token) et filtrer les stop-words</span>
-<span class="n">df_exploded</span> <span class="o">=</span> <span class="n">df_tokens</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
-    <span class="s2">"token"</span><span class="p">,</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">))</span>
-<span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">)</span>
+<span class="c1"># Explosion + filtrage stop-words</span>
+<span class="n">df_filtered</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_tokens</span>
+    <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">"token"</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">)))</span>
+    <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stop_words</span><span class="p">))))</span>
 
-<span class="c1"># Filtrer les stop-words et les tokens vides</span>
-<span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df_exploded</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-    <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">STOP_WORDS</span><span class="p">))</span>
-<span class="p">)</span>
-
-<span class="c1"># Calcul du nombre de tokens après filtrage</span>
-<span class="n">total_tokens_after</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="n">tokens_removed</span> <span class="o">=</span> <span class="n">total_tokens_before</span> <span class="o">-</span> <span class="n">total_tokens_after</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre total de tokens APRÈS filtrage : </span><span class="si">{</span><span class="n">total_tokens_after</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tokens supprimés (stop-words) : </span><span class="si">{</span><span class="n">tokens_removed</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Réduction : </span><span class="si">{</span><span class="p">(</span><span class="n">tokens_removed</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">total_tokens_before</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Échantillon de tokens normalisés :"</span><span class="p">)</span>
+<span class="c1"># Statistiques finales</span>
+<span class="n">total_after</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tokens APRES filtrage: </span><span class="si">{</span><span class="n">total_after</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Stop-words supprimes: </span><span class="si">{</span><span class="n">total_before</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">total_after</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="p">(</span><span class="n">total_before</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">total_after</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">total_before</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Echantillon:"</span><span class="p">)</span>
 <span class="n">df_filtered</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8099,26 +8009,25 @@ Longueur moyenne des documents : 109473 caractères
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Nombre total de tokens AVANT filtrage : 49183
-Nombre total de tokens APRÈS filtrage : 30656
-Tokens supprimés (stop-words) : 18527
-Réduction : 37.7%
+<pre>Tokens AVANT filtrage: 3000
+Tokens APRES filtrage: 3000
+Stop-words supprimes: 0 (0.0%)
 
-Échantillon de tokens normalisés :
-+------+------------+
-|doc_id|       token|
-+------+------------+
-| doc_1|          12|
-| doc_1|      livres|
-| doc_1|   meilleurs|
-| doc_1|      livres|
-| doc_1|éveloppement|
-| doc_1|   personnel|
-| doc_1|           l|
-| doc_1|           y|
-| doc_1|           a|
-| doc_1|      livres|
-+------+------------+
+Echantillon:
++-----------+--------------------+
+|     doc_id|               token|
++-----------+--------------------+
+|45193146633|          watchevent|
+|45193146633|slashback100prese...|
+|45193146633|       weltenwandler|
+|45193146634|         createevent|
+|45193146634| chuksdoziedccwebapp|
+|45193146634|          chuksdozie|
+|45193146635|           pushevent|
+|45193146635|         frdpzk3ppub|
+|45193146635|             frdpzk3|
+|45193146638|           pushevent|
++-----------+--------------------+
 only showing top 10 rows
 </pre>
 </div>
@@ -8132,7 +8041,7 @@ only showing top 10 rows
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-Construction-de-l'index-invers%C3%A9">3. Construction de l'index inversé<a class="anchor-link" href="#3.-Construction-de-l'index-invers%C3%A9">¶</a></h2><p>L'index inversé est la structure clé pour les recherches textuelles efficaces. Pour chaque token (terme) unique, nous regroupons tous les IDs de documents où ce terme apparaît et comptabilisons sa fréquence. Cette structure permet une recherche O(1) au lieu de scanner tous les documents.</p>
+<h2 id="3.-Construction-de-l'index-inverse">3. Construction de l'index inverse<a class="anchor-link" href="#3.-Construction-de-l'index-inverse">¶</a></h2><p>L'index inverse est la structure cle pour les recherches textuelles efficaces. Pour chaque token unique, nous regroupons tous les IDs de documents ou ce terme apparait et comptabilisons sa frequence. Cela permet une recherche O(1) au lieu de scanner tous les documents.</p>
 </div>
 </div>
 </div>
@@ -8141,23 +8050,24 @@ only showing top 10 rows
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Construction de l'index inversé ===</span>
-<span class="c1"># Regrouper par token et collecter tous les IDs de documents où le token apparaît</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Construction index inverse: token -&gt; [doc_ids] + frequence</span>
+
+<span class="c1"># Aggregation: groupBy token + collect_list doc_ids + count frequence</span>
 <span class="n">inverted_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_filtered</span>
     <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span>
     <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">),</span>  <span class="c1"># Liste des doc_id contenant ce token</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)</span>  <span class="c1"># Fréquence : nombre d'occurrences du token</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)))</span>  <span class="c1"># Tri par fréquence décroissante</span>
+    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)))</span>
 
-<span class="c1"># Statistiques de l'index</span>
+<span class="c1"># Statistiques</span>
 <span class="n">unique_terms</span> <span class="o">=</span> <span class="n">inverted_index</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre de termes uniques dans l'index : </span><span class="si">{</span><span class="n">unique_terms</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Échantillon de l'index inversé (termes les plus fréquents) :"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Termes uniques: </span><span class="si">{</span><span class="n">unique_terms</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Top 15 termes par frequence:"</span><span class="p">)</span>
 <span class="n">inverted_index</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8170,55 +8080,31 @@ only showing top 10 rows
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Nombre de termes uniques dans l'index : 7474
+<pre>Termes uniques: 1398
 
-Échantillon de l'index inversé (termes les plus fréquents) :
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>[Stage 40:===========================================&gt;              (6 + 2) / 8]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>+---------+------------------------------------------------------------+----+
-|    token|                                                     doc_ids|freq|
-+---------+------------------------------------------------------------+----+
-|       en|[doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 545|
-|      vie|[doc_1, doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, ...| 258|
-|        a|[doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, ...| 254|
-|        e|[doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, ...| 235|
-|        l|[doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 221|
-|       es|[doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, doc_1, doc_2, ...| 213|
-|       te|[doc_2, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, ...| 196|
-|       se|[doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 179|
-|       me|[doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 154|
-|personnel|[doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 141|
-|     tout|[doc_1, doc_1, doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, ...| 138|
-|       si|[doc_1, doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, ...| 136|
-|  routine|[doc_2, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, ...| 131|
-|    faire|[doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 122|
-|        1|[doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, doc_2, ...| 121|
-+---------+------------------------------------------------------------+----+
+Top 15 termes par frequence:
++-----------------------------+------------------------------------------------------------+----+
+|                        token|                                                     doc_ids|freq|
++-----------------------------+------------------------------------------------------------+----+
+|                    pushevent|[45193146832, 45193146846, 45193146847, 45193146861, 4519...| 714|
+|             githubactionsbot|[45193146831, 45193146861, 45193146864, 45193146917, 4519...|  99|
+|                  createevent|[45193146839, 45193146849, 45193146851, 45193146860, 4519...|  97|
+|             pullrequestevent|[45193146837, 45193146886, 45193146945, 45193147015, 4519...|  56|
+|                   watchevent|[45193146862, 45193146986, 45193146995, 45193147012, 4519...|  50|
+|            issuecommentevent|[45193146935, 45193146976, 45193147309, 45193147791, 4519...|  28|
+|                dependabotbot|[45193146976, 45193147015, 45193147370, 45193147592, 4519...|  26|
+|                aergoioherapy|[45193148410, 45193148531, 45193148698, 45193148854, 4519...|  19|
+|                      hanlsin|[45193148410, 45193148531, 45193148698, 45193148854, 4519...|  19|
+|                 releaseevent|[45193147950, 45193149627, 45193149629, 45193149635, 4519...|  14|
+|nilcsitopicinterviewquestions|[45193146976, 45193147015, 45193147764, 45193148912, 4519...|  13|
+|                      pullbot|[45193147322, 45193147449, 45193147859, 45193147860, 4519...|  13|
+|      dandapandabytesdevcrate|[45193149627, 45193149629, 45193149635, 45193149639, 4519...|  13|
+|              vpnsuperappfast|[45193147536, 45193147667, 45193147996, 45193148299, 4519...|  12|
+|                  vpnsuperapp|[45193147536, 45193147667, 45193147996, 45193148299, 4519...|  12|
++-----------------------------+------------------------------------------------------------+----+
 only showing top 15 rows
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
 </div>
 </div>
 </div>
@@ -8230,7 +8116,7 @@ only showing top 15 rows
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-%C3%89criture-de-l'index-invers%C3%A9-%E2%80%94-Parquet-et-CSV">4. Écriture de l'index inversé — Parquet et CSV<a class="anchor-link" href="#4.-%C3%89criture-de-l'index-invers%C3%A9-%E2%80%94-Parquet-et-CSV">¶</a></h2><p>Nous persistons l'index inversé dans deux formats pour comparer leur efficacité. Le format Parquet est columnar et optimisé pour les requêtes analytiques (avec compression), tandis que CSV est un format texte universel mais moins compressé. Cela permet d'évaluer le compromis entre performance et universalité des formats.</p>
+<h2 id="4.-Persistence-de-l'index-%E2%80%94-Parquet-et-CSV">4. Persistence de l'index — Parquet et CSV<a class="anchor-link" href="#4.-Persistence-de-l'index-%E2%80%94-Parquet-et-CSV">¶</a></h2><p>Nous persistons l'index dans deux formats pour comparer leur efficacite. Parquet est columnar et compresse (optimal pour requetes analytiques), tandis que CSV est texte universel mais moins efficace.</p>
 </div>
 </div>
 </div>
@@ -8239,32 +8125,31 @@ only showing top 15 rows
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Écriture de l'index inversé en Parquet et CSV ===</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Écriture de l'index inversé en Parquet..."</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Parquet: format columnar compresse</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Ecriture Parquet..."</span><span class="p">)</span>
 <span class="n">inverted_index</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Index Parquet écrit dans : </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Parquet: </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Ecriture de l'index inversé en CSV..."</span><span class="p">)</span>
-<span class="c1"># Convertir l'array doc_ids en string pour la compatibilité CSV</span>
+<span class="c1"># CSV: array -&gt; string separee par virgules</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Ecriture CSV..."</span><span class="p">)</span>
 <span class="n">inverted_index_csv</span> <span class="o">=</span> <span class="n">inverted_index</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">"doc_ids"</span><span class="p">,</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">))</span>  <span class="c1"># Joindre les doc_id avec des virgules</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">))</span>
 <span class="p">)</span>
 
 <span class="n">inverted_index_csv</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">write</span> \
     <span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Index CSV écrit dans : </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CSV: </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Rechargement des index pour les étapes suivantes</span>
+<span class="c1"># Rechargement pour benchmarking</span>
 <span class="n">df_index_parquet</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
 <span class="n">df_index_csv</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Index rechargés avec succès."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Index recharges."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8277,7 +8162,7 @@ only showing top 15 rows
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Écriture de l'index inversé en Parquet...
+<pre>Ecriture Parquet...
 </pre>
 </div>
 </div>
@@ -8290,24 +8175,12 @@ only showing top 15 rows
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Index Parquet écrit dans : outputs/lab2/inverted_index
+<pre>Parquet: outputs/lab2/inverted_index
 
-Ecriture de l'index inversé en CSV...
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Index CSV écrit dans : outputs/lab2/inverted_index_csv
+Ecriture CSV...
+CSV: outputs/lab2/inverted_index_csv
 
-Index rechargés avec succès.
+Index recharges.
 </pre>
 </div>
 </div>
@@ -8320,7 +8193,7 @@ Index rechargés avec succès.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Mesure-de-la-latence-des-requ%C3%AAtes">5. Mesure de la latence des requêtes<a class="anchor-link" href="#5.-Mesure-de-la-latence-des-requ%C3%AAtes">¶</a></h2><p>Nous interrogeons l'index inversé pour rechercher des termes spécifiques et mesurons le temps d'exécution réel (wall-clock time) pour chaque requête. Cela simule un scénario utilisateur réel et nous aide à comprendre les performances pratiques de notre pipeline.</p>
+<h2 id="5.-Benchmark:-mesure-de-latence-des-requetes">5. Benchmark: mesure de latence des requetes<a class="anchor-link" href="#5.-Benchmark:-mesure-de-latence-des-requetes">¶</a></h2><p>Nous interrogeons l'index pour rechercher des termes specifiques et mesurons le temps d'execution reel (wall-clock time). Cela simule un scenario utilisateur reel et permet de comparer Parquet vs CSV.</p>
 </div>
 </div>
 </div>
@@ -8329,99 +8202,66 @@ Index rechargés avec succès.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Requêtes sur l'index et mesure de latence ===</span>
-<span class="c1"># Cache l'index pour une mesure plus juste</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Cache index Parquet pour mesures justes</span>
 <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
 <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Index Parquet mis en cache pour les mesures de latence.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Index Parquet cache.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Termes à rechercher (thème : développement personnel)</span>
-<span class="n">query_terms</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">"développement"</span><span class="p">,</span> <span class="s2">"personnel"</span><span class="p">,</span> <span class="s2">"croissance"</span><span class="p">,</span> <span class="s2">"apprentissage"</span><span class="p">,</span> <span class="s2">"transformation"</span><span class="p">,</span>
-    <span class="s2">"potentiel"</span><span class="p">,</span> <span class="s2">"confiance"</span><span class="p">,</span> <span class="s2">"objectif"</span><span class="p">,</span> <span class="s2">"succès"</span><span class="p">,</span> <span class="s2">"motivation"</span><span class="p">,</span>
-    <span class="s2">"habitude"</span><span class="p">,</span> <span class="s2">"changement"</span><span class="p">,</span> <span class="s2">"progrès"</span><span class="p">,</span> <span class="s2">"amélioration"</span><span class="p">,</span> <span class="s2">"réussite"</span><span class="p">,</span>
-    <span class="s2">"compétence"</span><span class="p">,</span> <span class="s2">"effort"</span><span class="p">,</span> <span class="s2">"discipline"</span>
-<span class="p">]</span>
+<span class="c1"># Termes a rechercher (adaptes aux donnees GitHub)</span>
+<span class="n">query_terms</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pushevent"</span><span class="p">,</span> <span class="s2">"github"</span><span class="p">,</span> <span class="s2">"bot"</span><span class="p">,</span> <span class="s2">"code"</span><span class="p">,</span> <span class="s2">"bug"</span><span class="p">,</span> <span class="s2">"actions"</span><span class="p">,</span> <span class="s2">"workflow"</span><span class="p">]</span>
 <span class="n">query_latencies</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Mesure de latence des requêtes sur l'index Parquet :"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="c1"># Test Parquet</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Benchmark Parquet:"</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">query_terms</span><span class="p">:</span>
-    <span class="c1"># Mesure du temps réel (wall-clock time)</span>
-    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="n">term</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
     
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">doc_ids_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span>
-        <span class="n">freq</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"freq"</span><span class="p">]</span>
-        <span class="n">postings_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc_ids_list</span><span class="p">)</span>
-        <span class="n">doc_ids_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">doc_ids_list</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requête : '</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Latence Parquet : </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Fréquence (occurrences) : </span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Nombre de documents : </span><span class="si">{</span><span class="n">postings_count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Documents : [</span><span class="si">{</span><span class="n">doc_ids_str</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
-        
+        <span class="n">freq</span><span class="p">,</span> <span class="n">doc_count</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"freq"</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">" | freq=</span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2">, docs=</span><span class="si">{</span><span class="n">doc_count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">query_latencies</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s2">"term"</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span>
-            <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"parquet"</span><span class="p">,</span>
-            <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="n">latency_ms</span><span class="p">,</span>
-            <span class="s2">"found"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">"freq"</span><span class="p">:</span> <span class="n">freq</span><span class="p">,</span>
-            <span class="s2">"doc_count"</span><span class="p">:</span> <span class="n">postings_count</span>
+            <span class="s2">"term"</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"parquet"</span><span class="p">,</span> <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="n">latency_ms</span><span class="p">,</span>
+            <span class="s2">"found"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"freq"</span><span class="p">:</span> <span class="n">freq</span><span class="p">,</span> <span class="s2">"doc_count"</span><span class="p">:</span> <span class="n">doc_count</span>
         <span class="p">})</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requête : '</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Latence Parquet : </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Terme non trouvé"</span><span class="p">)</span>
-        
+        <span class="nb">print</span><span class="p">(</span><span class="s2">" | non trouve"</span><span class="p">)</span>
         <span class="n">query_latencies</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s2">"term"</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span>
-            <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"parquet"</span><span class="p">,</span>
-            <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="n">latency_ms</span><span class="p">,</span>
-            <span class="s2">"found"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">"freq"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">"doc_count"</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="s2">"term"</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"parquet"</span><span class="p">,</span> <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="n">latency_ms</span><span class="p">,</span>
+            <span class="s2">"found"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"freq"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"doc_count"</span><span class="p">:</span> <span class="mi">0</span>
         <span class="p">})</span>
-    <span class="nb">print</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Mesure de latence des requêtes sur l'index CSV :"</span><span class="p">)</span>
+<span class="c1"># Test CSV</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Benchmark CSV:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-
 <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">query_terms</span><span class="p">:</span>
-    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">df_index_csv</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="n">term</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requête : '</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Latence CSV : </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
-        <span class="n">doc_ids_str_raw</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span>
-        <span class="n">doc_ids_list</span> <span class="o">=</span> <span class="n">doc_ids_str_raw</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">doc_ids_str_raw</span> <span class="k">else</span> <span class="p">[]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Nombre de documents : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">doc_ids_list</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">doc_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">))</span> <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">" | docs=</span><span class="si">{</span><span class="n">doc_count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Terme non trouvé"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">" | non trouve"</span><span class="p">)</span>
 
-<span class="c1"># Sauvegarde du plan d'exécution pour une requête</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Sauvegarde du plan d'exécution pour une requête..."</span><span class="p">)</span>
+<span class="c1"># Sauvegarde plan execution</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Sauvegarde plan requete..."</span><span class="p">)</span>
 <span class="n">query_plan_file</span> <span class="o">=</span> <span class="n">proof_dir</span> <span class="o">/</span> <span class="s2">"plan_query.txt"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">query_plan_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">buffer</span>
-    <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"spark"</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"pushevent"</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan de requête écrit dans : </span><span class="si">{</span><span class="n">query_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan: </span><span class="si">{</span><span class="n">query_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8433,200 +8273,30 @@ Index rechargés avec succès.
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/29 19:50:51 WARN CacheManager: Asked to cache already cached data.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Index Parquet mis en cache pour les mesures de latence.
+<pre>Index Parquet cache.
 
-Mesure de latence des requêtes sur l'index Parquet :
+Benchmark Parquet:
+'pushevent': 345.12 ms | freq=714, docs=714
+'github': 133.72 ms | non trouve
+'bot': 109.59 ms | non trouve
+'code': 115.00 ms | non trouve
+'bug': 147.64 ms | non trouve
+'actions': 88.62 ms | non trouve
+'workflow': 99.53 ms | non trouve
+
+Benchmark CSV:
 --------------------------------------------------------------------------------
-Requête : 'développement'
-  Latence Parquet : 142.06 ms
-  Fréquence (occurrences) : 68
-  Nombre de documents : 68
-  Documents : [doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3]
+'pushevent': 518.50 ms | docs=714
+'github': 1024.05 ms | non trouve
+'bot': 421.89 ms | non trouve
+'code': 416.45 ms | non trouve
+'bug': 224.71 ms | non trouve
+'actions': 201.14 ms | non trouve
+'workflow': 233.33 ms | non trouve
 
-Requête : 'personnel'
-  Latence Parquet : 169.23 ms
-  Fréquence (occurrences) : 141
-  Nombre de documents : 141
-  Documents : [doc_1, doc_1, doc_1, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3]
-
-Requête : 'croissance'
-  Latence Parquet : 112.55 ms
-  Fréquence (occurrences) : 7
-  Nombre de documents : 7
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3]
-
-Requête : 'apprentissage'
-  Latence Parquet : 76.01 ms
-  Fréquence (occurrences) : 5
-  Nombre de documents : 5
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_3]
-
-Requête : 'transformation'
-  Latence Parquet : 71.22 ms
-  Fréquence (occurrences) : 1
-  Nombre de documents : 1
-  Documents : [doc_1]
-
-Requête : 'potentiel'
-  Latence Parquet : 76.85 ms
-  Fréquence (occurrences) : 36
-  Nombre de documents : 36
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3, doc_3]
-
-Requête : 'confiance'
-  Latence Parquet : 164.29 ms
-  Fréquence (occurrences) : 27
-  Nombre de documents : 27
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2]
-
-Requête : 'objectif'
-  Latence Parquet : 131.90 ms
-  Fréquence (occurrences) : 33
-  Nombre de documents : 33
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3]
-
-Requête : 'succès'
-  Latence Parquet : 130.16 ms
-  Fréquence (occurrences) : 7
-  Nombre de documents : 7
-  Documents : [doc_1, doc_1, doc_2, doc_2, doc_2, doc_3, doc_3]
-
-Requête : 'motivation'
-  Latence Parquet : 133.35 ms
-  Fréquence (occurrences) : 12
-  Nombre de documents : 12
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3]
-
-Requête : 'habitude'
-  Latence Parquet : 94.24 ms
-  Fréquence (occurrences) : 12
-  Nombre de documents : 12
-  Documents : [doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3]
-
-Requête : 'changement'
-  Latence Parquet : 74.28 ms
-  Fréquence (occurrences) : 13
-  Nombre de documents : 13
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3]
-
-Requête : 'progrès'
-  Latence Parquet : 73.62 ms
-  Fréquence (occurrences) : 6
-  Nombre de documents : 6
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_3, doc_3]
-
-Requête : 'amélioration'
-  Latence Parquet : 74.90 ms
-  Terme non trouvé
-
-Requête : 'réussite'
-  Latence Parquet : 94.23 ms
-  Fréquence (occurrences) : 8
-  Nombre de documents : 8
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3, doc_3]
-
-Requête : 'compétence'
-  Latence Parquet : 131.43 ms
-  Fréquence (occurrences) : 38
-  Nombre de documents : 38
-  Documents : [doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_2, doc_3]
-
-Requête : 'effort'
-  Latence Parquet : 104.93 ms
-  Fréquence (occurrences) : 4
-  Nombre de documents : 4
-  Documents : [doc_2, doc_2, doc_3, doc_3]
-
-Requête : 'discipline'
-  Latence Parquet : 112.60 ms
-  Fréquence (occurrences) : 9
-  Nombre de documents : 9
-  Documents : [doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3, doc_3]
-
-Mesure de latence des requêtes sur l'index CSV :
---------------------------------------------------------------------------------
-Requête : 'développement'
-  Latence CSV : 105.89 ms
-  Nombre de documents : 68
-
-Requête : 'personnel'
-  Latence CSV : 101.37 ms
-  Nombre de documents : 141
-
-Requête : 'croissance'
-  Latence CSV : 111.50 ms
-  Nombre de documents : 7
-
-Requête : 'apprentissage'
-  Latence CSV : 118.36 ms
-  Nombre de documents : 5
-
-Requête : 'transformation'
-  Latence CSV : 191.09 ms
-  Nombre de documents : 1
-
-Requête : 'potentiel'
-  Latence CSV : 146.86 ms
-  Nombre de documents : 36
-
-Requête : 'confiance'
-  Latence CSV : 99.96 ms
-  Nombre de documents : 27
-
-Requête : 'objectif'
-  Latence CSV : 93.83 ms
-  Nombre de documents : 33
-
-Requête : 'succès'
-  Latence CSV : 106.21 ms
-  Nombre de documents : 7
-
-Requête : 'motivation'
-  Latence CSV : 96.21 ms
-  Nombre de documents : 12
-
-Requête : 'habitude'
-  Latence CSV : 89.69 ms
-  Nombre de documents : 12
-
-Requête : 'changement'
-  Latence CSV : 111.37 ms
-  Nombre de documents : 13
-
-Requête : 'progrès'
-  Latence CSV : 130.35 ms
-  Nombre de documents : 6
-
-Requête : 'amélioration'
-  Latence CSV : 130.28 ms
-  Terme non trouvé
-
-Requête : 'réussite'
-  Latence CSV : 100.81 ms
-  Nombre de documents : 8
-
-Requête : 'compétence'
-  Latence CSV : 106.79 ms
-  Nombre de documents : 38
-
-Requête : 'effort'
-  Latence CSV : 88.39 ms
-  Nombre de documents : 4
-
-Requête : 'discipline'
-  Latence CSV : 79.07 ms
-  Nombre de documents : 9
-
-Sauvegarde du plan d'exécution pour une requête...
-Plan de requête écrit dans : proof/plan_query.txt
+Sauvegarde plan requete...
+Plan: proof/plan_query.txt
 </pre>
 </div>
 </div>
@@ -8639,7 +8309,7 @@ Plan de requête écrit dans : proof/plan_query.txt
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6.-Comparaison-de-l'empreinte-disque-%E2%80%94-Parquet-vs-CSV">6. Comparaison de l'empreinte disque — Parquet vs CSV<a class="anchor-link" href="#6.-Comparaison-de-l'empreinte-disque-%E2%80%94-Parquet-vs-CSV">¶</a></h2><p>Nous comparons la taille disque utilisée par les deux formats de stockage. Parquet utilise la compression columnar, tandis que CSV est un format texte universel mais moins optimisé. Cette comparaison quantifie les économies de stockage réalisées avec des formats spécialisés pour les requêtes analytiques.</p>
+<h2 id="6.-Comparaison-empreinte-disque-%E2%80%94-Parquet-vs-CSV">6. Comparaison empreinte disque — Parquet vs CSV<a class="anchor-link" href="#6.-Comparaison-empreinte-disque-%E2%80%94-Parquet-vs-CSV">¶</a></h2><p>Nous comparons la taille disque utilisee par les deux formats. Parquet utilise la compression columnar, tandis que CSV est texte universel mais moins optimise. Cette comparaison quantifie les economies de stockage.</p>
 </div>
 </div>
 </div>
@@ -8648,103 +8318,76 @@ Plan de requête écrit dans : proof/plan_query.txt
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Comparaison des empreintes disque (Parquet vs CSV) ===</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Fonction calcul taille repertoire</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_directory_size</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Calcule la taille totale d'un répertoire en bytes"""</span>
-    <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
-            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-                <span class="n">total_size</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">total_size</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> 
+               <span class="k">for</span> <span class="n">dp</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> 
+               <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">f</span><span class="p">)))</span>
 
-<span class="c1"># Calcul des tailles</span>
+<span class="c1"># Calcul tailles</span>
 <span class="n">parquet_size</span> <span class="o">=</span> <span class="n">get_directory_size</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
 <span class="n">csv_size</span> <span class="o">=</span> <span class="n">get_directory_size</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">))</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Comparaison des empreintes disque :"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Empreinte disque:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Taille Parquet : </span><span class="si">{</span><span class="n">parquet_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">parquet_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> MB)"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Taille CSV     : </span><span class="si">{</span><span class="n">csv_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">csv_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> MB)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Parquet: </span><span class="si">{</span><span class="n">parquet_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">parquet_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CSV:     </span><span class="si">{</span><span class="n">csv_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">csv_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB)"</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">csv_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">compression_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">csv_size</span> <span class="o">-</span> <span class="n">parquet_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">csv_size</span> <span class="o">*</span> <span class="mi">100</span>
-    <span class="n">savings_bytes</span> <span class="o">=</span> <span class="n">csv_size</span> <span class="o">-</span> <span class="n">parquet_size</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Économies de taille : </span><span class="si">{</span><span class="n">savings_bytes</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">compression_ratio</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"CSV vide, impossible de calculer le ratio."</span><span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">csv_size</span> <span class="o">-</span> <span class="n">parquet_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">csv_size</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Economie: </span><span class="si">{</span><span class="n">csv_size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">parquet_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Détail des fichiers Parquet :"</span><span class="p">)</span>
+<span class="c1"># Detail fichiers</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Fichiers Parquet:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">)):</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Détail des fichiers CSV :"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">)):</span>
-    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes"</span><span class="p">)</span>
-
-<span class="c1"># === Sauvegarde du plan d'exécution pour la construction de l'index ===</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Sauvegarde du plan d'exécution pour la construction de l'index..."</span><span class="p">)</span>
+<span class="c1"># Sauvegarde plan construction index</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Sauvegarde plan construction index..."</span><span class="p">)</span>
 <span class="n">plan_build_file</span> <span class="o">=</span> <span class="n">proof_dir</span> <span class="o">/</span> <span class="s2">"plan_index_build.txt"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">plan_build_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">buffer</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
     <span class="n">inverted_index</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan d'index écrit dans : </span><span class="si">{</span><span class="n">plan_build_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan: </span><span class="si">{</span><span class="n">plan_build_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># === Création du journal de métriques CSV ===</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Création du journal de métriques..."</span><span class="p">)</span>
+<span class="c1"># Creation journal metriques</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Creation journal metriques..."</span><span class="p">)</span>
 <span class="n">metrics_log_file</span> <span class="o">=</span> <span class="s2">"lab2_metrics_log.csv"</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metrics_log_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
-    <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"timestamp"</span><span class="p">,</span>
-        <span class="s2">"format"</span><span class="p">,</span>
-        <span class="s2">"term"</span><span class="p">,</span>
-        <span class="s2">"latency_ms"</span><span class="p">,</span>
-        <span class="s2">"parquet_size_bytes"</span><span class="p">,</span>
-        <span class="s2">"csv_size_bytes"</span><span class="p">,</span>
-        <span class="s2">"unique_terms"</span><span class="p">,</span>
-        <span class="s2">"total_docs"</span><span class="p">,</span>
-        <span class="s2">"doc_count"</span><span class="p">,</span>
-        <span class="s2">"term_freq"</span>
-    <span class="p">]</span>
-    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">fieldnames</span><span class="p">)</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">"timestamp"</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">,</span> <span class="s2">"term"</span><span class="p">,</span> <span class="s2">"latency_ms"</span><span class="p">,</span>
+        <span class="s2">"parquet_size_bytes"</span><span class="p">,</span> <span class="s2">"csv_size_bytes"</span><span class="p">,</span> <span class="s2">"unique_terms"</span><span class="p">,</span>
+        <span class="s2">"total_docs"</span><span class="p">,</span> <span class="s2">"doc_count"</span><span class="p">,</span> <span class="s2">"term_freq"</span>
+    <span class="p">])</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
     
-    <span class="n">current_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
     
-    <span class="c1"># Écriture des métriques de requête</span>
-    <span class="k">for</span> <span class="n">latency_entry</span> <span class="ow">in</span> <span class="n">query_latencies</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">query_latencies</span><span class="p">:</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">({</span>
-            <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">current_timestamp</span><span class="p">,</span>
+            <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
             <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"Parquet"</span><span class="p">,</span>
-            <span class="s2">"term"</span><span class="p">:</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">],</span>
-            <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">latency_entry</span><span class="p">[</span><span class="s1">'latency_ms'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"term"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">],</span>
+            <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'latency_ms'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="s2">"parquet_size_bytes"</span><span class="p">:</span> <span class="n">parquet_size</span><span class="p">,</span>
             <span class="s2">"csv_size_bytes"</span><span class="p">:</span> <span class="n">csv_size</span><span class="p">,</span>
             <span class="s2">"unique_terms"</span><span class="p">:</span> <span class="n">unique_terms</span><span class="p">,</span>
             <span class="s2">"total_docs"</span><span class="p">:</span> <span class="n">num_docs</span><span class="p">,</span>
-            <span class="s2">"doc_count"</span><span class="p">:</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"doc_count"</span><span class="p">]</span> <span class="k">if</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"found"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="s2">"term_freq"</span><span class="p">:</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"freq"</span><span class="p">]</span> <span class="k">if</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"found"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="s2">"doc_count"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"doc_count"</span><span class="p">]</span> <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"found"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"term_freq"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"freq"</span><span class="p">]</span> <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"found"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="p">})</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Journal de métriques écrit : </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Prêt pour capture des images d'interface Spark UI (http://localhost:4040)"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Consultez les onglets Jobs et SQL pour visualiser la construction et les requêtes"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Metriques: </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Capture Spark UI: http://localhost:4040"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8757,32 +8400,25 @@ Plan de requête écrit dans : proof/plan_query.txt
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Comparaison des empreintes disque :
+<pre>Empreinte disque:
 --------------------------------------------------------------------------------
-Taille Parquet : 60,909 bytes (0.0581 MB)
-Taille CSV     : 275,577 bytes (0.2628 MB)
-Économies de taille : 214,668 bytes (77.9%)
+Parquet: 31,162 bytes (30.4 KB)
+CSV:     65,175 bytes (63.6 KB)
+Economie: 34,013 bytes (52.2%)
 
-Détail des fichiers Parquet :
+Fichiers Parquet:
   ._SUCCESS.crc: 8 bytes
-  part-00000-bd3b3501-e735-4d28-aa1f-2e4cc3cce23b-c000.snappy.parquet: 60,417 bytes
-  .part-00000-bd3b3501-e735-4d28-aa1f-2e4cc3cce23b-c000.snappy.parquet.crc: 484 bytes
+  .part-00000-45ee650a-a12b-4726-9971-cd703f9a1b3b-c000.snappy.parquet.crc: 252 bytes
+  part-00000-45ee650a-a12b-4726-9971-cd703f9a1b3b-c000.snappy.parquet: 30,902 bytes
   _SUCCESS: 0 bytes
 
-Détail des fichiers CSV :
-  ._SUCCESS.crc: 8 bytes
-  part-00000-d84a8001-19d8-4c8d-a4fc-1776b674903e-c000.csv: 273,421 bytes
-  .part-00000-d84a8001-19d8-4c8d-a4fc-1776b674903e-c000.csv.crc: 2,148 bytes
-  _SUCCESS: 0 bytes
+Sauvegarde plan construction index...
+Plan: proof/plan_index_build.txt
 
-Sauvegarde du plan d'exécution pour la construction de l'index...
-Plan d'index écrit dans : proof/plan_index_build.txt
+Creation journal metriques...
+Metriques: lab2_metrics_log.csv
 
-Création du journal de métriques...
-Journal de métriques écrit : lab2_metrics_log.csv
-
-Prêt pour capture des images d'interface Spark UI (http://localhost:4040)
-Consultez les onglets Jobs et SQL pour visualiser la construction et les requêtes
+Capture Spark UI: http://localhost:4040
 </pre>
 </div>
 </div>
@@ -8793,21 +8429,17 @@ Consultez les onglets Jobs et SQL pour visualiser la construction et les requêt
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Arrêt et nettoyage ===</span>
-<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Lab 2 - Pipeline de traitement de texte terminé avec succès."</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Fichiers de sortie générés :"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Index Parquet : </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Index CSV : </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Plans d'exécution : </span><span class="si">{</span><span class="n">proof_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Journal de métriques : </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Prochaines étapes :"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"  1. Capturer les images d'interface Spark UI (tabs Jobs et SQL)"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"  2. Rédiger une note d'ingénierie (1 page) analysant les résultats"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"  3. Télécharger le notebook, outputs/, proof/, et la note sur GitHub"</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Lab 2 Practice termine."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Fichiers generes:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Index Parquet: </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Index CSV: </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Plans execution: </span><span class="si">{</span><span class="n">proof_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Metriques: </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8821,18 +8453,13 @@ Consultez les onglets Jobs et SQL pour visualiser la construction et les requêt
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>
-Lab 2 - Pipeline de traitement de texte terminé avec succès.
+Lab 2 Practice termine.
 
-Fichiers de sortie générés :
-  - Index Parquet : outputs/lab2/inverted_index
-  - Index CSV : outputs/lab2/inverted_index_csv
-  - Plans d'exécution : proof
-  - Journal de métriques : lab2_metrics_log.csv
-
-Prochaines étapes :
-  1. Capturer les images d'interface Spark UI (tabs Jobs et SQL)
-  2. Rédiger une note d'ingénierie (1 page) analysant les résultats
-  3. Télécharger le notebook, outputs/, proof/, et la note sur GitHub
+Fichiers generes:
+  - Index Parquet: outputs/lab2/inverted_index
+  - Index CSV: outputs/lab2/inverted_index_csv
+  - Plans execution: proof
+  - Metriques: lab2_metrics_log.csv
 </pre>
 </div>
 </div>

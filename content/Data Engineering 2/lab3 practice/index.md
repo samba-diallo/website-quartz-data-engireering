@@ -11,3 +11,4 @@ title: Lab 3 - Practice
 
 - [[DE2_Lab3_Notebook_EN|DE2_Lab3_Notebook_EN.ipynb]] *(notebook)*
 - `lab3_metrics_log.csv`
+- [[proof/index|proof/]]

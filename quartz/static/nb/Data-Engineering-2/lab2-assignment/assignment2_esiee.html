@@ -7805,8 +7805,8 @@ a.anchor-link {
 <h1 id="DE2-%E2%80%94-Assignment-2-:-Texte-%E2%80%94-Index-Invers%C3%A9">DE2 — Assignment 2 : Texte — Index Inversé<a class="anchor-link" href="#DE2-%E2%80%94-Assignment-2-:-Texte-%E2%80%94-Index-Invers%C3%A9">¶</a></h1><blockquote>
 <p>Auteur : Badr TAJINI - Data Engineering II (Workloads Intensifs en Données) - ESIEE 2025-2026</p>
 </blockquote>
-<p><strong>Piste :</strong> <em>(Saisir votre piste : A/B/C/D)</em></p>
-<p><strong>Noms :</strong> <em>(Étudiant 1 — Étudiant 2)</em></p>
+<p><strong>Piste :</strong> <em>(B Archive Github)</em></p>
+<p><strong>Noms :</strong> <em>(DIALLO Samba - DIOP Mouhamed)</em></p>
 <p>Complétez les cellules ci-dessous. Consultez <code>DE2_Lab2_Overview_EN.md</code> et <code>helper_assignment2-de2_esiee.md</code> pour plus de détails.</p>
 </div>
 </div>
@@ -7827,130 +7827,23 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Importations et Configuration ===</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">pathlib</span><span class="o">,</span><span class="w"> </span><span class="nn">csv</span><span class="o">,</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span><span class="p">,</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">LongType</span><span class="p">,</span> <span class="n">ArrayType</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 
-<span class="n">DE2_SPARK_DRIVER_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DE2_SPARK_DRIVER_HOST"</span><span class="p">,</span> <span class="s2">"127.0.0.1"</span><span class="p">)</span>
-<span class="n">DE2_SPARK_BIND_ADDRESS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"DE2_SPARK_BIND_ADDRESS"</span><span class="p">,</span> <span class="s2">"0.0.0.0"</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"SPARK_LOCAL_IP"</span><span class="p">,</span> <span class="n">DE2_SPARK_DRIVER_HOST</span><span class="p">)</span>
+<span class="c1"># Configuration Spark simplifiée</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"de2-assignment2"</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2"> | UI: http://localhost:4040"</span><span class="p">)</span>
 
-<span class="c1"># Fonction pour afficher l'interface Spark</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">show_spark_ui</span><span class="p">(</span><span class="n">spark_session</span><span class="p">):</span>
-    <span class="n">ui_url</span> <span class="o">=</span> <span class="n">spark_session</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">uiWebUrl</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Version Spark :"</span><span class="p">,</span> <span class="n">spark_session</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ui_url</span><span class="p">:</span>
-        <span class="n">ui_port</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">ui_url</span><span class="p">)</span><span class="o">.</span><span class="n">port</span> <span class="ow">or</span> <span class="mi">4040</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interface Spark :"</span><span class="p">,</span> <span class="n">ui_url</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interface Spark (navigateur WSL/Windows) :"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"http://localhost:</span><span class="si">{</span><span class="n">ui_port</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interface Spark : non disponible"</span><span class="p">)</span>
-
-<span class="c1"># Initialisation de la session Spark</span>
-<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span> \
-    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"de2-assignment2"</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s2">"local[*]"</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.driver.host"</span><span class="p">,</span> <span class="n">DE2_SPARK_DRIVER_HOST</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.driver.bindAddress"</span><span class="p">,</span> <span class="n">DE2_SPARK_BIND_ADDRESS</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">"spark.ui.bindAddress"</span><span class="p">,</span> <span class="n">DE2_SPARK_BIND_ADDRESS</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
-
-<span class="n">show_spark_ui</span><span class="p">(</span><span class="n">spark</span><span class="p">)</span>
-
-<span class="c1"># Création des répertoires de sortie</span>
+<span class="c1"># Création des répertoires</span>
 <span class="n">output_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"outputs/lab2"</span><span class="p">)</span>
-<span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">parquet_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index"</span>
-<span class="n">csv_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index_csv"</span>
-<span class="n">proof_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"proof"</span><span class="p">)</span>
-<span class="n">proof_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Nettoyer les répertoires s'ils existent</span>
-<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parquet_dir</span><span class="p">,</span> <span class="n">csv_dir</span><span class="p">]:</span>
-    <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="n">d</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Répertoires de sortie créés avec succès."</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Version Spark : 4.0.1
-Interface Spark : http://127.0.0.1:4040
-Interface Spark (navigateur WSL/Windows) : http://localhost:4040
-Répertoires de sortie créés avec succès.
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c504fccb">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-Ingestion-du-corpus-de-texte">1. Ingestion du corpus de texte<a class="anchor-link" href="#1.-Ingestion-du-corpus-de-texte">¶</a></h2><p>Dans cette section, nous chargeons un corpus de texte avec un schéma explicite. Chaque document possède un identifiant unique (doc_id) et un contenu textuel. Nous affichons aussi le nombre total de documents et quelques exemples pour valider le chargement du corpus.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=08d97211">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Définition du schéma et chargement du corpus ===</span>
-<span class="c1"># Schéma : chaque document a un ID unique et un contenu textuel</span>
-<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"content"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">)</span>
-<span class="p">])</span>
-
-<span class="c1"># Corpus exemple : articles courts sur Spark</span>
-<span class="n">corpus_data</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s2">"doc_1"</span><span class="p">,</span> <span class="s2">"Apache Spark is a unified analytics engine for big data processing"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_2"</span><span class="p">,</span> <span class="s2">"Spark provides high-level APIs in Java, Scala, Python, and R"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_3"</span><span class="p">,</span> <span class="s2">"Spark runs on Hadoop, Mesos, Kubernetes, or standalone"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_4"</span><span class="p">,</span> <span class="s2">"Structured Streaming enables fast fault-tolerant stream processing"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_5"</span><span class="p">,</span> <span class="s2">"Spark SQL provides DataFrame and SQL query capabilities"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_6"</span><span class="p">,</span> <span class="s2">"Machine learning library MLlib supports classification and clustering"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_7"</span><span class="p">,</span> <span class="s2">"GraphX is Spark's API for graphs and graph-parallel computation"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_8"</span><span class="p">,</span> <span class="s2">"Spark excels at iterative algorithms and interactive analysis"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_9"</span><span class="p">,</span> <span class="s2">"RDD is the fundamental data structure of Apache Spark"</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">"doc_10"</span><span class="p">,</span> <span class="s2">"DataFrames are distributed collections of data organized into columns"</span><span class="p">)</span>
-<span class="p">]</span>
-
-<span class="c1"># Création du DataFrame corpus à partir des données</span>
-<span class="n">df_corpus</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">corpus_data</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre total de documents : </span><span class="si">{</span><span class="n">df_corpus</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Échantillon du corpus :"</span><span class="p">)</span>
-<span class="n">df_corpus</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">parquet_dir</span><span class="p">,</span> <span class="n">csv_dir</span><span class="p">,</span> <span class="n">proof_dir</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index"</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s2">"inverted_index_csv"</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"proof"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parquet_dir</span><span class="p">,</span> <span class="n">csv_dir</span><span class="p">,</span> <span class="n">proof_dir</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Répertoires créés."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7963,30 +7856,134 @@ Répertoires de sortie créés avec succès.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
+<pre>WARNING: Using incubator modules: jdk.incubator.vector
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/05/14 15:23:53 WARN Utils: Your hostname, sable-ThinkPad-X1-Yoga-3rd, resolves to a loopback address: 127.0.1.1; using 10.192.33.105 instead (on interface wlp2s0)
+26/05/14 15:23:53 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>26/05/14 15:23:55 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Nombre total de documents : 10
+<pre>Spark 4.0.0 | UI: http://localhost:4040
+Répertoires créés.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c504fccb">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="1.-Ingestion-du-corpus-de-texte">1. Ingestion du corpus de texte<a class="anchor-link" href="#1.-Ingestion-du-corpus-de-texte">¶</a></h2><p>Dans cette section, nous chargeons un corpus de texte réel à partir du <strong>GitHub Archive</strong>. Chaque événement GitHub devient un document avec un identifiant unique (doc_id = event ID) et un contenu textuel composé du type d'événement, du nom du repository et du login de l'acteur. Nous affichons aussi le nombre total de documents et quelques exemples pour valider le chargement du corpus.</p>
+<p><strong>Source de données</strong> : <code>sample_archive_github.json</code> - Événements GitHub publics réels</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=08d97211">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Chargement GitHub Archive et transformation en corpus textuel ===</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">BooleanType</span>
 
-Échantillon du corpus :
-+------+---------------------------------------------------------------------+
-|doc_id|content                                                              |
-+------+---------------------------------------------------------------------+
-|doc_1 |Apache Spark is a unified analytics engine for big data processing   |
-|doc_2 |Spark provides high-level APIs in Java, Scala, Python, and R         |
-|doc_3 |Spark runs on Hadoop, Mesos, Kubernetes, or standalone               |
-|doc_4 |Structured Streaming enables fast fault-tolerant stream processing   |
-|doc_5 |Spark SQL provides DataFrame and SQL query capabilities              |
-|doc_6 |Machine learning library MLlib supports classification and clustering|
-|doc_7 |GraphX is Spark's API for graphs and graph-parallel computation      |
-|doc_8 |Spark excels at iterative algorithms and interactive analysis        |
-|doc_9 |RDD is the fundamental data structure of Apache Spark                |
-|doc_10|DataFrames are distributed collections of data organized into columns|
-+------+---------------------------------------------------------------------+
+<span class="c1"># Schéma GitHub Archive simplifié</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"repo"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span><span class="n">StructField</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">)]),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"actor"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span><span class="n">StructField</span><span class="p">(</span><span class="s2">"login"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">)]),</span> <span class="kc">False</span><span class="p">),</span>
+<span class="p">])</span>
 
+<span class="c1"># Chargement et transformation en une seule étape</span>
+<span class="n">archive_file</span> <span class="o">=</span> <span class="s2">"../../sample_archive_github.json"</span>
+<span class="n">df_corpus</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">archive_file</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">select</span><span class="p">(</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo.name"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"actor.login"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"content"</span><span class="p">)</span>
+    <span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Corpus: </span><span class="si">{</span><span class="n">df_corpus</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> documents GitHub | Source: </span><span class="si">{</span><span class="n">archive_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">df_corpus</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+[Stage 0:&gt;                                                          (0 + 1) / 1]</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Corpus: 1000 documents GitHub | Source: ../../sample_archive_github.json
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>+-----------+--------------------------------------------------------------------------------------------+
+|doc_id     |content                                                                                     |
++-----------+--------------------------------------------------------------------------------------------+
+|45193146633|WatchEvent slashback100/presence_simulation weltenwandler                                   |
+|45193146634|CreateEvent chuksdozie/dcc-webapp chuksdozie                                                |
+|45193146635|PushEvent frdpzk3/ppub frdpzk3                                                              |
+|45193146638|PushEvent Sandhj/ST Sandhj                                                                  |
+|45193146652|IssuesEvent Abhay-hack/Lumina LoneWolf4713                                                  |
+|45193146653|PushEvent Jackcoldtd2/Phantom-Wallet-Geteway-Solona-Api-Sdk-Connect-Web3 github-actions[bot]|
+|45193146662|WatchEvent yuaotian/go-cursor-help parnexcodes                                              |
+|45193146665|PushEvent husnapupita/WedusKripto21 github-actions[bot]                                     |
+|45193146669|CreateEvent Rahma118/Counter Rahma118                                                       |
+|45193146674|PushEvent jamesreprise/infrastructure jamesreprise                                          |
++-----------+--------------------------------------------------------------------------------------------+
+only showing top 10 rows
 </pre>
 </div>
 </div>
@@ -8008,11 +8005,12 @@ Répertoires de sortie créés avec succès.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Normalisation : minuscules, tokenisation, suppression des stop-words ===</span>
-<span class="c1"># Liste des stop-words courants en anglais (mots peu significatifs)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Normalisation du texte : pipeline de transformation ===</span>
+
+<span class="c1"># Stop-words anglais courants a filtrer (mots sans valeur semantique)</span>
 <span class="n">stop_words</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"the"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="s2">"an"</span><span class="p">,</span> <span class="s2">"and"</span><span class="p">,</span> <span class="s2">"or"</span><span class="p">,</span> <span class="s2">"but"</span><span class="p">,</span> <span class="s2">"in"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">,</span> <span class="s2">"at"</span><span class="p">,</span> <span class="s2">"to"</span><span class="p">,</span> <span class="s2">"for"</span><span class="p">,</span>
     <span class="s2">"is"</span><span class="p">,</span> <span class="s2">"are"</span><span class="p">,</span> <span class="s2">"was"</span><span class="p">,</span> <span class="s2">"were"</span><span class="p">,</span> <span class="s2">"be"</span><span class="p">,</span> <span class="s2">"been"</span><span class="p">,</span> <span class="s2">"being"</span><span class="p">,</span> <span class="s2">"have"</span><span class="p">,</span> <span class="s2">"has"</span><span class="p">,</span> <span class="s2">"had"</span><span class="p">,</span>
@@ -8021,39 +8019,36 @@ Répertoires de sortie créés avec succès.
     <span class="s2">"who"</span><span class="p">,</span> <span class="s2">"what"</span><span class="p">,</span> <span class="s2">"where"</span><span class="p">,</span> <span class="s2">"when"</span><span class="p">,</span> <span class="s2">"why"</span><span class="p">,</span> <span class="s2">"how"</span>
 <span class="p">}</span>
 
-<span class="c1"># Étape 1 : convertir en minuscules et supprimer la ponctuation et caractères spéciaux</span>
+<span class="c1"># Pipeline de normalisation en 3 etapes</span>
+<span class="c1"># 1. Minuscules + suppression ponctuation (regex: garder seulement alphanumerique et espaces)</span>
 <span class="n">df_normalized</span> <span class="o">=</span> <span class="n">df_corpus</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">"content_clean"</span><span class="p">,</span>
     <span class="n">F</span><span class="o">.</span><span class="n">lower</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">regexp_replace</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"content"</span><span class="p">),</span> <span class="sa">r</span><span class="s2">"[^a-zA-Z0-9\s]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
 <span class="p">)</span>
 
-<span class="c1"># Étape 2 : tokeniser en mots individuels en scindant par espaces</span>
+<span class="c1"># 2. Tokenisation: split par espaces pour obtenir mots individuels</span>
 <span class="n">df_tokens</span> <span class="o">=</span> <span class="n">df_normalized</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">"tokens"</span><span class="p">,</span>
     <span class="n">F</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"content_clean"</span><span class="p">),</span> <span class="sa">r</span><span class="s2">"\s+"</span><span class="p">)</span>
 <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"content_clean"</span><span class="p">)</span>
 
-<span class="c1"># Comptage des tokens avant filtrage</span>
+<span class="c1"># Comptage avant filtrage pour statistiques</span>
 <span class="n">total_tokens_before</span> <span class="o">=</span> <span class="n">df_tokens</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
     <span class="n">F</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"token_count"</span><span class="p">)</span>
 <span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"token_count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre total de tokens AVANT filtrage : </span><span class="si">{</span><span class="n">total_tokens_before</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tokens AVANT filtrage: </span><span class="si">{</span><span class="n">total_tokens_before</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Étape 3 : exploser les tokens (une ligne par token) et filtrer les stop-words</span>
-<span class="n">df_exploded</span> <span class="o">=</span> <span class="n">df_tokens</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
-    <span class="s2">"token"</span><span class="p">,</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">))</span>
-<span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">)</span>
+<span class="c1"># 3. Explosion (1 ligne par token) + filtrage stop-words et tokens vides</span>
+<span class="n">df_filtered</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_tokens</span>
+    <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">"token"</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">)))</span>
+    <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"tokens"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stop_words</span><span class="p">))))</span>
 
-<span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df_exploded</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-    <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">stop_words</span><span class="p">))</span>
-<span class="p">)</span>
-
-<span class="c1"># Comptage des tokens après filtrage</span>
+<span class="c1"># Statistiques finales</span>
 <span class="n">total_tokens_after</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre total de tokens APRÈS filtrage : </span><span class="si">{</span><span class="n">total_tokens_after</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tokens supprimés (stop-words) : </span><span class="si">{</span><span class="n">total_tokens_before</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">total_tokens_after</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Échantillon de tokens normalisés :"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tokens APRES filtrage: </span><span class="si">{</span><span class="n">total_tokens_after</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Stop-words supprimes: </span><span class="si">{</span><span class="n">total_tokens_before</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">total_tokens_after</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Echantillon tokens normalises:"</span><span class="p">)</span>
 <span class="n">df_filtered</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8067,55 +8062,45 @@ Répertoires de sortie créés avec succès.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Nombre total de tokens AVANT filtrage : 87
-</pre>
+<pre>
+[Stage 4:&gt;                                                          (0 + 1) / 1]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
+<pre>
+                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Nombre total de tokens APRÈS filtrage : 68
-Tokens supprimés (stop-words) : 19
+<pre>Tokens AVANT filtrage: 3000
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Tokens APRES filtrage: 3000
+Stop-words supprimes: 0
 
-Échantillon de tokens normalisés :
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>+------+----------+
-|doc_id|     token|
-+------+----------+
-| doc_1|    apache|
-| doc_1|     spark|
-| doc_1|   unified|
-| doc_1| analytics|
-| doc_1|    engine|
-| doc_1|       big|
-| doc_1|      data|
-| doc_1|processing|
-| doc_2|     spark|
-| doc_2|  provides|
-+------+----------+
+Echantillon tokens normalises:
++-----------+--------------------+
+|     doc_id|               token|
++-----------+--------------------+
+|45193146633|          watchevent|
+|45193146633|slashback100prese...|
+|45193146633|       weltenwandler|
+|45193146634|         createevent|
+|45193146634| chuksdoziedccwebapp|
+|45193146634|          chuksdozie|
+|45193146635|           pushevent|
+|45193146635|         frdpzk3ppub|
+|45193146635|             frdpzk3|
+|45193146638|           pushevent|
++-----------+--------------------+
 only showing top 10 rows
 </pre>
 </div>
@@ -8138,21 +8123,31 @@ only showing top 10 rows
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Construction de l'index inversé ===</span>
-<span class="c1"># Regrouper par token et collecter tous les IDs de documents où le token apparaît</span>
-<span class="n">df_inverted_index</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">),</span>  <span class="c1"># Tous les doc_id contenant ce token</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)</span>  <span class="c1"># Fréquence : nombre d'occurrences du token</span>
-<span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">))</span>  <span class="c1"># Tri décroissant par fréquence</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Construction de l'index inverse: token -&gt; [doc_ids] + frequence ===</span>
 
-<span class="c1"># Nombre de termes uniques</span>
+<span class="c1"># Aggregation par token:</span>
+<span class="c1"># - collect_list: rassemble tous les doc_id contenant ce token</span>
+<span class="c1"># - count: nombre total d'occurrences du token (frequence)</span>
+<span class="c1"># - orderBy desc: termes les plus frequents en premier</span>
+<span class="n">df_inverted_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_filtered</span>
+    <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">collect_list</span><span class="p">(</span><span class="s2">"doc_id"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">desc</span><span class="p">(</span><span class="s2">"freq"</span><span class="p">)))</span>
+
+<span class="c1"># Statistiques de l'index</span>
 <span class="n">unique_terms</span> <span class="o">=</span> <span class="n">df_inverted_index</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Nombre de termes uniques dans l'index : </span><span class="si">{</span><span class="n">unique_terms</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Échantillon de l'index inversé (premiers 15 termes par fréquence) :"</span><span class="p">)</span>
-<span class="n">df_inverted_index</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Termes uniques dans l'index: </span><span class="si">{</span><span class="n">unique_terms</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Top 15 termes par frequence:"</span><span class="p">)</span>
+<span class="c1"># truncate=80 : la colonne doc_ids est un collect_list (parfois des centaines</span>
+<span class="c1"># d'IDs) ; sans troncature une seule ligne fait &gt;9000 caracteres et casse</span>
+<span class="c1"># l'affichage de la page.</span>
+<span class="n">df_inverted_index</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8164,55 +8159,37 @@ only showing top 10 rows
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Nombre de termes uniques dans l'index : 57
+<pre>Termes uniques dans l'index: 1398
 
-Échantillon de l'index inversé (premiers 15 termes par fréquence) :
+Top 15 termes par frequence:
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>[Stage 20:&gt;                                                         (0 + 8) / 8]</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>+----------+------------------------------------------+----+
-|token     |doc_ids                                   |freq|
-+----------+------------------------------------------+----+
-|spark     |[doc_1, doc_2, doc_3, doc_5, doc_8, doc_9]|6   |
-|data      |[doc_1, doc_9, doc_10]                    |3   |
-|apache    |[doc_1, doc_9]                            |2   |
-|processing|[doc_1, doc_4]                            |2   |
-|provides  |[doc_2, doc_5]                            |2   |
-|sql       |[doc_5, doc_5]                            |2   |
-|analytics |[doc_1]                                   |1   |
-|unified   |[doc_1]                                   |1   |
-|engine    |[doc_1]                                   |1   |
-|big       |[doc_1]                                   |1   |
-|apis      |[doc_2]                                   |1   |
-|scala     |[doc_2]                                   |1   |
-|java      |[doc_2]                                   |1   |
-|r         |[doc_2]                                   |1   |
-|highlevel |[doc_2]                                   |1   |
-+----------+------------------------------------------+----+
+<pre>+-----------------------------+--------------------------------------------------------------------------------+----+
+|                        token|                                                                         doc_ids|freq|
++-----------------------------+--------------------------------------------------------------------------------+----+
+|                    pushevent|[45193146832, 45193146846, 45193146847, 45193146861, 45193146863, 45193146864...| 714|
+|             githubactionsbot|[45193146831, 45193146861, 45193146864, 45193146917, 45193146938, 45193146980...|  99|
+|                  createevent|[45193146839, 45193146849, 45193146851, 45193146860, 45193146894, 45193146913...|  97|
+|             pullrequestevent|[45193146837, 45193146886, 45193146945, 45193147015, 45193147088, 45193147141...|  56|
+|                   watchevent|[45193146862, 45193146986, 45193146995, 45193147012, 45193147029, 45193147432...|  50|
+|            issuecommentevent|[45193146935, 45193146976, 45193147309, 45193147791, 45193148176, 45193148315...|  28|
+|                dependabotbot|[45193146976, 45193147015, 45193147370, 45193147592, 45193147656, 45193147764...|  26|
+|                aergoioherapy|[45193148410, 45193148531, 45193148698, 45193148854, 45193148966, 45193149043...|  19|
+|                      hanlsin|[45193148410, 45193148531, 45193148698, 45193148854, 45193148966, 45193149043...|  19|
+|                 releaseevent|[45193147950, 45193149627, 45193149629, 45193149635, 45193149639, 45193149653...|  14|
+|nilcsitopicinterviewquestions|[45193146976, 45193147015, 45193147764, 45193148912, 45193148914, 45193149031...|  13|
+|                      pullbot|[45193147322, 45193147449, 45193147859, 45193147860, 45193147964, 45193148247...|  13|
+|      dandapandabytesdevcrate|[45193149627, 45193149629, 45193149635, 45193149639, 45193149653, 45193149656...|  13|
+|              vpnsuperappfast|[45193147536, 45193147667, 45193147996, 45193148299, 45193148518, 45193148637...|  12|
+|                  vpnsuperapp|[45193147536, 45193147667, 45193147996, 45193148299, 45193148518, 45193148637...|  12|
++-----------------------------+--------------------------------------------------------------------------------+----+
 only showing top 15 rows
 </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
 </div>
 </div>
 </div>
@@ -8233,32 +8210,35 @@ only showing top 15 rows
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Écriture de l'index inversé en Parquet et CSV ===</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Écriture de l'index inversé en Parquet..."</span><span class="p">)</span>
-<span class="n">df_inverted_index</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Index Parquet écrit dans : </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Persistence de l'index: Parquet (columnar) vs CSV (texte) ===</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Ecriture de l'index inversé en CSV..."</span><span class="p">)</span>
-<span class="c1"># Convertir l'array doc_ids en string (séparé par des virgules) pour CSV</span>
+<span class="c1"># Ecriture Parquet: format columnar compresse, optimal pour requetes analytiques</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Ecriture Parquet..."</span><span class="p">)</span>
+<span class="n">df_inverted_index</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Parquet: </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Ecriture CSV: format texte universel mais moins efficace</span>
+<span class="c1"># Transformation necessaire: array -&gt; string separee par virgules</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Ecriture CSV..."</span><span class="p">)</span>
 <span class="n">df_inverted_index_csv</span> <span class="o">=</span> <span class="n">df_inverted_index</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
     <span class="s2">"doc_ids"</span><span class="p">,</span>
-    <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">))</span>  <span class="c1"># Joindre les elements du tableau avec des virgules</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="s2">","</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"doc_ids"</span><span class="p">))</span>
 <span class="p">)</span>
 
+<span class="c1"># coalesce(1): un seul fichier CSV pour simplicite</span>
 <span class="n">df_inverted_index_csv</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">write</span> \
     <span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Index CSV écrit dans : </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CSV: </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Rechargement des index pour les requêtes suivantes</span>
+<span class="c1"># Rechargement pour tests de requetes</span>
 <span class="n">df_index_parquet</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
 <span class="n">df_index_csv</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"header"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Index rechargés avec succès pour les requêtes."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Index recharges pour benchmarking."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8271,37 +8251,45 @@ only showing top 15 rows
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Écriture de l'index inversé en Parquet...
+<pre>Ecriture Parquet...
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Index Parquet écrit dans : outputs/lab2/inverted_index
-
-Ecriture de l'index inversé en CSV...
-</pre>
+<pre>
+[Stage 27:&gt;                                                         (0 + 1) / 1]</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>                                                                                </pre>
+<pre>
+                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Index CSV écrit dans : outputs/lab2/inverted_index_csv
+<pre>Parquet: outputs/lab2/inverted_index
 
-Index rechargés avec succès pour les requêtes.
+Ecriture CSV...
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>CSV: outputs/lab2/inverted_index_csv
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+Index recharges pour benchmarking.
 </pre>
 </div>
 </div>
@@ -8323,66 +8311,55 @@ Index rechargés avec succès pour les requêtes.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Requêtes sur l'index et mesure de latence ===</span>
-<span class="c1"># Termes à rechercher</span>
-<span class="n">terms_to_query</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"spark"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">,</span> <span class="s2">"processing"</span><span class="p">]</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Benchmark: mesure de latence des requetes (Parquet vs CSV) ===</span>
+
+<span class="c1"># Termes a rechercher dans l'index</span>
+<span class="n">terms_to_query</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pushevent"</span><span class="p">,</span> <span class="s2">"github"</span><span class="p">,</span> <span class="s2">"bot"</span><span class="p">]</span>
 <span class="n">query_latencies</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Mesure de latence des requêtes sur l'index Parquet :"</span><span class="p">)</span>
+<span class="c1"># Test 1: Requetes sur index Parquet (format columnar compresse)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Benchmark Parquet:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
-
 <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms_to_query</span><span class="p">:</span>
-    <span class="c1"># Mesure du temps de requête sur Parquet</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="n">term</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
     
+    <span class="c1"># Stockage des metriques pour le rapport CSV</span>
     <span class="n">query_latencies</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
         <span class="s2">"term"</span><span class="p">:</span> <span class="n">term</span><span class="p">,</span>
         <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"parquet"</span><span class="p">,</span>
         <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="n">latency_ms</span><span class="p">,</span>
         <span class="s2">"found"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">"freq"</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"freq"</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">"doc_count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="s2">"freq"</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"freq"</span><span class="p">]</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"doc_count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">])</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="mi">0</span>
     <span class="p">})</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requête : '</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Latence Parquet : </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># doc_ids est un array dans Parquet</span>
-        <span class="n">doc_ids_list</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span>
-        <span class="n">doc_ids_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">doc_ids_list</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Fréquence : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'freq'</span><span class="p">]</span><span class="si">}</span><span class="s2">, Documents : [</span><span class="si">{</span><span class="n">doc_ids_str</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">" | freq=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'freq'</span><span class="p">]</span><span class="si">}</span><span class="s2">, docs=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'doc_ids'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Terme non trouvé"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">" | non trouve"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Mesure de latence des requêtes sur l'index CSV :"</span><span class="p">)</span>
+<span class="c1"># Test 2: Requetes sur index CSV (format texte)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Benchmark CSV:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
-
 <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terms_to_query</span><span class="p">:</span>
-    <span class="c1"># Mesure du temps de requête sur CSV</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">df_index_csv</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="n">term</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
     
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requête : '</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Latence CSV : </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="c1"># doc_ids est une string dans CSV (séparée par des virgules)</span>
-        <span class="n">doc_ids_str</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span>
-        <span class="n">doc_ids_list</span> <span class="o">=</span> <span class="n">doc_ids_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">doc_ids_str</span> <span class="k">else</span> <span class="p">[]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Fréquence : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'freq'</span><span class="p">]</span><span class="si">}</span><span class="s2">, Document count : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">doc_ids_list</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">term</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms"</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="n">doc_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">))</span> <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"doc_ids"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">" | freq=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'freq'</span><span class="p">]</span><span class="si">}</span><span class="s2">, docs=</span><span class="si">{</span><span class="n">doc_count</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Terme non trouvé"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">" | non trouve"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Latences enregistrées pour analyse."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Latences enregistrees."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8395,35 +8372,31 @@ Index rechargés avec succès pour les requêtes.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Mesure de latence des requêtes sur l'index Parquet :
+<pre>Benchmark Parquet:
 ----------------------------------------------------------------------
-Requête : 'spark'
-  Latence Parquet : 614.93 ms
-  Fréquence : 6, Documents : [doc_1, doc_2, doc_3, doc_5, doc_8, doc_9]
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>'pushevent': 307.43 ms | freq=714, docs=714
+'github': 82.24 ms | non trouve
+'bot': 69.18 ms | non trouve
 
-Requête : 'data'
-  Latence Parquet : 179.39 ms
-  Fréquence : 3, Documents : [doc_1, doc_9, doc_10]
-
-Requête : 'processing'
-  Latence Parquet : 169.84 ms
-  Fréquence : 2, Documents : [doc_1, doc_4]
-
-Mesure de latence des requêtes sur l'index CSV :
+Benchmark CSV:
 ----------------------------------------------------------------------
-Requête : 'spark'
-  Latence CSV : 237.88 ms
-  Fréquence : 6, Document count : 6
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>'pushevent': 144.27 ms | freq=714, docs=714
+'github': 80.52 ms | non trouve
+'bot': 103.95 ms | non trouve
 
-Requête : 'data'
-  Latence CSV : 137.92 ms
-  Fréquence : 3, Document count : 3
-
-Requête : 'processing'
-  Latence CSV : 140.65 ms
-  Fréquence : 2, Document count : 2
-
-Latences enregistrées pour analyse.
+Latences enregistrees.
 </pre>
 </div>
 </div>
@@ -8445,40 +8418,34 @@ Latences enregistrées pour analyse.
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Comparaison des empreintes disque (Parquet vs CSV) ===</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Fonction utilitaire: calcul taille totale d'un repertoire</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_directory_size</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Calcule la taille totale d'un répertoire en bytes"""</span>
-    <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
-            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-                <span class="n">total_size</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">total_size</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> 
+               <span class="k">for</span> <span class="n">dp</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> 
+               <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">f</span><span class="p">)))</span>
 
-<span class="c1"># Calcul des tailles</span>
+<span class="c1"># Calcul des tailles sur disque</span>
 <span class="n">parquet_size</span> <span class="o">=</span> <span class="n">get_directory_size</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">))</span>
 <span class="n">csv_size</span> <span class="o">=</span> <span class="n">get_directory_size</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">csv_dir</span><span class="p">))</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Comparaison des empreintes disque :"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Empreinte disque:"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">70</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Taille Parquet : </span><span class="si">{</span><span class="n">parquet_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">parquet_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MB)"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Taille CSV     : </span><span class="si">{</span><span class="n">csv_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">csv_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MB)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Parquet: </span><span class="si">{</span><span class="n">parquet_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">parquet_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CSV:     </span><span class="si">{</span><span class="n">csv_size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes (</span><span class="si">{</span><span class="n">csv_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB)"</span><span class="p">)</span>
 
+<span class="c1"># Ratio de compression (negatif = Parquet plus gros, positif = Parquet plus petit)</span>
 <span class="k">if</span> <span class="n">csv_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">compression_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">csv_size</span> <span class="o">-</span> <span class="n">parquet_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">csv_size</span> <span class="o">*</span> <span class="mi">100</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Réduction de taille : </span><span class="si">{</span><span class="n">compression_ratio</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% (Parquet vs CSV)"</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"CSV vide, impossible de calculer le ratio."</span><span class="p">)</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">csv_size</span> <span class="o">-</span> <span class="n">parquet_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">csv_size</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Difference: </span><span class="si">{</span><span class="n">ratio</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">% (Parquet vs CSV)"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Détail des fichiers Parquet :"</span><span class="p">)</span>
+<span class="c1"># Detail des fichiers Parquet (metadata + data + checksums)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Fichiers Parquet:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parquet_dir</span><span class="p">)):</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8492,16 +8459,16 @@ Latences enregistrées pour analyse.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Comparaison des empreintes disque :
+<pre>Empreinte disque:
 ----------------------------------------------------------------------
-Taille Parquet : 1,882 bytes (0.00 MB)
-Taille CSV     : 1,068 bytes (0.00 MB)
-Réduction de taille : -76.2% (Parquet vs CSV)
+Parquet: 31,162 bytes (30.4 KB)
+CSV:     65,175 bytes (63.6 KB)
+Difference: +52.2% (Parquet vs CSV)
 
-Détail des fichiers Parquet :
+Fichiers Parquet:
   ._SUCCESS.crc: 8 bytes
-  part-00000-9e702105-9a24-4791-ae44-0e03c3b25da4-c000.snappy.parquet: 1,850 bytes
-  .part-00000-9e702105-9a24-4791-ae44-0e03c3b25da4-c000.snappy.parquet.crc: 24 bytes
+  part-00000-45372f4d-7988-4b46-aba5-3929dfc51701-c000.snappy.parquet: 30,902 bytes
+  .part-00000-45372f4d-7988-4b46-aba5-3929dfc51701-c000.snappy.parquet.crc: 252 bytes
   _SUCCESS: 0 bytes
 </pre>
 </div>
@@ -8524,75 +8491,63 @@ Détail des fichiers Parquet :
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Sauvegarde des plans d'exécution et création du journal de métriques ===</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Sauvegarde preuves: plans d'execution + metriques CSV ===</span>
 
-<span class="c1"># Sauvegarde du plan pour la construction de l'index</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Sauvegarde du plan d'exécution pour la construction de l'index..."</span><span class="p">)</span>
+<span class="c1"># Plan 1: Construction de l'index inverse (groupBy + aggregations)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sauvegarde plan construction index..."</span><span class="p">)</span>
 <span class="n">plan_file</span> <span class="o">=</span> <span class="n">proof_dir</span> <span class="o">/</span> <span class="s2">"plan_index_build.txt"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">plan_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="c1"># Capture du plan texte formaté</span>
     <span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">buffer</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
     <span class="n">df_inverted_index</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan d'index écrit dans : </span><span class="si">{</span><span class="n">plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan index: </span><span class="si">{</span><span class="n">plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Sauvegarde du plan pour une requête</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Sauvegarde du plan d'exécution pour une requête..."</span><span class="p">)</span>
+<span class="c1"># Plan 2: Requete de recherche (filter sur token)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sauvegarde plan requete..."</span><span class="p">)</span>
 <span class="n">query_plan_file</span> <span class="o">=</span> <span class="n">proof_dir</span> <span class="o">/</span> <span class="s2">"plan_query.txt"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">query_plan_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">buffer</span>
-    <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"spark"</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">df_index_parquet</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"token"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"pushevent"</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan de requête écrit dans : </span><span class="si">{</span><span class="n">query_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan requete: </span><span class="si">{</span><span class="n">query_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Création du journal de métriques CSV</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Création du journal de métriques..."</span><span class="p">)</span>
+<span class="c1"># Journal des metriques: latences + tailles + statistiques</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Creation journal metriques..."</span><span class="p">)</span>
 <span class="n">metrics_log_file</span> <span class="o">=</span> <span class="s2">"lab2_metrics_log.csv"</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metrics_log_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
-    <span class="n">fieldnames</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"timestamp"</span><span class="p">,</span>
-        <span class="s2">"index_type"</span><span class="p">,</span>
-        <span class="s2">"term"</span><span class="p">,</span>
-        <span class="s2">"latency_ms"</span><span class="p">,</span>
-        <span class="s2">"parquet_size_bytes"</span><span class="p">,</span>
-        <span class="s2">"csv_size_bytes"</span><span class="p">,</span>
-        <span class="s2">"unique_terms"</span><span class="p">,</span>
-        <span class="s2">"doc_count"</span><span class="p">,</span>
-        <span class="s2">"token_freq"</span>
-    <span class="p">]</span>
-    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">fieldnames</span><span class="p">)</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">"timestamp"</span><span class="p">,</span> <span class="s2">"index_type"</span><span class="p">,</span> <span class="s2">"term"</span><span class="p">,</span> <span class="s2">"latency_ms"</span><span class="p">,</span>
+        <span class="s2">"parquet_size_bytes"</span><span class="p">,</span> <span class="s2">"csv_size_bytes"</span><span class="p">,</span> <span class="s2">"unique_terms"</span><span class="p">,</span>
+        <span class="s2">"doc_count"</span><span class="p">,</span> <span class="s2">"token_freq"</span>
+    <span class="p">])</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
     
-    <span class="n">current_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
     
-    <span class="c1"># Écriture des métriques de requête</span>
-    <span class="k">for</span> <span class="n">latency_entry</span> <span class="ow">in</span> <span class="n">query_latencies</span><span class="p">:</span>
+    <span class="c1"># Ecriture des metriques de chaque requete testee</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">query_latencies</span><span class="p">:</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">({</span>
-            <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">current_timestamp</span><span class="p">,</span>
+            <span class="s2">"timestamp"</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
             <span class="s2">"index_type"</span><span class="p">:</span> <span class="s2">"Parquet"</span><span class="p">,</span>
-            <span class="s2">"term"</span><span class="p">:</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">],</span>
-            <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">latency_entry</span><span class="p">[</span><span class="s1">'latency_ms'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"term"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"term"</span><span class="p">],</span>
+            <span class="s2">"latency_ms"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">entry</span><span class="p">[</span><span class="s1">'latency_ms'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="s2">"parquet_size_bytes"</span><span class="p">:</span> <span class="n">parquet_size</span><span class="p">,</span>
             <span class="s2">"csv_size_bytes"</span><span class="p">:</span> <span class="n">csv_size</span><span class="p">,</span>
             <span class="s2">"unique_terms"</span><span class="p">:</span> <span class="n">unique_terms</span><span class="p">,</span>
-            <span class="s2">"doc_count"</span><span class="p">:</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"doc_count"</span><span class="p">],</span>
-            <span class="s2">"token_freq"</span><span class="p">:</span> <span class="n">latency_entry</span><span class="p">[</span><span class="s2">"freq"</span><span class="p">]</span>
+            <span class="s2">"doc_count"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"doc_count"</span><span class="p">],</span>
+            <span class="s2">"token_freq"</span><span class="p">:</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"freq"</span><span class="p">]</span>
         <span class="p">})</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Journal de métriques écrit dans : </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Prêt pour capture des images de l'interface Spark UI (http://localhost:4040)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Metriques: </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Capture Spark UI: http://localhost:4040"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8605,15 +8560,15 @@ Détail des fichiers Parquet :
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Sauvegarde du plan d'exécution pour la construction de l'index...
-Plan d'index écrit dans : proof/plan_index_build.txt
-Sauvegarde du plan d'exécution pour une requête...
-Plan de requête écrit dans : proof/plan_query.txt
+<pre>Sauvegarde plan construction index...
+Plan index: proof/plan_index_build.txt
+Sauvegarde plan requete...
+Plan requete: proof/plan_query.txt
 
-Création du journal de métriques...
-Journal de métriques écrit dans : lab2_metrics_log.csv
+Creation journal metriques...
+Metriques: lab2_metrics_log.csv
 
-Prêt pour capture des images de l'interface Spark UI (http://localhost:4040)
+Capture Spark UI: http://localhost:4040
 </pre>
 </div>
 </div>
@@ -8630,42 +8585,16 @@ Prêt pour capture des images de l'interface Spark UI (http://localhost:4040)
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=eaf939dd">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=eaf939dd">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># === Arrêt et nettoyage ===</span>
-<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Assignment 2 terminé avec succès."</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Fichiers de sortie générés :"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Index Parquet : </span><span class="si">{</span><span class="n">parquet_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Index CSV : </span><span class="si">{</span><span class="n">csv_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Plans : </span><span class="si">{</span><span class="n">proof_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - Métriques : </span><span class="si">{</span><span class="n">metrics_log_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>
-Assignment 2 terminé avec succès.
-Fichiers de sortie générés :
-  - Index Parquet : outputs/lab2/inverted_index
-  - Index CSV : outputs/lab2/inverted_index_csv
-  - Plans : proof
-  - Métriques : lab2_metrics_log.csv
-</pre>
 </div>
 </div>
 </div>

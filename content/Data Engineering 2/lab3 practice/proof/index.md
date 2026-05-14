@@ -1,6 +1,6 @@
 ---
 title: "lab3 practice - Preuves"
-date: 2026-05-12
+date: 2026-05-14
 tags:
   - proof
   - de2

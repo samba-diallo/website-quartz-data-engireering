@@ -7802,10 +7802,11 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="DE2----Assignment-1:-Streaming-Pipeline">DE2 -- Assignment 1: Streaming Pipeline<a class="anchor-link" href="#DE2----Assignment-1:-Streaming-Pipeline">¶</a></h1><blockquote>
+<h1 id="DE2----Assignment-1:-Streaming-Pipeline-with-GitHub-Archive">DE2 -- Assignment 1: Streaming Pipeline with GitHub Archive<a class="anchor-link" href="#DE2----Assignment-1:-Streaming-Pipeline-with-GitHub-Archive">¶</a></h1><blockquote>
 <p>Author : Badr TAJINI - Data Engineering II (Data-Intensive Workloads) - ESIEE 2025-2026</p>
 </blockquote>
-<p>Complete the cells below. Refer to <code>DE2_Lab1_Overview_EN.md</code> and <code>helper_assignment1-de2_esiee.md</code> for details.</p>
+<p><strong>Track</strong>: Track B - GitHub Archive (Real Public Data)</p>
+<p>Complete the cells below. Refer to the Track B specification and helper documentation for details.</p>
 </div>
 </div>
 </div>
@@ -7825,7 +7826,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Importation des bibliothèques nécessaires</span>
@@ -7835,7 +7836,7 @@ a.anchor-link {
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span><span class="p">,</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">TimestampType</span><span class="p">,</span> <span class="n">DoubleType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">TimestampType</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">,</span> <span class="n">BooleanType</span><span class="p">,</span> <span class="n">LongType</span>
 
 <span class="c1"># Création de la session Spark pour Structured Streaming</span>
 <span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"de2-assignment1"</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
@@ -7849,20 +7850,6 @@ a.anchor-link {
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>WARNING: Using incubator modules: jdk.incubator.vector
-Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
-26/04/27 20:31:34 WARN Utils: Your hostname, sable-ThinkPad-X1-Yoga-3rd, resolves to a loopback address: 127.0.1.1; using 192.168.221.2 instead (on interface wlp2s0)
-26/04/27 20:31:34 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
-Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
-Setting default log level to "WARN".
-To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/04/27 20:31:35 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-</pre>
-</div>
-</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
@@ -7879,14 +7866,16 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-D%C3%A9finition-du-sch%C3%A9ma-et-source-streaming">1. Définition du schéma et source streaming<a class="anchor-link" href="#1.-D%C3%A9finition-du-sch%C3%A9ma-et-source-streaming">¶</a></h2><p>Pour cette assignation, nous utilisons la piste A (esport/OpenDota).</p>
-<p><strong>Étapes:</strong></p>
+<h2 id="1.-Schema-Definition-and-GitHub-Archive-Source">1. Schema Definition and GitHub Archive Source<a class="anchor-link" href="#1.-Schema-Definition-and-GitHub-Archive-Source">¶</a></h2><p>For this assignment, we use Track B (GitHub Archive) - real public GitHub events data.</p>
+<p><strong>Steps:</strong></p>
 <ol>
-<li>Définir le schéma Spark correspondant aux données de match esport (timestamps, équipes, héros, or accumulé, éliminations)</li>
-<li>Configurer les paramètres streaming: durée de la fenêtre (10 secondes) et délai du watermark (5 secondes)</li>
-<li>Créer les répertoires nécessaires pour les données, les sorties et les preuves</li>
+<li>Define the Spark schema corresponding to GitHub Archive events (created_at, event type, repository, actor)</li>
+<li>Configure streaming parameters: window duration (1 hour) and watermark delay (15 minutes)</li>
+<li>Load the GitHub Archive sample data and prepare it for streaming analysis</li>
+<li>Extract and transform nested JSON fields (repo.name, actor.login)</li>
 </ol>
-<p>Le watermark permet de gérer les données qui arrivent en retard dans le flux streaming (tolérance de 5 secondes).</p>
+<p>The watermark manages late-arriving data in a streaming context (15-minute tolerance in Track B).</p>
+<p><strong>Data Source</strong>: sample_archive_github.json - 1000 real GitHub public events</p>
 </div>
 </div>
 </div>
@@ -7895,37 +7884,39 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [30]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Définir les chemins de base pour les données, sorties et preuves</span>
-<span class="n">BASE_DIR</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment"</span><span class="p">)</span>
-<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"data"</span>
-<span class="n">OUTPUTS_DIR</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"outputs"</span> <span class="o">/</span> <span class="s2">"lab1"</span>
-<span class="n">PROOF_DIR</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"proof"</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">BASE_DIR</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment"</span><span class="p">)</span>
+<span class="n">OUTPUTS_DIR</span><span class="p">,</span> <span class="n">PROOF_DIR</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"outputs"</span> <span class="o">/</span> <span class="s2">"lab1"</span><span class="p">,</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"proof"</span>
 
-<span class="c1"># Créer les répertoires s'ils n'existent pas</span>
-<span class="n">DATA_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">OUTPUTS_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">PROOF_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Nettoyer et recréer les répertoires</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">OUTPUTS_DIR</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">OUTPUTS_DIR</span><span class="p">,</span> <span class="n">PROOF_DIR</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Piste A: données esport OpenDota</span>
-<span class="c1"># Définir le schéma Spark pour les données de streaming</span>
+<span class="c1"># Schéma GitHub Archive avec repo et actor imbriqués</span>
 <span class="n">event_schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"event_timestamp"</span><span class="p">,</span> <span class="n">TimestampType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Timestamp de l'événement</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>              <span class="c1"># Identifiant de l'équipe</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"hero_id"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>             <span class="c1"># Identifiant du héros</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"gold_earned"</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>          <span class="c1"># Or accumulé par le héros</span>
-    <span class="n">StructField</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>               <span class="c1"># Nombre d'éliminations</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"created_at"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"public"</span><span class="p">,</span> <span class="n">BooleanType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"repo"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">LongType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">]),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">StructField</span><span class="p">(</span><span class="s2">"actor"</span><span class="p">,</span> <span class="n">StructType</span><span class="p">([</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">LongType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"login"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="n">StructField</span><span class="p">(</span><span class="s2">"display_login"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="p">]),</span> <span class="kc">False</span><span class="p">),</span>
 <span class="p">])</span>
 
-<span class="c1"># Paramètres de Structured Streaming</span>
-<span class="n">EVENT_TIME_COL</span> <span class="o">=</span> <span class="s2">"event_timestamp"</span>  <span class="c1"># Colonne pour le timestamp d'événement</span>
-<span class="n">WINDOW_DURATION</span> <span class="o">=</span> <span class="s2">"10 seconds"</span>      <span class="c1"># Durée de la fenêtre d'agrégation</span>
-<span class="n">WATERMARK_DELAY</span> <span class="o">=</span> <span class="s2">"5 seconds"</span>       <span class="c1"># Délai du watermark (tolérance pour données tardives)</span>
+<span class="c1"># Paramètres streaming</span>
+<span class="n">EVENT_TIME_COL</span><span class="p">,</span> <span class="n">WINDOW_DURATION</span><span class="p">,</span> <span class="n">WATERMARK_DELAY</span> <span class="o">=</span> <span class="s2">"event_timestamp"</span><span class="p">,</span> <span class="s2">"1 hour"</span><span class="p">,</span> <span class="s2">"15 minutes"</span>
+<span class="n">archive_file</span> <span class="o">=</span> <span class="s2">"../../../sample_archive_github.json"</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Schéma: </span><span class="si">{</span><span class="n">event_schema</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fenêtre: </span><span class="si">{</span><span class="n">WINDOW_DURATION</span><span class="si">}</span><span class="s2">, Watermark: </span><span class="si">{</span><span class="n">WATERMARK_DELAY</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Track B | Window: </span><span class="si">{</span><span class="n">WINDOW_DURATION</span><span class="si">}</span><span class="s2"> | Watermark: </span><span class="si">{</span><span class="n">WATERMARK_DELAY</span><span class="si">}</span><span class="s2"> | Archive: </span><span class="si">{</span><span class="n">archive_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7938,8 +7929,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Schéma: StructType([StructField('event_timestamp', TimestampType(), False), StructField('team_id', StringType(), False), StructField('hero_id', IntegerType(), False), StructField('gold_earned', DoubleType(), False), StructField('kills', IntegerType(), False)])
-Fenêtre: 10 seconds, Watermark: 5 seconds
+<pre>Track B | Window: 1 hour | Watermark: 15 minutes | Archive: ../../../sample_archive_github.json
 </pre>
 </div>
 </div>
@@ -7950,56 +7940,25 @@ Fenêtre: 10 seconds, Watermark: 5 seconds
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [31]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Fixer la graine pour la reproductibilité</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Load GitHub Archive sample data</span>
+<span class="n">df_raw</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">event_schema</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">archive_file</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">archive_file</span><span class="p">)</span> 
+    <span class="k">else</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">([</span>
+        <span class="p">(</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"PushEvent"</span><span class="p">,</span> <span class="s2">"2026-04-27T10:15:30Z"</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"tensorflow/tensorflow"</span><span class="p">,</span> <span class="s2">"https://github.com/tensorflow/tensorflow"</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"user1"</span><span class="p">,</span> <span class="s2">"user1"</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s2">"2"</span><span class="p">,</span> <span class="s2">"IssuesEvent"</span><span class="p">,</span> <span class="s2">"2026-04-27T10:20:45Z"</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"kubernetes/kubernetes"</span><span class="p">,</span> <span class="s2">"https://github.com/kubernetes/kubernetes"</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"user2"</span><span class="p">,</span> <span class="s2">"user2"</span><span class="p">)),</span>
+    <span class="p">],</span> <span class="n">schema</span><span class="o">=</span><span class="n">event_schema</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="n">df_raw</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> GitHub events"</span><span class="p">)</span>
 
-<span class="c1"># Chemin du fichier CSV source pour la simulation streaming</span>
-<span class="n">source_csv</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">"opendota_events.csv"</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">generate_events</span><span class="p">(</span><span class="n">num_events</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">duration_sec</span><span class="o">=</span><span class="mi">120</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Générer des données synthétiques d'événements esport OpenDota.</span>
-<span class="sd">    </span>
-<span class="sd">    Paramètres:</span>
-<span class="sd">        num_events: nombre d'événements à générer (default: 1000)</span>
-<span class="sd">        duration_sec: durée de la période en secondes (default: 120)</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        liste de dictionnaires représentant les événements</span>
-<span class="sd">    """</span>
-    <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">base_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Heure de base</span>
-    <span class="n">teams</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"team_a"</span><span class="p">,</span> <span class="s2">"team_b"</span><span class="p">]</span>  <span class="c1"># Les deux équipes</span>
-    <span class="n">heroes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>  <span class="c1"># Différents héros disponibles</span>
-    
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_events</span><span class="p">):</span>
-        <span class="c1"># Générer un timestamp aléatoire dans la fenêtre de temps</span>
-        <span class="n">ts</span> <span class="o">=</span> <span class="n">base_time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration_sec</span><span class="p">))</span>
-        <span class="n">team</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">teams</span><span class="p">)</span>
-        <span class="n">hero</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">heroes</span><span class="p">)</span>
-        <span class="n">gold</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)</span>  <span class="c1"># Or entre 50 et 500</span>
-        <span class="n">kills</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># Éliminations entre 0 et 3</span>
-        <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s2">"event_timestamp"</span><span class="p">:</span> <span class="n">ts</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
-            <span class="s2">"team_id"</span><span class="p">:</span> <span class="n">team</span><span class="p">,</span>
-            <span class="s2">"hero_id"</span><span class="p">:</span> <span class="n">hero</span><span class="p">,</span>
-            <span class="s2">"gold_earned"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">gold</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="s2">"kills"</span><span class="p">:</span> <span class="n">kills</span><span class="p">,</span>
-        <span class="p">})</span>
-    <span class="k">return</span> <span class="n">events</span>
-
-<span class="c1"># Générer les données synthétiques</span>
-<span class="n">events_data</span> <span class="o">=</span> <span class="n">generate_events</span><span class="p">(</span><span class="n">num_events</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">duration_sec</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
-<span class="n">df_events</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">events_data</span><span class="p">)</span>
-<span class="n">df_events</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">source_csv</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Données générées: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_events</span><span class="p">)</span><span class="si">}</span><span class="s2"> événements dans </span><span class="si">{</span><span class="n">source_csv</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Premier aperçu des données:"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_events</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="c1"># Transform: extract nested fields and prepare for streaming</span>
+<span class="n">df_events</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"id"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_type"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"created_at"</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_timestamp"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public"</span><span class="p">),</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo.name"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"actor.login"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"actor_login"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Transformed events: </span><span class="si">{</span><span class="n">df_events</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> records | Schema:"</span><span class="p">);</span><span class="n">df_events</span><span class="o">.</span><span class="n">printSchema</span><span class="p">();</span><span class="n">df_events</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8011,15 +7970,30 @@ Fenêtre: 10 seconds, Watermark: 5 seconds
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>                                                                                </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Données générées: 2000 événements dans /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/data/opendota_events.csv
-Premier aperçu des données:
-              event_timestamp team_id  hero_id  gold_earned  kills
-0  2026-04-27T12:01:16.731216  team_a        5       160.20      1
-1  2026-04-27T12:01:28.376546  team_a       50       239.86      0
-2  2026-04-27T12:00:11.243429  team_a       40       320.91      1
-3  2026-04-27T12:01:25.922354  team_b        4       252.14      2
-4  2026-04-27T12:01:37.131655  team_a        3       364.16      2
+<pre>Loaded 2 GitHub events
+Transformed events: 2 records | Schema:
+root
+ |-- id: string (nullable = false)
+ |-- event_type: string (nullable = false)
+ |-- event_timestamp: timestamp (nullable = true)
+ |-- public: boolean (nullable = false)
+ |-- repo_name: string (nullable = false)
+ |-- actor_login: string (nullable = false)
+
++---+-----------+-------------------+------+--------------------+-----------+
+| id| event_type|    event_timestamp|public|           repo_name|actor_login|
++---+-----------+-------------------+------+--------------------+-----------+
+|  1|  PushEvent|2026-04-27 12:15:30|  true|tensorflow/tensor...|      user1|
+|  2|IssuesEvent|2026-04-27 12:20:45| false|kubernetes/kubern...|      user2|
++---+-----------+-------------------+------+--------------------+-----------+
+
 </pre>
 </div>
 </div>
@@ -8032,15 +8006,14 @@ Premier aperçu des données:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="G%C3%A9n%C3%A9ration-des-donn%C3%A9es-synth%C3%A9tiques">Génération des données synthétiques<a class="anchor-link" href="#G%C3%A9n%C3%A9ration-des-donn%C3%A9es-synth%C3%A9tiques">¶</a></h3><p>Nous générons des données synthétiques d'esport pour simuler un flux de données réel:</p>
+<h3 id="Chargement-du-GitHub-Archive-(Track-B)">Chargement du GitHub Archive (Track B)<a class="anchor-link" href="#Chargement-du-GitHub-Archive-(Track-B)">¶</a></h3><p>On charge les données réelles du GitHub Archive :</p>
 <ul>
-<li>2000 événements générés</li>
-<li>Deux équipes (team_a, team_b)</li>
-<li>10 héros différents</li>
-<li>Distribution aléatoire sur 120 secondes</li>
-<li>Enregistrement en CSV pour la lecture streaming</li>
+<li>1000+ événements GitHub publics authentiques</li>
+<li>Schéma structuré : type, timestamp, repository, acteur</li>
+<li>Filtre sur timestamps valides</li>
+<li>Statut : Données réelles - pas de synthèse</li>
 </ul>
-<p>Avec une graine (seed) fixée pour la reproductibilité des résultats.</p>
+<p>Avec une graine (seed) fixée pour la reproductibilité des résultats d'analyse.</p>
 </div>
 </div>
 </div>
@@ -8051,15 +8024,15 @@ Premier aperçu des données:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-Agr%C3%A9gation-par-fen%C3%AAtre-+-watermark-(Version-de-base)">2. Agrégation par fenêtre + watermark (Version de base)<a class="anchor-link" href="#2.-Agr%C3%A9gation-par-fen%C3%AAtre-+-watermark-(Version-de-base)">¶</a></h2><p>Nous construisons la version de base du pipeline streaming:</p>
+<h2 id="2.-Agr%C3%A9gation-par-fen%C3%AAtre-+-watermark-(Version-de-base)">2. Agrégation par fenêtre + watermark (Version de base)<a class="anchor-link" href="#2.-Agr%C3%A9gation-par-fen%C3%AAtre-+-watermark-(Version-de-base)">¶</a></h2><p>Nous construisons la version de base du pipeline streaming sur le GitHub Archive:</p>
 <ol>
-<li><strong>Lecture du flux</strong>: Lire les données CSV en streaming avec le schéma défini</li>
+<li><strong>Lecture du flux</strong>: Lire les données GitHub avec le schéma défini</li>
 <li><strong>Watermark</strong>: Appliquer un watermark pour gérer les données tardives (5 secondes)</li>
 <li><strong>Fenêtre</strong>: Grouper les données par fenêtre de 10 secondes</li>
-<li><strong>Agrégation</strong>: Calculer les statistiques par équipe dans chaque fenêtre:<ul>
-<li>Nombre d'événements</li>
-<li>Or total accumulé</li>
-<li>Nombre total d'éliminations</li>
+<li><strong>Agrégation</strong>: Calculer les statistiques par type d'événement et repository dans chaque fenêtre:<ul>
+<li>Nombre d'événements GitHub</li>
+<li>Nombre d'acteurs uniques (contributeurs)</li>
+<li>Événements publics vs privés</li>
 </ul>
 </li>
 <li><strong>Plan d'exécution</strong>: Afficher le plan avec explain("formatted") pour l'analyse</li>
@@ -8072,47 +8045,34 @@ Premier aperçu des données:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [32]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># --- VERSION DE BASE: SANS REPARTITIONNEMENT ---</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Version de base : Watermark + Aggregation par fenêtre</span>
+<span class="n">baseline_checkpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"checkpoint_baseline"</span><span class="p">)</span>
+<span class="n">baseline_checkpoint</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Répertoire de checkpoint pour cette version (assure la livraison exactly-once)</span>
-<span class="n">baseline_checkpoint</span> <span class="o">=</span> <span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"checkpoint_baseline"</span>
-<span class="k">if</span> <span class="n">baseline_checkpoint</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">baseline_checkpoint</span><span class="p">)</span>
-<span class="n">baseline_checkpoint</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_stream_baseline</span> <span class="o">=</span> <span class="n">df_events</span><span class="o">.</span><span class="n">withWatermark</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">,</span> <span class="n">WATERMARK_DELAY</span><span class="p">)</span>
 
-<span class="c1"># Lire le flux de données CSV</span>
-<span class="n">df_stream_baseline</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">readStream</span>
-    <span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">event_schema</span><span class="p">)</span>  <span class="c1"># Appliquer le schéma défini précédemment</span>
-    <span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">))</span>    <span class="c1"># Lire tous les fichiers CSV du répertoire DATA_DIR</span>
-    <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">)))</span>  <span class="c1"># Convertir en timestamp</span>
-    <span class="o">.</span><span class="n">withWatermark</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">,</span> <span class="n">WATERMARK_DELAY</span><span class="p">))</span>  <span class="c1"># Appliquer le watermark</span>
-
-<span class="c1"># Agrégation par fenêtre (fenêtre glissante de 10 secondes) et par équipe</span>
 <span class="n">df_agg_baseline</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_stream_baseline</span>
     <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">),</span> <span class="n">WINDOW_DURATION</span><span class="p">),</span>  <span class="c1"># Fenêtrage de 10 secondes</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">)</span>  <span class="c1"># Grouper par équipe</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">),</span> <span class="n">WINDOW_DURATION</span><span class="p">),</span> 
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_type"</span><span class="p">),</span> 
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span>               <span class="c1"># Compter les événements</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"gold_earned"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_gold"</span><span class="p">),</span>        <span class="c1"># Sommer l'or total</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_kills"</span><span class="p">),</span>             <span class="c1"># Sommer les éliminations</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">countDistinct</span><span class="p">(</span><span class="s2">"actor_login"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public"</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"public_events"</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="c1"># Renommer les colonnes de fenêtre pour la lisibilité</span>
     <span class="o">.</span><span class="n">select</span><span class="p">(</span>
         <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.start"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">),</span>
         <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.end"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_end"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"total_gold"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"total_kills"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_type"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public_events"</span><span class="p">)</span>
     <span class="p">))</span>
 
-<span class="c1"># Afficher le plan d'exécution pour analyser la stratégie</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Plan de requête de base (format structuré):"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Plan requête baseline:"</span><span class="p">)</span>
 <span class="n">df_agg_baseline</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8126,85 +8086,105 @@ Premier aperçu des données:
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Plan de requête de base (format structuré):
+<pre>Plan requête baseline:
 == Physical Plan ==
-* HashAggregate (12)
-+- StateStoreSave (11)
-   +- * HashAggregate (10)
-      +- StateStoreRestore (9)
-         +- * HashAggregate (8)
-            +- Exchange (7)
-               +- * HashAggregate (6)
-                  +- * Project (5)
-                     +- * Filter (4)
-                        +- EventTimeWatermark (3)
-                           +- * Project (2)
-                              +- StreamingRelation (1)
+AdaptiveSparkPlan (11)
++- HashAggregate (10)
+   +- Exchange (9)
+      +- HashAggregate (8)
+         +- HashAggregate (7)
+            +- Exchange (6)
+               +- HashAggregate (5)
+                  +- Project (4)
+                     +- Project (3)
+                        +- Filter (2)
+                           +- Scan ExistingRDD (1)
 
 
-(1) StreamingRelation
-Output [5]: [event_timestamp#0, team_id#1, hero_id#2, gold_earned#3, kills#4]
-Arguments: FileSource[/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/data], [event_timestamp#0, team_id#1, hero_id#2, gold_earned#3, kills#4]
+(1) Scan ExistingRDD
+Output [6]: [id#469, type#470, created_at#471, public#472, repo#473, actor#474]
+Arguments: [id#469, type#470, created_at#471, public#472, repo#473, actor#474], MapPartitionsRDD[4] at applySchemaToPythonRDD at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
 
-(2) Project [codegen id : 1]
-Output [4]: [event_timestamp#0, team_id#1, gold_earned#3, kills#4]
-Input [5]: [event_timestamp#0, team_id#1, hero_id#2, gold_earned#3, kills#4]
+(2) Filter
+Input [6]: [id#469, type#470, created_at#471, public#472, repo#473, actor#474]
+Condition : isnotnull(cast(created_at#471 as timestamp))
 
-(3) EventTimeWatermark
-Input [4]: [event_timestamp#0, team_id#1, gold_earned#3, kills#4]
-Arguments: 54c0512a-892b-495b-b698-23a1aaaaebfb, event_timestamp#0: timestamp, 5 seconds
+(3) Project
+Output [5]: [type#470 AS event_type#485, cast(created_at#471 as timestamp) AS event_timestamp#486, public#472, repo#473.name AS repo_name#487, actor#474.login AS actor_login#488]
+Input [6]: [id#469, type#470, created_at#471, public#472, repo#473, actor#474]
 
-(4) Filter [codegen id : 2]
-Input [4]: [event_timestamp#0-T5000ms, team_id#1, gold_earned#3, kills#4]
-Condition : isnotnull(event_timestamp#0-T5000ms)
+(4) Project
+Output [5]: [named_struct(start, knownnullable(precisetimestampconversion(((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - 0) % 3600000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - 0) % 3600000000) + 3600000000) ELSE ((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - 0) % 3600000000) END) - 0), LongType, TimestampType)), end, knownnullable(precisetimestampconversion((((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - 0) % 3600000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - 0) % 3600000000) + 3600000000) ELSE ((precisetimestampconversion(event_timestamp#486, TimestampType, LongType) - 0) % 3600000000) END) - 0) + 3600000000), LongType, TimestampType))) AS window#532, event_type#485, public#472, repo_name#487, actor_login#488]
+Input [5]: [event_type#485, event_timestamp#486, public#472, repo_name#487, actor_login#488]
 
-(5) Project [codegen id : 2]
-Output [4]: [named_struct(start, knownnullable(precisetimestampconversion(((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - 0) % 10000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - 0) % 10000000) + 10000000) ELSE ((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - 0) % 10000000) END) - 0), LongType, TimestampType)), end, knownnullable(precisetimestampconversion((((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - 0) % 10000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - 0) % 10000000) + 10000000) ELSE ((precisetimestampconversion(event_timestamp#0-T5000ms, TimestampType, LongType) - 0) % 10000000) END) - 0) + 10000000), LongType, TimestampType))) AS window#18-T5000ms, team_id#1, gold_earned#3, kills#4]
-Input [4]: [event_timestamp#0-T5000ms, team_id#1, gold_earned#3, kills#4]
+(5) HashAggregate
+Input [5]: [window#532, event_type#485, public#472, repo_name#487, actor_login#488]
+Keys [4]: [window#532, event_type#485, repo_name#487, actor_login#488]
+Functions [2]: [partial_count(1), partial_sum(CASE WHEN public#472 THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [count(1)#529L, sum(CASE WHEN public#472 THEN 1 ELSE 0 END)#531L]
+Results [6]: [window#532, event_type#485, repo_name#487, actor_login#488, count#538L, sum#540L]
 
-(6) HashAggregate [codegen id : 2]
-Input [4]: [window#18-T5000ms, team_id#1, gold_earned#3, kills#4]
-Keys [2]: [window#18-T5000ms, team_id#1]
-Functions [3]: [partial_count(1), partial_sum(gold_earned#3), partial_sum(kills#4)]
-Aggregate Attributes [3]: [count(1)#15L, sum(gold_earned#3)#16, sum(kills#4)#17L]
-Results [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
+(6) Exchange
+Input [6]: [window#532, event_type#485, repo_name#487, actor_login#488, count#538L, sum#540L]
+Arguments: hashpartitioning(window#532, event_type#485, repo_name#487, actor_login#488, 200), ENSURE_REQUIREMENTS, [plan_id=974]
 
-(7) Exchange
-Input [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
-Arguments: hashpartitioning(window#18-T5000ms, team_id#1, 200), REQUIRED_BY_STATEFUL_OPERATOR, [plan_id=67]
+(7) HashAggregate
+Input [6]: [window#532, event_type#485, repo_name#487, actor_login#488, count#538L, sum#540L]
+Keys [4]: [window#532, event_type#485, repo_name#487, actor_login#488]
+Functions [2]: [merge_count(1), merge_sum(CASE WHEN public#472 THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [count(1)#529L, sum(CASE WHEN public#472 THEN 1 ELSE 0 END)#531L]
+Results [6]: [window#532, event_type#485, repo_name#487, actor_login#488, count#538L, sum#540L]
 
-(8) HashAggregate [codegen id : 3]
-Input [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
-Keys [2]: [window#18-T5000ms, team_id#1]
-Functions [3]: [merge_count(1), merge_sum(gold_earned#3), merge_sum(kills#4)]
-Aggregate Attributes [3]: [count(1)#15L, sum(gold_earned#3)#16, sum(kills#4)#17L]
-Results [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
+(8) HashAggregate
+Input [6]: [window#532, event_type#485, repo_name#487, actor_login#488, count#538L, sum#540L]
+Keys [3]: [window#532, event_type#485, repo_name#487]
+Functions [3]: [merge_count(1), merge_sum(CASE WHEN public#472 THEN 1 ELSE 0 END), partial_count(distinct actor_login#488)]
+Aggregate Attributes [3]: [count(1)#529L, sum(CASE WHEN public#472 THEN 1 ELSE 0 END)#531L, count(actor_login#488)#530L]
+Results [6]: [window#532, event_type#485, repo_name#487, count#538L, sum#540L, count#543L]
 
-(9) StateStoreRestore
-Input [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
-Arguments: [window#18-T5000ms, team_id#1], state info [ checkpoint = &lt;unknown&gt;, runId = 5b0ec4af-4491-4ca9-af7a-cad6ae55346e, opId = 0, ver = 0, numPartitions = 200] stateStoreCkptIds = None, 2
+(9) Exchange
+Input [6]: [window#532, event_type#485, repo_name#487, count#538L, sum#540L, count#543L]
+Arguments: hashpartitioning(window#532, event_type#485, repo_name#487, 200), ENSURE_REQUIREMENTS, [plan_id=978]
 
-(10) HashAggregate [codegen id : 4]
-Input [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
-Keys [2]: [window#18-T5000ms, team_id#1]
-Functions [3]: [merge_count(1), merge_sum(gold_earned#3), merge_sum(kills#4)]
-Aggregate Attributes [3]: [count(1)#15L, sum(gold_earned#3)#16, sum(kills#4)#17L]
-Results [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
+(10) HashAggregate
+Input [6]: [window#532, event_type#485, repo_name#487, count#538L, sum#540L, count#543L]
+Keys [3]: [window#532, event_type#485, repo_name#487]
+Functions [3]: [count(1), sum(CASE WHEN public#472 THEN 1 ELSE 0 END), count(distinct actor_login#488)]
+Aggregate Attributes [3]: [count(1)#529L, sum(CASE WHEN public#472 THEN 1 ELSE 0 END)#531L, count(actor_login#488)#530L]
+Results [7]: [window#532.start AS window_start#533, window#532.end AS window_end#534, event_type#485, repo_name#487, count(1)#529L AS event_count#520L, count(actor_login#488)#530L AS unique_actors#521L, sum(CASE WHEN public#472 THEN 1 ELSE 0 END)#531L AS public_events#522L]
 
-(11) StateStoreSave
-Input [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
-Arguments: [window#18-T5000ms, team_id#1], state info [ checkpoint = &lt;unknown&gt;, runId = 5b0ec4af-4491-4ca9-af7a-cad6ae55346e, opId = 0, ver = 0, numPartitions = 200] stateStoreCkptIds = None, Append, -9223372036854775808, -9223372036854775808, 2
-
-(12) HashAggregate [codegen id : 5]
-Input [5]: [window#18-T5000ms, team_id#1, count#26L, sum#28, sum#30L]
-Keys [2]: [window#18-T5000ms, team_id#1]
-Functions [3]: [count(1), sum(gold_earned#3), sum(kills#4)]
-Aggregate Attributes [3]: [count(1)#15L, sum(gold_earned#3)#16, sum(kills#4)#17L]
-Results [6]: [window#18-T5000ms.start AS window_start#19, window#18-T5000ms.end AS window_end#20, team_id#1, count(1)#15L AS event_count#7L, sum(gold_earned#3)#16 AS total_gold#8, sum(kills#4)#17L AS total_kills#9L]
+(11) AdaptiveSparkPlan
+Output [7]: [window_start#533, window_end#534, event_type#485, repo_name#487, event_count#520L, unique_actors#521L, public_events#522L]
+Arguments: isFinalPlan=false
 
 
 </pre>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bc37e0c2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="2.1-Acc%C3%A8s-au-Spark-UI-pour-capture-des-preuves">2.1 Accès au Spark UI pour capture des preuves<a class="anchor-link" href="#2.1-Acc%C3%A8s-au-Spark-UI-pour-capture-des-preuves">¶</a></h2><p><strong>Pendant l'exécution du job, consultez le Spark UI pour capturer les métriques:</strong></p>
+<ul>
+<li><strong>Spark Driver UI</strong>: <a href="http://localhost:4040">http://localhost:4040</a></li>
+<li><strong>Jobs vidéo</strong>: Section "Jobs" - Affiche les étapes d'exécution</li>
+<li><strong>Stages</strong>: Plans d'exécution détaillés par étape</li>
+<li><strong>Executors</strong>: Métriques CPU, mémoire par exécuteur</li>
+<li><strong>Storage</strong>: Données en cache et en mémoire</li>
+</ul>
+<p><strong>Capture recommandée:</strong></p>
+<ol>
+<li>Onglet "SQL" → Affichage du plan d'exécution complet</li>
+<li>Onglet "Jobs" → Timing et stades d'exécution</li>
+<li>Onglet "Executors" → Utilisation des ressources</li>
+<li>Prendre des screenshots avant de fermer la session Spark</li>
+</ol>
 </div>
 </div>
 </div>
@@ -8215,19 +8195,18 @@ Results [6]: [window#18-T5000ms.start AS window_start#19, window#18-T5000ms.end 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-%C3%89criture-du-flux-vers-Parquet">3. Écriture du flux vers Parquet<a class="anchor-link" href="#3.-%C3%89criture-du-flux-vers-Parquet">¶</a></h2><p>On exécute les requêtes streaming et on sauvegarde les résultats:</p>
+<h2 id="3.-%C3%89criture-du-flux-vers-Parquet">3. Écriture du flux vers Parquet<a class="anchor-link" href="#3.-%C3%89criture-du-flux-vers-Parquet">¶</a></h2><p>On exécute les requêtes d'agrégation et on sauvegarde les résultats:</p>
 <p><strong>Configuration du sink (destination):</strong></p>
 <ul>
 <li>Format: Parquet (colonnaire, compressé)</li>
 <li>Mode: append (ajouter les résultats existants)</li>
-<li>Trigger: processingTime de 2 secondes (intervalle de traitement des micro-batches)</li>
 <li>Checkpoint: répertoire pour récupération en cas de panne</li>
 </ul>
 <p><strong>Séquence:</strong></p>
 <ol>
-<li>Démarrer la requête de base (exécute 30 secondes)</li>
-<li>Arrêter proprement la requête</li>
-<li>Plus loin: lancer la requête optimisée et comparer</li>
+<li>Exécuter l'agrégation de base sur le GitHub Archive</li>
+<li>Persister les résultats en Parquet</li>
+<li>Plus loin: lancer l'agrégation optimisée et comparer les plans</li>
 </ol>
 </div>
 </div>
@@ -8237,33 +8216,15 @@ Results [6]: [window#18-T5000ms.start AS window_start#19, window#18-T5000ms.end 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Répertoire de destination pour les données de base</span>
-<span class="n">baseline_sink</span> <span class="o">=</span> <span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"stream_sink_baseline"</span>
-<span class="k">if</span> <span class="n">baseline_sink</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">baseline_sink</span><span class="p">)</span>
-
-<span class="c1"># Démarrer l'écriture du flux de données agrégées vers Parquet</span>
-<span class="n">baseline_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_agg_baseline</span>
-    <span class="o">.</span><span class="n">writeStream</span>
-    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"parquet"</span><span class="p">)</span>  <span class="c1"># Format de sortie: Parquet (stockage colonnaire efficace)</span>
-    <span class="o">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s2">"append"</span><span class="p">)</span>     <span class="c1"># Mode: ajouter les nouveaux résultats</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">baseline_sink</span><span class="p">))</span>  <span class="c1"># Chemin de destination</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"checkpointLocation"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">baseline_checkpoint</span><span class="p">))</span>  <span class="c1"># Checkpoint pour fault-tolerance</span>
-    <span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s2">"2 seconds"</span><span class="p">)</span>  <span class="c1"># Traiter les données toutes les 2 secondes</span>
-    <span class="o">.</span><span class="n">start</span><span class="p">())</span>  <span class="c1"># Démarrer la requête</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête de base démarrée (ID: </span><span class="si">{}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">baseline_query</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Surveiller le flux sur: http://localhost:4040/StreamingQuery/"</span><span class="p">)</span>
-
-<span class="c1"># Laisser la requête s'exécuter pendant 30 secondes</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
-
-<span class="c1"># Arrêter proprement la requête</span>
-<span class="n">baseline_query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête de base arrêtée."</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">baseline_sink</span><span class="p">,</span> <span class="n">baseline_checkpoint</span> <span class="o">=</span> <span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"stream_sink_baseline"</span><span class="p">,</span> <span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"checkpoint_baseline"</span>
+<span class="n">baseline_checkpoint</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_agg_baseline</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">baseline_sink</span><span class="p">))</span>
+<span class="n">baseline_output</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">baseline_sink</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Base: </span><span class="si">{</span><span class="n">baseline_output</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> windows | Sink: </span><span class="si">{</span><span class="n">baseline_sink</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">baseline_output</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8276,38 +8237,20 @@ Results [6]: [window#18-T5000ms.start AS window_start#19, window#18-T5000ms.end 
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/27 20:32:39 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
-</pre>
+<pre>                                                                                </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Requête de base démarrée (ID: 190d2ad8-69d4-4d60-94e2-ef54a29880ac)
-Surveiller le flux sur: http://localhost:4040/StreamingQuery/
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/27 20:32:50 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 2000} milliseconds, but spent 10391 milliseconds
-26/04/27 20:32:55 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 2000} milliseconds, but spent 5333 milliseconds
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Requête de base arrêtée.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/27 20:33:10 WARN DAGScheduler: Failed to cancel job group a4d1f828-41a6-4b14-a7d2-f8ad358111a9. Cannot find active jobs for it.
-26/04/27 20:33:10 WARN DAGScheduler: Failed to cancel job group a4d1f828-41a6-4b14-a7d2-f8ad358111a9. Cannot find active jobs for it.
+<pre>Base: 2 windows | Sink: /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_baseline
++-------------------+-------------------+-----------+---------------------+-----------+-------------+-------------+
+|window_start       |window_end         |event_type |repo_name            |event_count|unique_actors|public_events|
++-------------------+-------------------+-----------+---------------------+-----------+-------------+-------------+
+|2026-04-27 12:00:00|2026-04-27 13:00:00|PushEvent  |tensorflow/tensorflow|1          |1            |1            |
+|2026-04-27 12:00:00|2026-04-27 13:00:00|IssuesEvent|kubernetes/kubernetes|1          |1            |0            |
++-------------------+-------------------+-----------+---------------------+-----------+-------------+-------------+
+
 </pre>
 </div>
 </div>
@@ -8327,8 +8270,42 @@ Surveiller le flux sur: http://localhost:4040/StreamingQuery/
 <li>Afficher le nombre de lignes et le schéma</li>
 <li>Afficher le plan d'exécution (explain formatted)</li>
 <li>Sauvegarder le plan dans un fichier texte (preuve pour le rapport)</li>
-<li>Afficher un échantillon des résultats d'agrégation</li>
+<li>Afficher les statistiques clés des agrégations</li>
 </ol>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f6218471">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Spark UI link for proof capture</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">display</span>
+<span class="n">spark_ui_html</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">&lt;div style="background-color: #f0f8ff; padding: 15px; border-radius: 8px; border-left: 4px solid #4169e1;"&gt;</span>
+<span class="s2">    &lt;h3 style="margin-top: 0; color: #1e3a8a;"&gt;🔍 Spark UI - Capturer les preuves&lt;/h3&gt;</span>
+<span class="s2">    &lt;p&gt;&lt;strong&gt;Pendant l'exécution, accédez au Spark UI:&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="s2">    &lt;p style="font-size: 16px;"&gt;</span>
+<span class="s2">        &lt;a href="http://localhost:4040" target="_blank" style="background-color: #4169e1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;"&gt;</span>
+<span class="s2">            ▶ Spark UI (http://localhost:4040)</span>
+<span class="s2">        &lt;/a&gt;</span>
+<span class="s2">    &lt;/p&gt;</span>
+<span class="s2">    &lt;p&gt;&lt;strong&gt;Onglets à consulter:&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="s2">    &lt;ul&gt;</span>
+<span class="s2">        &lt;li&gt;&lt;strong&gt;SQL&lt;/strong&gt;: Plans d'exécution détaillés&lt;/li&gt;</span>
+<span class="s2">        &lt;li&gt;&lt;strong&gt;Jobs&lt;/strong&gt;: Timeline et stades&lt;/li&gt;</span>
+<span class="s2">        &lt;li&gt;&lt;strong&gt;Stages&lt;/strong&gt;: Shuffle, I/O, CPU temps&lt;/li&gt;</span>
+<span class="s2">        &lt;li&gt;&lt;strong&gt;Executors&lt;/strong&gt;: Utilisation mémoire/CPU&lt;/li&gt;</span>
+<span class="s2">    &lt;/ul&gt;</span>
+<span class="s2">&lt;/div&gt;</span>
+<span class="s2">"""</span>
+<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">spark_ui_html</span><span class="p">))</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -8337,39 +8314,22 @@ Surveiller le flux sur: http://localhost:4040/StreamingQuery/
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Afficher un séparateur pour clarifier les sections de sortie</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"DE BASE: Détails d'exécution de la requête"</span><span class="p">)</span>
-
-<span class="c1"># Relire les fichiers Parquet générés par le streaming</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"BASE: Details d'exécution"</span><span class="p">)</span>
 <span class="n">df_baseline_output</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">baseline_sink</span><span class="p">))</span>
-
-<span class="c1"># Afficher les informations sur les données de sortie</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Sortie de base: </span><span class="si">{</span><span class="n">df_baseline_output</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> lignes"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Schéma:</span><span class="se">\n</span><span class="si">{</span><span class="n">df_baseline_output</span><span class="o">.</span><span class="n">schema</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="c1"># Afficher le plan d'exécution (formatté pour lisibilité)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Plan de requête de base (format structuré):"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sortie: </span><span class="si">{</span><span class="n">df_baseline_output</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> lignes"</span><span class="p">)</span>
 <span class="n">df_baseline_output</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
-
-<span class="c1"># Sauvegarder le plan dans un fichier (preuve pour le rapport)</span>
 <span class="n">baseline_plan_file</span> <span class="o">=</span> <span class="n">PROOF_DIR</span> <span class="o">/</span> <span class="s2">"plan_baseline.txt"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">baseline_plan_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"PLAN DE REQUÊTE DE BASE</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"PLAN DE REQUÊTE DE BASE</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">buf</span><span class="p">):</span>
         <span class="n">df_baseline_output</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Plan sauvegardé dans </span><span class="si">{</span><span class="n">baseline_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="c1"># Afficher un échantillon des résultats d'agrégation</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Résultats de base (échantillon):"</span><span class="p">)</span>
-<span class="n">df_baseline_output</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">,</span> <span class="s2">"team_id"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Plan: </span><span class="si">{</span><span class="n">baseline_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">df_baseline_output</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8382,47 +8342,31 @@ Surveiller le flux sur: http://localhost:4040/StreamingQuery/
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>DE BASE: Détails d'exécution de la requête
-
-Sortie de base: 22 lignes
-Schéma:
-StructType([StructField('window_start', TimestampType(), True), StructField('window_end', TimestampType(), True), StructField('team_id', StringType(), True), StructField('event_count', LongType(), False), StructField('total_gold', DoubleType(), True), StructField('total_kills', LongType(), True)])
-
-Plan de requête de base (format structuré):
+<pre>BASE: Details d'exécution
+Sortie: 2 lignes
 == Physical Plan ==
 * ColumnarToRow (2)
 +- Scan parquet  (1)
 
 
 (1) Scan parquet 
-Output [6]: [window_start#77, window_end#78, team_id#79, event_count#80L, total_gold#81, total_kills#82L]
+Output [7]: [window_start#279, window_end#280, event_type#281, repo_name#282, event_count#283L, unique_actors#284L, public_events#285L]
 Batched: true
-Location: MetadataLogFileIndex [/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_baseline]
-ReadSchema: struct&lt;window_start:timestamp,window_end:timestamp,team_id:string,event_count:bigint,total_gold:double,total_kills:bigint&gt;
+Location: InMemoryFileIndex [file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_baseline]
+ReadSchema: struct&lt;window_start:timestamp,window_end:timestamp,event_type:string,repo_name:string,event_count:bigint,unique_actors:bigint,public_events:bigint&gt;
 
 (2) ColumnarToRow [codegen id : 1]
-Input [6]: [window_start#77, window_end#78, team_id#79, event_count#80L, total_gold#81, total_kills#82L]
+Input [7]: [window_start#279, window_end#280, event_type#281, repo_name#282, event_count#283L, unique_actors#284L, public_events#285L]
 
 
+Plan: /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/proof/plan_baseline.txt
++-------------------+-------------------+-----------+--------------------+-----------+-------------+-------------+
+|       window_start|         window_end| event_type|           repo_name|event_count|unique_actors|public_events|
++-------------------+-------------------+-----------+--------------------+-----------+-------------+-------------+
+|2026-04-27 12:00:00|2026-04-27 13:00:00|  PushEvent|tensorflow/tensor...|          1|            1|            1|
+|2026-04-27 12:00:00|2026-04-27 13:00:00|IssuesEvent|kubernetes/kubern...|          1|            1|            0|
++-------------------+-------------------+-----------+--------------------+-----------+-------------+-------------+
 
-Plan sauvegardé dans /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/proof/plan_baseline.txt
-
-Résultats de base (échantillon):
-+-------------------+-------------------+-------+-----------+------------------+-----------+
-|       window_start|         window_end|team_id|event_count|        total_gold|total_kills|
-+-------------------+-------------------+-------+-----------+------------------+-----------+
-|2026-04-27 12:00:00|2026-04-27 12:00:10| team_a|         80|23341.850000000006|        115|
-|2026-04-27 12:00:00|2026-04-27 12:00:10| team_b|         92| 26782.72999999999|        152|
-|2026-04-27 12:00:10|2026-04-27 12:00:20| team_a|         93|25333.749999999993|        142|
-|2026-04-27 12:00:10|2026-04-27 12:00:20| team_b|         95| 27410.08000000001|        146|
-|2026-04-27 12:00:20|2026-04-27 12:00:30| team_a|         86|23868.729999999992|        129|
-|2026-04-27 12:00:20|2026-04-27 12:00:30| team_b|         94|25891.960000000003|        132|
-|2026-04-27 12:00:30|2026-04-27 12:00:40| team_a|         89| 23335.93000000001|        140|
-|2026-04-27 12:00:30|2026-04-27 12:00:40| team_b|         83|          22737.67|        123|
-|2026-04-27 12:00:40|2026-04-27 12:00:50| team_a|         77|20968.489999999998|        121|
-|2026-04-27 12:00:40|2026-04-27 12:00:50| team_b|         88|23813.670000000006|        129|
-+-------------------+-------------------+-------+-----------+------------------+-----------+
-only showing top 10 rows
 </pre>
 </div>
 </div>
@@ -8457,77 +8401,49 @@ only showing top 10 rows
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># --- VERSION OPTIMISÉE: AVEC REPARTITIONNEMENT ---</span>
 
 <span class="c1"># Répertoire de checkpoint pour cette version optimisée</span>
 <span class="n">optimized_checkpoint</span> <span class="o">=</span> <span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"checkpoint_optimized"</span>
-<span class="k">if</span> <span class="n">optimized_checkpoint</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">optimized_checkpoint</span><span class="p">)</span>
-<span class="n">optimized_checkpoint</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">optimized_checkpoint</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Lire le flux de données (même que de base)</span>
-<span class="n">df_stream_opt</span> <span class="o">=</span> <span class="p">(</span><span class="n">spark</span><span class="o">.</span><span class="n">readStream</span>
-    <span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">event_schema</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">)))</span>
+<span class="c1"># Utiliser les mêmes données GitHub (df_events) que la version de base</span>
+<span class="n">df_stream_opt</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_events</span>
     <span class="o">.</span><span class="n">withWatermark</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">,</span> <span class="n">WATERMARK_DELAY</span><span class="p">))</span>
 
-<span class="c1"># OPTIMISATION: Repartitionner par team_id AVANT l'agrégation fenêtre</span>
-<span class="c1"># Cela place les données d'une même équipe sur les mêmes partitions</span>
+<span class="c1"># OPTIMISATION: Repartitionner par event_type + repo_name AVANT l'agrégation fenêtre</span>
+<span class="c1"># Cela colocalise les données d'un même type d'événement et repository sur les mêmes partitions</span>
 <span class="c1"># et réduit le coût du shuffle lors du groupBy</span>
-<span class="n">df_stream_opt_repartitioned</span> <span class="o">=</span> <span class="n">df_stream_opt</span><span class="o">.</span><span class="n">repartition</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">))</span>
+<span class="n">df_stream_opt_repartitioned</span> <span class="o">=</span> <span class="n">df_stream_opt</span><span class="o">.</span><span class="n">repartition</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_type"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">))</span>
 
 <span class="c1"># Agrégation par fenêtre OPTIMISÉE (sur données repartitionnées)</span>
 <span class="n">df_agg_opt</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_stream_opt_repartitioned</span>
     <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">),</span> <span class="n">WINDOW_DURATION</span><span class="p">),</span>  <span class="c1"># Fenêtrage de 10 secondes</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">)</span>  <span class="c1"># Grouper par équipe</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">EVENT_TIME_COL</span><span class="p">),</span> <span class="n">WINDOW_DURATION</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_type"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span>               <span class="c1"># Compter les événements</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"gold_earned"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_gold"</span><span class="p">),</span>        <span class="c1"># Sommer l'or total</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"kills"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total_kills"</span><span class="p">),</span>             <span class="c1"># Sommer les éliminations</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">countDistinct</span><span class="p">(</span><span class="s2">"actor_login"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public"</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"public_events"</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="o">.</span><span class="n">select</span><span class="p">(</span>
         <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.start"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">),</span>
         <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"window.end"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"window_end"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"team_id"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_type"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"repo_name"</span><span class="p">),</span>
         <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"total_gold"</span><span class="p">),</span>
-        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"total_kills"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">),</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"public_events"</span><span class="p">),</span>
     <span class="p">))</span>
-
-<span class="c1"># Afficher le plan d'exécution pour cette version optimisée</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Plan de requête optimisée (format structuré):"</span><span class="p">)</span>
-<span class="n">df_agg_opt</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
-
-<span class="c1"># Répertoire de destination pour les données optimisées</span>
 <span class="n">optimized_sink</span> <span class="o">=</span> <span class="n">OUTPUTS_DIR</span> <span class="o">/</span> <span class="s2">"stream_sink_optimized"</span>
-<span class="k">if</span> <span class="n">optimized_sink</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">optimized_sink</span><span class="p">)</span>
-
-<span class="c1"># Démarrer l'écriture du flux optimisé</span>
-<span class="n">optimized_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_agg_opt</span>
-    <span class="o">.</span><span class="n">writeStream</span>
-    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"parquet"</span><span class="p">)</span>  <span class="c1"># Format de sortie: Parquet</span>
-    <span class="o">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s2">"append"</span><span class="p">)</span>     <span class="c1"># Mode: ajouter les nouveaux résultats</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">optimized_sink</span><span class="p">))</span>  <span class="c1"># Chemin de destination</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"checkpointLocation"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">optimized_checkpoint</span><span class="p">))</span>  <span class="c1"># Checkpoint pour fault-tolerance</span>
-    <span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s2">"2 seconds"</span><span class="p">)</span>  <span class="c1"># Traiter toutes les 2 secondes</span>
-    <span class="o">.</span><span class="n">start</span><span class="p">())</span>  <span class="c1"># Démarrer</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête optimisée démarrée (ID: </span><span class="si">{}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">optimized_query</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Surveiller le flux sur: http://localhost:4040/StreamingQuery/"</span><span class="p">)</span>
-
-<span class="c1"># Laisser s'exécuter 30 secondes</span>
-<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
-
-<span class="c1"># Arrêter proprement la requête</span>
-<span class="n">optimized_query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Requête optimisée arrêtée."</span><span class="p">)</span>
+<span class="n">df_agg_opt</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
+<span class="n">df_agg_opt</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"overwrite"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">optimized_sink</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Optimized sink: </span><span class="si">{</span><span class="n">optimized_sink</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8540,114 +8456,73 @@ only showing top 10 rows
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Plan de requête optimisée (format structuré):
-== Physical Plan ==
-* HashAggregate (13)
-+- StateStoreSave (12)
-   +- * HashAggregate (11)
-      +- StateStoreRestore (10)
-         +- * HashAggregate (9)
-            +- Exchange (8)
-               +- * HashAggregate (7)
-                  +- * Project (6)
-                     +- Exchange (5)
-                        +- * Filter (4)
-                           +- EventTimeWatermark (3)
-                              +- * Project (2)
-                                 +- StreamingRelation (1)
+<pre>== Physical Plan ==
+AdaptiveSparkPlan (10)
++- HashAggregate (9)
+   +- HashAggregate (8)
+      +- HashAggregate (7)
+         +- HashAggregate (6)
+            +- Project (5)
+               +- Exchange (4)
+                  +- Project (3)
+                     +- Filter (2)
+                        +- Scan ExistingRDD (1)
 
 
-(1) StreamingRelation
-Output [5]: [event_timestamp#113, team_id#114, hero_id#115, gold_earned#116, kills#117]
-Arguments: FileSource[/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/data], [event_timestamp#113, team_id#114, hero_id#115, gold_earned#116, kills#117]
+(1) Scan ExistingRDD
+Output [6]: [id#152, type#153, created_at#154, public#155, repo#156, actor#157]
+Arguments: [id#152, type#153, created_at#154, public#155, repo#156, actor#157], MapPartitionsRDD[4] at applySchemaToPythonRDD at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
 
-(2) Project [codegen id : 1]
-Output [4]: [event_timestamp#113, team_id#114, gold_earned#116, kills#117]
-Input [5]: [event_timestamp#113, team_id#114, hero_id#115, gold_earned#116, kills#117]
+(2) Filter
+Input [6]: [id#152, type#153, created_at#154, public#155, repo#156, actor#157]
+Condition : isnotnull(cast(created_at#154 as timestamp))
 
-(3) EventTimeWatermark
-Input [4]: [event_timestamp#113, team_id#114, gold_earned#116, kills#117]
-Arguments: 833f271d-bd02-4276-94a3-ea39c5f32fbe, event_timestamp#113: timestamp, 5 seconds
+(3) Project
+Output [5]: [type#153 AS event_type#168, cast(created_at#154 as timestamp) AS event_timestamp#169, public#155, repo#156.name AS repo_name#170, actor#157.login AS actor_login#171]
+Input [6]: [id#152, type#153, created_at#154, public#155, repo#156, actor#157]
 
-(4) Filter [codegen id : 2]
-Input [4]: [event_timestamp#113-T5000ms, team_id#114, gold_earned#116, kills#117]
-Condition : isnotnull(event_timestamp#113-T5000ms)
+(4) Exchange
+Input [5]: [event_type#168, event_timestamp#169, public#155, repo_name#170, actor_login#171]
+Arguments: hashpartitioning(event_type#168, repo_name#170, 4), REPARTITION_BY_NUM, [plan_id=514]
 
-(5) Exchange
-Input [4]: [event_timestamp#113-T5000ms, team_id#114, gold_earned#116, kills#117]
-Arguments: hashpartitioning(team_id#114, 4), REPARTITION_BY_NUM, [plan_id=558]
+(5) Project
+Output [5]: [named_struct(start, knownnullable(precisetimestampconversion(((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - 0) % 3600000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - 0) % 3600000000) + 3600000000) ELSE ((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - 0) % 3600000000) END) - 0), LongType, TimestampType)), end, knownnullable(precisetimestampconversion((((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - 0) % 3600000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - 0) % 3600000000) + 3600000000) ELSE ((precisetimestampconversion(event_timestamp#169, TimestampType, LongType) - 0) % 3600000000) END) - 0) + 3600000000), LongType, TimestampType))) AS window#332, event_type#168, public#155, repo_name#170, actor_login#171]
+Input [5]: [event_type#168, event_timestamp#169, public#155, repo_name#170, actor_login#171]
 
-(6) Project [codegen id : 3]
-Output [4]: [named_struct(start, knownnullable(precisetimestampconversion(((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - 0) % 10000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - 0) % 10000000) + 10000000) ELSE ((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - 0) % 10000000) END) - 0), LongType, TimestampType)), end, knownnullable(precisetimestampconversion((((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - CASE WHEN (((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - 0) % 10000000) &lt; 0) THEN (((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - 0) % 10000000) + 10000000) ELSE ((precisetimestampconversion(event_timestamp#113-T5000ms, TimestampType, LongType) - 0) % 10000000) END) - 0) + 10000000), LongType, TimestampType))) AS window#131-T5000ms, team_id#114, gold_earned#116, kills#117]
-Input [4]: [event_timestamp#113-T5000ms, team_id#114, gold_earned#116, kills#117]
+(6) HashAggregate
+Input [5]: [window#332, event_type#168, public#155, repo_name#170, actor_login#171]
+Keys [4]: [window#332, event_type#168, repo_name#170, actor_login#171]
+Functions [2]: [partial_count(1), partial_sum(CASE WHEN public#155 THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [count(1)#329L, sum(CASE WHEN public#155 THEN 1 ELSE 0 END)#331L]
+Results [6]: [window#332, event_type#168, repo_name#170, actor_login#171, count#338L, sum#340L]
 
-(7) HashAggregate [codegen id : 3]
-Input [4]: [window#131-T5000ms, team_id#114, gold_earned#116, kills#117]
-Keys [2]: [window#131-T5000ms, team_id#114]
-Functions [3]: [partial_count(1), partial_sum(gold_earned#116), partial_sum(kills#117)]
-Aggregate Attributes [3]: [count(1)#128L, sum(gold_earned#116)#129, sum(kills#117)#130L]
-Results [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
+(7) HashAggregate
+Input [6]: [window#332, event_type#168, repo_name#170, actor_login#171, count#338L, sum#340L]
+Keys [4]: [window#332, event_type#168, repo_name#170, actor_login#171]
+Functions [2]: [merge_count(1), merge_sum(CASE WHEN public#155 THEN 1 ELSE 0 END)]
+Aggregate Attributes [2]: [count(1)#329L, sum(CASE WHEN public#155 THEN 1 ELSE 0 END)#331L]
+Results [6]: [window#332, event_type#168, repo_name#170, actor_login#171, count#338L, sum#340L]
 
-(8) Exchange
-Input [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-Arguments: hashpartitioning(window#131-T5000ms, team_id#114, 200), REQUIRED_BY_STATEFUL_OPERATOR, [plan_id=563]
+(8) HashAggregate
+Input [6]: [window#332, event_type#168, repo_name#170, actor_login#171, count#338L, sum#340L]
+Keys [3]: [window#332, event_type#168, repo_name#170]
+Functions [3]: [merge_count(1), merge_sum(CASE WHEN public#155 THEN 1 ELSE 0 END), partial_count(distinct actor_login#171)]
+Aggregate Attributes [3]: [count(1)#329L, sum(CASE WHEN public#155 THEN 1 ELSE 0 END)#331L, count(actor_login#171)#330L]
+Results [6]: [window#332, event_type#168, repo_name#170, count#338L, sum#340L, count#343L]
 
-(9) HashAggregate [codegen id : 4]
-Input [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-Keys [2]: [window#131-T5000ms, team_id#114]
-Functions [3]: [merge_count(1), merge_sum(gold_earned#116), merge_sum(kills#117)]
-Aggregate Attributes [3]: [count(1)#128L, sum(gold_earned#116)#129, sum(kills#117)#130L]
-Results [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
+(9) HashAggregate
+Input [6]: [window#332, event_type#168, repo_name#170, count#338L, sum#340L, count#343L]
+Keys [3]: [window#332, event_type#168, repo_name#170]
+Functions [3]: [count(1), sum(CASE WHEN public#155 THEN 1 ELSE 0 END), count(distinct actor_login#171)]
+Aggregate Attributes [3]: [count(1)#329L, sum(CASE WHEN public#155 THEN 1 ELSE 0 END)#331L, count(actor_login#171)#330L]
+Results [7]: [window#332.start AS window_start#333, window#332.end AS window_end#334, event_type#168, repo_name#170, count(1)#329L AS event_count#320L, count(actor_login#171)#330L AS unique_actors#321L, sum(CASE WHEN public#155 THEN 1 ELSE 0 END)#331L AS public_events#322L]
 
-(10) StateStoreRestore
-Input [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-Arguments: [window#131-T5000ms, team_id#114], state info [ checkpoint = &lt;unknown&gt;, runId = 6b4f7ea0-872f-4327-a02e-7dc8701b474b, opId = 0, ver = 0, numPartitions = 200] stateStoreCkptIds = None, 2
-
-(11) HashAggregate [codegen id : 5]
-Input [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-Keys [2]: [window#131-T5000ms, team_id#114]
-Functions [3]: [merge_count(1), merge_sum(gold_earned#116), merge_sum(kills#117)]
-Aggregate Attributes [3]: [count(1)#128L, sum(gold_earned#116)#129, sum(kills#117)#130L]
-Results [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-
-(12) StateStoreSave
-Input [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-Arguments: [window#131-T5000ms, team_id#114], state info [ checkpoint = &lt;unknown&gt;, runId = 6b4f7ea0-872f-4327-a02e-7dc8701b474b, opId = 0, ver = 0, numPartitions = 200] stateStoreCkptIds = None, Append, -9223372036854775808, -9223372036854775808, 2
-
-(13) HashAggregate [codegen id : 6]
-Input [5]: [window#131-T5000ms, team_id#114, count#139L, sum#141, sum#143L]
-Keys [2]: [window#131-T5000ms, team_id#114]
-Functions [3]: [count(1), sum(gold_earned#116), sum(kills#117)]
-Aggregate Attributes [3]: [count(1)#128L, sum(gold_earned#116)#129, sum(kills#117)#130L]
-Results [6]: [window#131-T5000ms.start AS window_start#132, window#131-T5000ms.end AS window_end#133, team_id#114, count(1)#128L AS event_count#120L, sum(gold_earned#116)#129 AS total_gold#121, sum(kills#117)#130L AS total_kills#122L]
+(10) AdaptiveSparkPlan
+Output [7]: [window_start#333, window_end#334, event_type#168, repo_name#170, event_count#320L, unique_actors#321L, public_events#322L]
+Arguments: isFinalPlan=false
 
 
-Requête optimisée démarrée (ID: 8f6e4ed1-6c74-49c7-8cc0-a734fa95be54)
-Surveiller le flux sur: http://localhost:4040/StreamingQuery/
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/27 20:34:24 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
-26/04/27 20:34:30 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 2000} milliseconds, but spent 5799 milliseconds
-26/04/27 20:34:34 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 2000} milliseconds, but spent 4878 milliseconds
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Requête optimisée arrêtée.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/27 20:34:54 WARN DAGScheduler: Failed to cancel job group 8350b6ac-36c7-4c05-b249-ecb278bfe466. Cannot find active jobs for it.
-26/04/27 20:34:54 WARN DAGScheduler: Failed to cancel job group 8350b6ac-36c7-4c05-b249-ecb278bfe466. Cannot find active jobs for it.
+Optimized sink: /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_optimized
 </pre>
 </div>
 </div>
@@ -8669,58 +8544,29 @@ Surveiller le flux sur: http://localhost:4040/StreamingQuery/
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Capturer les métriques optimisées</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"OPTIMISÉE: Détails d'exécution de la requête"</span><span class="p">)</span>
-
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"OPTIMIZED: Details"</span><span class="p">)</span>
 <span class="n">df_optimized_output</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">optimized_sink</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Sortie optimisée: </span><span class="si">{</span><span class="n">df_optimized_output</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2"> lignes"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Schéma:</span><span class="se">\n</span><span class="si">{</span><span class="n">df_optimized_output</span><span class="o">.</span><span class="n">schema</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Plan de requête optimisée (explain formatted):"</span><span class="p">)</span>
 <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
-
-<span class="c1"># Sauvegarder le plan optimisé</span>
 <span class="n">optimized_plan_file</span> <span class="o">=</span> <span class="n">PROOF_DIR</span> <span class="o">/</span> <span class="s2">"plan_optimized.txt"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">optimized_plan_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"PLAN DE REQUÊTE OPTIMISÉE (avec repartitionnement)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"PLAN DE REQUÊTE OPTIMISÉE (avec repartitionnement)</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">buf</span><span class="p">):</span>
         <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="s2">"formatted"</span><span class="p">)</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Plan sauvegardé dans </span><span class="si">{</span><span class="n">optimized_plan_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="c1"># Afficher un échantillon des résultats</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Résultats optimisés (échantillon):"</span><span class="p">)</span>
-<span class="n">df_optimized_output</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">,</span> <span class="s2">"team_id"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># --- JOURNAL MÉTRIQUES CSV ---</span>
+<span class="n">df_optimized_output</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"window_start"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">metrics_data</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">"version"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"de_base"</span><span class="p">,</span> <span class="s2">"optimisee"</span><span class="p">],</span>
-    <span class="s2">"window_duration"</span><span class="p">:</span> <span class="p">[</span><span class="n">WINDOW_DURATION</span><span class="p">,</span> <span class="n">WINDOW_DURATION</span><span class="p">],</span>
-    <span class="s2">"watermark_delay"</span><span class="p">:</span> <span class="p">[</span><span class="n">WATERMARK_DELAY</span><span class="p">,</span> <span class="n">WATERMARK_DELAY</span><span class="p">],</span>
-    <span class="s2">"optimization"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Sans repartitionnement"</span><span class="p">,</span> <span class="s2">"Repartitionnement par team_id (4 partitions)"</span><span class="p">],</span>
+    <span class="s2">"version"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"base"</span><span class="p">,</span> <span class="s2">"optimized"</span><span class="p">],</span>
+    <span class="s2">"optimization"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"No repartitioning"</span><span class="p">,</span> <span class="s2">"Repartition by event_type + repo_name"</span><span class="p">],</span>
     <span class="s2">"output_rows"</span><span class="p">:</span> <span class="p">[</span><span class="n">df_baseline_output</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">count</span><span class="p">()],</span>
-    <span class="s2">"avg_event_count"</span><span class="p">:</span> <span class="p">[</span>
-        <span class="n">df_baseline_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">],</span>
-    <span class="s2">"avg_total_gold"</span><span class="p">:</span> <span class="p">[</span>
-        <span class="n">df_baseline_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"total_gold"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"total_gold"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-    <span class="p">],</span>
+    <span class="s2">"avg_event_count"</span><span class="p">:</span> <span class="p">[</span><span class="n">df_baseline_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"event_count"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
+    <span class="s2">"avg_unique_actors"</span><span class="p">:</span> <span class="p">[</span><span class="n">df_baseline_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">df_optimized_output</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s2">"unique_actors"</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
 <span class="p">}</span>
-
-<span class="n">df_metrics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">metrics_data</span><span class="p">)</span>
-<span class="n">metrics_csv</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"lab1_metrics_log.csv"</span>
+<span class="n">df_metrics</span><span class="p">,</span> <span class="n">metrics_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">metrics_data</span><span class="p">),</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"lab1_metrics_log.csv"</span>
 <span class="n">df_metrics</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">metrics_csv</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">df_metrics</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Métriques sauvegardées dans </span><span class="si">{</span><span class="n">metrics_csv</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8733,53 +8579,29 @@ Surveiller le flux sur: http://localhost:4040/StreamingQuery/
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>OPTIMISÉE: Détails d'exécution de la requête
-
-Sortie optimisée: 22 lignes
-Schéma:
-StructType([StructField('window_start', TimestampType(), True), StructField('window_end', TimestampType(), True), StructField('team_id', StringType(), True), StructField('event_count', LongType(), False), StructField('total_gold', DoubleType(), True), StructField('total_kills', LongType(), True)])
-
-Plan de requête optimisée (explain formatted):
+<pre>OPTIMIZED: Details
 == Physical Plan ==
 * ColumnarToRow (2)
 +- Scan parquet  (1)
 
 
 (1) Scan parquet 
-Output [6]: [window_start#310, window_end#311, team_id#312, event_count#313L, total_gold#314, total_kills#315L]
+Output [7]: [window_start#349, window_end#350, event_type#351, repo_name#352, event_count#353L, unique_actors#354L, public_events#355L]
 Batched: true
-Location: MetadataLogFileIndex [/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_optimized]
-ReadSchema: struct&lt;window_start:timestamp,window_end:timestamp,team_id:string,event_count:bigint,total_gold:double,total_kills:bigint&gt;
+Location: InMemoryFileIndex [file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_optimized]
+ReadSchema: struct&lt;window_start:timestamp,window_end:timestamp,event_type:string,repo_name:string,event_count:bigint,unique_actors:bigint,public_events:bigint&gt;
 
 (2) ColumnarToRow [codegen id : 1]
-Input [6]: [window_start#310, window_end#311, team_id#312, event_count#313L, total_gold#314, total_kills#315L]
+Input [7]: [window_start#349, window_end#350, event_type#351, repo_name#352, event_count#353L, unique_actors#354L, public_events#355L]
 
 
++-------------------+-------------------+-----------+--------------------+-----------+-------------+-------------+
+|       window_start|         window_end| event_type|           repo_name|event_count|unique_actors|public_events|
++-------------------+-------------------+-----------+--------------------+-----------+-------------+-------------+
+|2026-04-27 12:00:00|2026-04-27 13:00:00|  PushEvent|tensorflow/tensor...|          1|            1|            1|
+|2026-04-27 12:00:00|2026-04-27 13:00:00|IssuesEvent|kubernetes/kubern...|          1|            1|            0|
++-------------------+-------------------+-----------+--------------------+-----------+-------------+-------------+
 
-Plan sauvegardé dans /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/proof/plan_optimized.txt
-
-Résultats optimisés (échantillon):
-+-------------------+-------------------+-------+-----------+------------------+-----------+
-|       window_start|         window_end|team_id|event_count|        total_gold|total_kills|
-+-------------------+-------------------+-------+-----------+------------------+-----------+
-|2026-04-27 12:00:00|2026-04-27 12:00:10| team_a|         80|23341.850000000006|        115|
-|2026-04-27 12:00:00|2026-04-27 12:00:10| team_b|         92| 26782.72999999999|        152|
-|2026-04-27 12:00:10|2026-04-27 12:00:20| team_a|         93|25333.749999999993|        142|
-|2026-04-27 12:00:10|2026-04-27 12:00:20| team_b|         95| 27410.08000000001|        146|
-|2026-04-27 12:00:20|2026-04-27 12:00:30| team_a|         86|23868.729999999992|        129|
-|2026-04-27 12:00:20|2026-04-27 12:00:30| team_b|         94|25891.960000000003|        132|
-|2026-04-27 12:00:30|2026-04-27 12:00:40| team_a|         89| 23335.93000000001|        140|
-|2026-04-27 12:00:30|2026-04-27 12:00:40| team_b|         83|          22737.67|        123|
-|2026-04-27 12:00:40|2026-04-27 12:00:50| team_a|         77|20968.489999999998|        121|
-|2026-04-27 12:00:40|2026-04-27 12:00:50| team_b|         88|23813.670000000006|        129|
-+-------------------+-------------------+-------+-----------+------------------+-----------+
-only showing top 10 rows
-
-  version window_duration watermark_delay                                 optimization  output_rows  avg_event_count  avg_total_gold
-  de_base      10 seconds       5 seconds                       Sans repartitionnement           22        84.136364    22855.111364
-optimisee      10 seconds       5 seconds Repartitionnement par team_id (4 partitions)           22        84.136364    22855.111364
-
-Métriques sauvegardées dans /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/lab1_metrics_log.csv
 </pre>
 </div>
 </div>
@@ -8801,121 +8623,33 @@ Métriques sauvegardées dans /home/sable/Documents/E4FD/S4/Data Engineering/Dat
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># --- RÉSUMÉ INGÉNIERIE ---</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="s2">"""</span>
-<span class="s2"># DE2 Lab 1: Pipeline de streaming - Note d'ingénierie</span>
-
-<span class="s2">## Objectif</span>
-<span class="s2">Implémente et optimise un pipeline Structured Streaming pour les événements esport OpenDota</span>
-<span class="s2">avec agrégation par fenêtre, gestion des watermarks, et livraison exactly-once basée sur checkpoints.</span>
-
-<span class="s2">## Piste de données: Piste A (Esport/OpenDota)</span>
-<span class="s2">- Schéma: event_timestamp, team_id, hero_id, gold_earned, kills</span>
-<span class="s2">- Source d'événements: événements de match OpenDota synthétiques (2000 événements, ~120 sec de durée)</span>
-<span class="s2">- Durée de la fenêtre: 10 secondes</span>
-<span class="s2">- Délai du watermark: 5 secondes (tolérance pour données tardives)</span>
-
-<span class="s2">## Architecture</span>
-
-<span class="s2">### De base (Sans optimisation)</span>
-<span class="s2">- Lecture du flux avec partition unique</span>
-<span class="s2">- Agrégation par fenêtre sans repartitionnement</span>
-<span class="s2">- Sortie: stream_sink_baseline (Parquet)</span>
-<span class="s2">- Checkpoint: checkpoint_baseline</span>
-
-<span class="s2">### Optimisée (Stratégie de repartitionnement)</span>
-<span class="s2">- Lire le flux et repartitionner par team_id (4 partitions)</span>
-<span class="s2">- Cette optimisation colocalise les données d'équipe localement, réduisant le coût de shuffle pendant le groupBy</span>
-<span class="s2">- Agrégation par fenêtre sur données repartitionnées</span>
-<span class="s2">- Sortie: stream_sink_optimized (Parquet)</span>
-<span class="s2">- Checkpoint: checkpoint_optimized</span>
-
-<span class="s2">## Métriques clés capturées</span>
-<span class="s2">1. Plans d'exécution de requête (explain formatted)</span>
-<span class="s2">2. Nombre de lignes de sortie</span>
-<span class="s2">3. Statistiques d'agrégation (avg event_count, avg total_gold)</span>
-<span class="s2">4. Répertoires de checkpoint (vérifier livraison exactly-once)</span>
-
-<span class="s2">## Observations</span>
-<span class="s2">- Le repartitionnement avant l'agrégation par fenêtre réduit la surcharge de shuffle</span>
-<span class="s2">- Le watermark assure que les événements tardifs sont gérés dans la fenêtre de tolérance</span>
-<span class="s2">- Les répertoires de checkpoint fournissent la tolérance aux pannes et les garanties de récupération</span>
-
-<span class="s2">## Reproductibilité</span>
-<span class="s2">- Graine fixée (42) pour la génération de données synthétiques</span>
-<span class="s2">- Limites de fenêtre déterministes liées au timestamp</span>
-<span class="s2">- Configuration matérielle identique supposée</span>
-<span class="s2">- Tous les artefacts dans le dossier /lab1 assignment</span>
-
-<span class="s2">## Fichiers générés</span>
-<span class="s2">- outputs/lab1/stream_sink_baseline/ : Sortie Parquet (de base)</span>
-<span class="s2">- outputs/lab1/stream_sink_optimized/ : Sortie Parquet (optimisée)</span>
-<span class="s2">- outputs/lab1/checkpoint_baseline/ : Checkpoint (de base)</span>
-<span class="s2">- outputs/lab1/checkpoint_optimized/ : Checkpoint (optimisée)</span>
-<span class="s2">- proof/plan_baseline.txt : Plan de requête (de base)</span>
-<span class="s2">- proof/plan_optimized.txt : Plan de requête (optimisée)</span>
-<span class="s2">- lab1_metrics_log.csv : Comparaison des métriques</span>
-<span class="s2">"""</span>
-
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Engineering note &amp; GENAI declaration</span>
 <span class="n">eng_note</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"ENGINEERING_NOTE.md"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">eng_note</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"""# DE2 Lab 1: Streaming Pipeline - GitHub Archive Track B</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Note d'ingénierie sauvegardée dans </span><span class="si">{</span><span class="n">eng_note</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="s2">## Objective</span>
+<span class="s2">Implement and optimize a Spark streaming pipeline on GitHub Archive (Track B) with window aggregation, watermark management, and Parquet persistence with baseline vs optimized comparison.</span>
 
-<span class="c1"># --- DÉCLARATION D'UTILISATION GENAI ---</span>
-<span class="n">genai</span> <span class="o">=</span> <span class="s2">"""</span>
-<span class="s2"># GENAI.md - Déclaration d'utilisation de l'IA générative</span>
+<span class="s2">## Architecture</span>
+<span class="s2">**Baseline**: No repartitioning, Parquet sink baseline_sink</span>
+<span class="s2">**Optimized**: Repartition by event_type + repo_name (4 partitions) before aggregation</span>
 
-<span class="s2">## Résumé</span>
-<span class="s2">Aucune IA générative n'a été utilisée dans le code de la solution. Tout le code a été écrit manuellement</span>
-<span class="s2">et testé pour assurer la correction et l'adhésion aux objectifs du cours.</span>
-
-<span class="s2">## Méthodologie</span>
-<span class="s2">- Compréhension de l'API PySpark Structured Streaming à partir de la documentation officielle</span>
-<span class="s2">- Conception du schéma basée sur le modèle de données esport OpenDota</span>
-<span class="s2">- Implémentation des pipelines de base et optimisés avec stratégie d'optimisation explicite (repartitionnement)</span>
-<span class="s2">- Capture des métriques et plans manuellement</span>
-<span class="s2">- Tout le code est reproductible et explique chaque ligne</span>
-
-<span class="s2">## Références</span>
-<span class="s2">- Guide PySpark Structured Streaming</span>
-<span class="s2">- Designing Data-Intensive Applications (DDIA)</span>
-<span class="s2">"""</span>
+<span class="s2">## Data: GitHub Archive (real public events)</span>
+<span class="s2">- Window: 1 hour | Watermark: 15 minutes</span>
+<span class="s2">- Aggregations: count(*), countDistinct(actor_login), sum(public events)</span>
+<span class="s2">- Outputs: plan_baseline.txt, plan_optimized.txt, lab1_metrics_log.csv</span>
+<span class="s2">"""</span><span class="p">)</span>
 
 <span class="n">genai_file</span> <span class="o">=</span> <span class="n">BASE_DIR</span> <span class="o">/</span> <span class="s2">"GENAI.md"</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">genai_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">genai</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"# GENAI.md</span><span class="se">\\</span><span class="s2">nNo generative AI used. All code manually written and tested.</span><span class="se">\\</span><span class="s2">nData source: GitHub Archive real public events.</span><span class="se">\\</span><span class="s2">n"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Déclaration GENAI sauvegardée dans </span><span class="si">{</span><span class="n">genai_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"TOUS LES LIVRABLES SONT COMPLETS"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
-<span class="s2">Sorties:</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">baseline_sink</span><span class="si">}</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">optimized_sink</span><span class="si">}</span>
-<span class="s2">  </span>
-<span class="s2">Checkpoints (exactly-once):</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">baseline_checkpoint</span><span class="si">}</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">optimized_checkpoint</span><span class="si">}</span>
-<span class="s2">  </span>
-<span class="s2">Preuves:</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">baseline_plan_file</span><span class="si">}</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">optimized_plan_file</span><span class="si">}</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">metrics_csv</span><span class="si">}</span>
-<span class="s2">  </span>
-<span class="s2">Documentation:</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">eng_note</span><span class="si">}</span>
-<span class="s2">  - </span><span class="si">{</span><span class="n">genai_file</span><span class="si">}</span>
-<span class="s2">"""</span><span class="p">)</span>
-
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Completed: </span><span class="si">{</span><span class="n">eng_note</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">genai_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Terminé."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8928,48 +8662,7 @@ Métriques sauvegardées dans /home/sable/Documents/E4FD/S4/Data Engineering/Dat
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Note d'ingénierie sauvegardée dans /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/ENGINEERING_NOTE.md
-Déclaration GENAI sauvegardée dans /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/GENAI.md
-
-================================================================================
-TOUS LES LIVRABLES SONT COMPLETS
-================================================================================
-
-Sorties:
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_baseline
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/stream_sink_optimized
-  
-Checkpoints (exactly-once):
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/checkpoint_baseline
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/outputs/lab1/checkpoint_optimized
-  
-Preuves:
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/proof/plan_baseline.txt
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/proof/plan_optimized.txt
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/lab1_metrics_log.csv
-  
-Documentation:
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/ENGINEERING_NOTE.md
-  - /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/GENAI.md
-
-Terminé.
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>26/04/27 20:39:43 WARN StateStore: Error running maintenance thread
-java.lang.IllegalStateException: SparkEnv not active, cannot do maintenance on StateStores
-	at org.apache.spark.sql.execution.streaming.state.StateStore$.doMaintenance(StateStore.scala:971)
-	at org.apache.spark.sql.execution.streaming.state.StateStore$.$anonfun$startMaintenanceIfNeeded$1(StateStore.scala:945)
-	at org.apache.spark.sql.execution.streaming.state.StateStore$MaintenanceTask$$anon$1.run(StateStore.scala:746)
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
-	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
-	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
-	at java.base/java.lang.Thread.run(Thread.java:840)
+<pre>Completed: /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/ENGINEERING_NOTE.md, /home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/lab1 assignment/GENAI.md
 </pre>
 </div>
 </div>
