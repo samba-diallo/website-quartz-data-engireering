@@ -1,0 +1,30 @@
+# Build artifacts and caches
+node_modules/
+public/
+.next/
+.quartz-cache/
+build/
+dist/
+
+# Python virtualenv
+de1-env/
+
+# Sub-projects (formattés indépendamment)
+Data Engineering 1/
+Data Engineering 2/
+
+# Quartz published content (markdown auteur, ne pas reformater)
+content/
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Large data samples
+sample_archive_github.json
+*.json.gz
+*.parquet
+
+# Generated docs / proofs
+documentation/

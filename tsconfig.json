@@ -18,5 +18,15 @@
     "jsxImportSource": "preact"
   },
   "include": ["**/*.ts", "**/*.tsx", "./package.json"],
-  "exclude": ["build/**/*.d.ts"]
+  "exclude": [
+    "build/**/*.d.ts",
+    "node_modules/**",
+    "public/**",
+    ".next/**",
+    ".quartz-cache/**",
+    "de1-env/**",
+    "Data Engineering 1/**",
+    "Data Engineering 2/**",
+    "content/**"
+  ]
 }
