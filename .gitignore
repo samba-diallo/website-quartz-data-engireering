@@ -78,3 +78,59 @@ Thumbs.db
 # -------- Logs -----------------------------------------------
 *.log
 npm-debug.log*
+
+# =============================================================
+# AJOUTS SECURITY_AUDIT (2026-05-15) — voir documentation/SECURITY_AUDIT.md
+# =============================================================
+
+# -------- Audit privé (contient credentials trouvés) ---------
+documentation/SECURITY_AUDIT.md
+
+# -------- Lab outputs DE1 non couverts précédemment ----------
+**/lab*-practice/output/
+**/lab*-practice/outputs/
+
+# -------- Sample data (potentiel PII GitHub emails) ----------
+sample_*.json
+samples/
+
+# -------- Scratch / brainstorming / prompts (consigne) -------
+p*.md
+pus.md
+PROMPT_*.md
+Prompt.md
+consi.md
+document izisaas.md
+implementation_plan*.md
+kafka_airflow_integration_plan.md
+recap.md
+NEXT_STEPS.md
+Cyber.md
+GUIDE_TECHNOLOGIES.md
+PROJET_JOURNAL.md
+
+# -------- Secrets / Kubernetes / Cloud configs ---------------
+**/secrets-and-pvc.yaml
+**/*.secrets.yaml
+.envrc
+.tool-versions.local
+.aws/
+.gcp/
+*.kubeconfig
+
+# -------- Airflow / Spark / Kafka run state ------------------
+**/airflow/logs/
+**/spark-events/
+**/streaming_checkpoint/
+**/*_checkpoint/
+
+# -------- dbt (préparation futur) ----------------------------
+target/
+dbt_packages/
+
+# -------- Tests / linters / type checkers --------------------
+.coverage
+.tox/
+.mypy_cache/
+.ruff_cache/
+htmlcov/

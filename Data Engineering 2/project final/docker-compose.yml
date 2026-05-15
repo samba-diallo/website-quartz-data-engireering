@@ -1,0 +1,240 @@
+# ==========================================================
+# Docker Compose - GitHub Archive Analytics Platform (v2)
+# Architecture : Kafka + Spark + FastAPI + Next.js
+# ==========================================================
+version: "3.8"
+
+services:
+
+  # ----------------------------------------------------------
+  # COUCHE STREAMING : Kafka + Zookeeper
+  # ----------------------------------------------------------
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: de2_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: de2_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Configuration des listeners pour acces interne (Docker) et externe (host)
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_MESSAGE_MAX_BYTES: 10485760
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+
+  # Interface web pour visualiser les topics et messages Kafka
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: de2_kafka_ui
+    depends_on:
+      - kafka
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: de2-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    restart: unless-stopped
+
+  # Initialisation des topics Kafka au demarrage
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: de2_kafka_init
+    depends_on:
+      - kafka
+    entrypoint: ["/bin/bash", "/scripts/init_topics.sh"]
+    volumes:
+      - ./scripts/init_topics.sh:/scripts/init_topics.sh:ro
+    restart: "no"
+
+  # ----------------------------------------------------------
+  # COUCHE INGESTION : Producer Python (GH Archive -> Kafka)
+  # ----------------------------------------------------------
+
+  producer:
+    build:
+      context: ./kafka/producer
+      dockerfile: Dockerfile
+    container_name: de2_producer
+    depends_on:
+      - kafka-init
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC: github.raw.events
+    volumes:
+      - ./data:/app/data
+    restart: "no"
+
+  # ----------------------------------------------------------
+  # COUCHE SPARK STREAMING : Consumer Bronze
+  # ----------------------------------------------------------
+
+  spark-bronze:
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    container_name: de2_spark_bronze
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC: github.raw.events
+      BRONZE_OUTPUT_PATH: /app/outputs/project/bronze_v2
+      CHECKPOINT_PATH: /app/outputs/project/bronze_v2_checkpoint
+    volumes:
+      - ./outputs:/app/outputs
+      - ./spark:/app/spark:ro
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # COUCHE SERVING : Backend API (FastAPI + DuckDB)
+  # ----------------------------------------------------------
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: de2_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./outputs:/app/outputs:ro
+    environment:
+      - PARQUET_BASE_PATH=/app/outputs/project
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # COUCHE PRESENTATION : Frontend Dashboard (Next.js)
+  # ----------------------------------------------------------
+
+  frontend:
+    build:
+      context: ./frontend-dashboard
+      dockerfile: Dockerfile
+    container_name: de2_frontend
+    command: npm run dev
+    volumes:
+      - ./frontend-dashboard:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # ORCHESTRATION : Apache Airflow
+  # ----------------------------------------------------------
+
+  airflow-db:
+    image: postgres:13
+    container_name: de2_airflow_db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - airflow_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  airflow-init:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    container_name: de2_airflow_init
+    depends_on:
+      - airflow-db
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@airflow-db/${POSTGRES_DB}
+      - _AIRFLOW_DB_UPGRADE=true
+      - _AIRFLOW_WWW_USER_CREATE=true
+      - _AIRFLOW_WWW_USER_USERNAME=${AIRFLOW_ADMIN_USER}
+      - _AIRFLOW_WWW_USER_PASSWORD=${AIRFLOW_ADMIN_PASSWORD}
+    command: >
+      bash -c "airflow db migrate &&
+      airflow users create
+      --username ${AIRFLOW_ADMIN_USER}
+      --firstname admin
+      --lastname admin
+      --role Admin
+      --email ${AIRFLOW_ADMIN_EMAIL}
+      --password ${AIRFLOW_ADMIN_PASSWORD}"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/logs:/opt/airflow/logs
+
+  airflow-webserver:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    container_name: de2_airflow_webserver
+    depends_on:
+      - airflow-db
+    ports:
+      - "8080:8080"
+    command: webserver
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@airflow-db/${POSTGRES_DB}
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/logs:/opt/airflow/logs
+      - ./kafka/producer:/opt/producer
+      - ./spark/scripts:/opt/spark/scripts:ro
+      - ./outputs:/opt/airflow/outputs
+    restart: unless-stopped
+
+  airflow-scheduler:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    container_name: de2_airflow_scheduler
+    depends_on:
+      - airflow-db
+    command: scheduler
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@airflow-db/${POSTGRES_DB}
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/plugins:/opt/airflow/plugins
+      - ./airflow/logs:/opt/airflow/logs
+      - ./kafka/producer:/opt/producer
+      - ./spark/scripts:/opt/spark/scripts:ro
+      - ./outputs:/opt/airflow/outputs
+    restart: unless-stopped
+
+# ----------------------------------------------------------
+# VOLUMES PERSISTANTS
+# ----------------------------------------------------------
+volumes:
+  zookeeper_data:
+  kafka_data:
+  airflow_db_data:
