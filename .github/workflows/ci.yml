@@ -10,30 +10,42 @@ on:
       - main
   workflow_dispatch:
 
+# Least-privilege : ce workflow ne fait que build + upload artifact
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build Quartz Site
     runs-on: ubuntu-latest
-    
+
     steps:
-      # Récupérer le code du repository
+      # Récupérer le code du repository (avec fetch-depth: 0 pour gitleaks)
       - name: Checkout code
         uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0
+
+      # Scan secrets sur tout le diff/historique
+      - name: Secret scanning (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Configurer Node.js avec la version spécifiée
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-      
+
       # Installer les dépendances npm
       - name: Install dependencies
         run: npm ci
-      
-      # Vérifier les types TypeScript et le linting
+
+      # Vérifier les types TypeScript et le linting (fail la CI si erreur)
       - name: Check types and lint
-        run: npm run check 2>&1 || true
+        run: npm run check
       
       # Construire le site Quartz
       - name: Build Quartz site
