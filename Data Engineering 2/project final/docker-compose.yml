@@ -1,20 +1,131 @@
+# ==========================================================
+# Docker Compose - GitHub Archive Analytics Platform (v2)
+# Architecture : Kafka + Spark + FastAPI + Next.js
+# ==========================================================
 version: "3.8"
 
 services:
+
+  # ----------------------------------------------------------
+  # COUCHE STREAMING : Kafka + Zookeeper
+  # ----------------------------------------------------------
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: de2_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: de2_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Configuration des listeners pour acces interne (Docker) et externe (host)
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_MESSAGE_MAX_BYTES: 10485760
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+
+  # Interface web pour visualiser les topics et messages Kafka
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: de2_kafka_ui
+    depends_on:
+      - kafka
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: de2-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    restart: unless-stopped
+
+  # Initialisation des topics Kafka au demarrage
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: de2_kafka_init
+    depends_on:
+      - kafka
+    entrypoint: ["/bin/bash", "/scripts/init_topics.sh"]
+    volumes:
+      - ./scripts/init_topics.sh:/scripts/init_topics.sh:ro
+    restart: "no"
+
+  # ----------------------------------------------------------
+  # COUCHE INGESTION : Producer Python (GH Archive -> Kafka)
+  # ----------------------------------------------------------
+
+  producer:
+    build:
+      context: ./kafka/producer
+      dockerfile: Dockerfile
+    container_name: de2_producer
+    depends_on:
+      - kafka-init
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC: github.raw.events
+    volumes:
+      - ./data:/app/data
+    restart: "no"
+
+  # ----------------------------------------------------------
+  # COUCHE SPARK STREAMING : Consumer Bronze
+  # ----------------------------------------------------------
+
+  spark-bronze:
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    container_name: de2_spark_bronze
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC: github.raw.events
+      BRONZE_OUTPUT_PATH: /app/outputs/project/bronze_v2
+      CHECKPOINT_PATH: /app/outputs/project/bronze_v2_checkpoint
+    volumes:
+      - ./outputs:/app/outputs
+      - ./spark:/app/spark:ro
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # COUCHE SERVING : Backend API (FastAPI + DuckDB)
+  # ----------------------------------------------------------
+
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: de2_backend
     ports:
       - "8000:8000"
     volumes:
-      # Mount the outputs directory so DuckDB can read the Parquet files
       - ./outputs:/app/outputs:ro
     environment:
-      # We tell the backend to look for data inside /app/outputs
       - PARQUET_BASE_PATH=/app/outputs/project
     restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # COUCHE PRESENTATION : Frontend Dashboard (Next.js)
+  # ----------------------------------------------------------
 
   frontend:
     build:
@@ -26,7 +137,12 @@ services:
     depends_on:
       - backend
     environment:
-      # In Docker, we use the service name 'backend' to communicate between containers internally,
-      # but for the browser (client-side React), it still needs to access localhost
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     restart: unless-stopped
+
+# ----------------------------------------------------------
+# VOLUMES PERSISTANTS
+# ----------------------------------------------------------
+volumes:
+  zookeeper_data:
+  kafka_data:
