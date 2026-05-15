@@ -1,0 +1,283 @@
+== Physical Plan ==
+AdaptiveSparkPlan (42)
++- Project (41)
+   +- BroadcastHashJoin Inner BuildRight (40)
+      :- Project (23)
+      :  +- BroadcastHashJoin Inner BuildLeft (22)
+      :     :- BroadcastExchange (19)
+      :     :  +- Filter (18)
+      :     :     +- InMemoryTableScan (1)
+      :     :           +- InMemoryRelation (2)
+      :     :                 +- AdaptiveSparkPlan (17)
+                                 +- == Final Plan ==
+                                    ResultQueryStage (11)
+                                    +- * HashAggregate (10)
+                                       +- ShuffleQueryStage (9), Statistics(sizeInBytes=8.0 MiB, rowCount=1.17E+5)
+                                          +- Exchange (8)
+                                             +- * HashAggregate (7)
+                                                +- * Project (6)
+                                                   +- * Filter (5)
+                                                      +- * ColumnarToRow (4)
+                                                         +- Scan parquet  (3)
+                                 +- == Initial Plan ==
+                                    HashAggregate (16)
+                                    +- Exchange (15)
+                                       +- HashAggregate (14)
+                                          +- Project (13)
+                                             +- Filter (12)
+                                                +- Scan parquet  (3)
+      :     +- Filter (21)
+      :        +- Scan ExistingRDD (20)
+      +- BroadcastExchange (39)
+         +- Filter (38)
+            +- InMemoryTableScan (24)
+                  +- InMemoryRelation (25)
+                        +- AdaptiveSparkPlan (37)
+                           +- == Final Plan ==
+                              ResultQueryStage (33)
+                              +- * HashAggregate (32)
+                                 +- ShuffleQueryStage (31), Statistics(sizeInBytes=1110.6 KiB, rowCount=2.99E+4)
+                                    +- Exchange (30)
+                                       +- * HashAggregate (29)
+                                          +- TableCacheQueryStage (28), Statistics(sizeInBytes=4.5 MiB, rowCount=9.89E+4)
+                                             +- InMemoryTableScan (26)
+                                                   +- InMemoryRelation (27)
+                                                         +- AdaptiveSparkPlan (17)
+                              +- == Final Plan ==
+                                 ResultQueryStage (11)
+                                 +- * HashAggregate (10)
+                                    +- ShuffleQueryStage (9), Statistics(sizeInBytes=8.0 MiB, rowCount=1.17E+5)
+                                       +- Exchange (8)
+                                          +- * HashAggregate (7)
+                                             +- * Project (6)
+                                                +- * Filter (5)
+                                                   +- * ColumnarToRow (4)
+                                                      +- Scan parquet  (3)
+                              +- == Initial Plan ==
+                                 HashAggregate (16)
+                                 +- Exchange (15)
+                                    +- HashAggregate (14)
+                                       +- Project (13)
+                                          +- Filter (12)
+                                             +- Scan parquet  (3)
+                           +- == Initial Plan ==
+                              HashAggregate (36)
+                              +- Exchange (35)
+                                 +- HashAggregate (34)
+                                    +- InMemoryTableScan (26)
+                                          +- InMemoryRelation (27)
+                                                +- AdaptiveSparkPlan (17)
+                     +- == Final Plan ==
+                        ResultQueryStage (11)
+                        +- * HashAggregate (10)
+                           +- ShuffleQueryStage (9), Statistics(sizeInBytes=8.0 MiB, rowCount=1.17E+5)
+                              +- Exchange (8)
+                                 +- * HashAggregate (7)
+                                    +- * Project (6)
+                                       +- * Filter (5)
+                                          +- * ColumnarToRow (4)
+                                             +- Scan parquet  (3)
+                     +- == Initial Plan ==
+                        HashAggregate (16)
+                        +- Exchange (15)
+                           +- HashAggregate (14)
+                              +- Project (13)
+                                 +- Filter (12)
+                                    +- Scan parquet  (3)
+
+
+(1) InMemoryTableScan
+Output [2]: [src#685, dst#686]
+Arguments: [src#685, dst#686], [isnotnull(src#685)]
+
+(2) InMemoryRelation
+Arguments: [src#685, dst#686], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(3) Scan parquet 
+Output [4]: [event_type#173, actor_login#174, repo_name#175, date#179]
+Batched: true
+Location: InMemoryFileIndex [file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/project final/outputs/project/silver]
+PushedFilters: [In(event_type, [IssuesEvent,PullRequestEvent,PushEvent])]
+ReadSchema: struct<event_type:string,actor_login:string,repo_name:string>
+
+(4) ColumnarToRow [codegen id : 1]
+Input [4]: [event_type#173, actor_login#174, repo_name#175, date#179]
+
+(5) Filter [codegen id : 1]
+Input [4]: [event_type#173, actor_login#174, repo_name#175, date#179]
+Condition : event_type#173 IN (PushEvent,PullRequestEvent,IssuesEvent)
+
+(6) Project [codegen id : 1]
+Output [2]: [actor_login#174 AS src#685, repo_name#175 AS dst#686]
+Input [4]: [event_type#173, actor_login#174, repo_name#175, date#179]
+
+(7) HashAggregate [codegen id : 1]
+Input [2]: [src#685, dst#686]
+Keys [2]: [src#685, dst#686]
+Functions: []
+Aggregate Attributes: []
+Results [2]: [src#685, dst#686]
+
+(8) Exchange
+Input [2]: [src#685, dst#686]
+Arguments: hashpartitioning(src#685, dst#686, 200), ENSURE_REQUIREMENTS, [plan_id=1693]
+
+(9) ShuffleQueryStage
+Output [2]: [src#685, dst#686]
+Arguments: 0
+
+(10) HashAggregate [codegen id : 2]
+Input [2]: [src#685, dst#686]
+Keys [2]: [src#685, dst#686]
+Functions: []
+Aggregate Attributes: []
+Results [2]: [src#685, dst#686]
+
+(11) ResultQueryStage
+Output [2]: [src#685, dst#686]
+Arguments: 1
+
+(12) Filter
+Input [4]: [event_type#173, actor_login#174, repo_name#175, date#179]
+Condition : event_type#173 IN (PushEvent,PullRequestEvent,IssuesEvent)
+
+(13) Project
+Output [2]: [actor_login#174 AS src#685, repo_name#175 AS dst#686]
+Input [4]: [event_type#173, actor_login#174, repo_name#175, date#179]
+
+(14) HashAggregate
+Input [2]: [src#685, dst#686]
+Keys [2]: [src#685, dst#686]
+Functions: []
+Aggregate Attributes: []
+Results [2]: [src#685, dst#686]
+
+(15) Exchange
+Input [2]: [src#685, dst#686]
+Arguments: hashpartitioning(src#685, dst#686, 200), ENSURE_REQUIREMENTS, [plan_id=1637]
+
+(16) HashAggregate
+Input [2]: [src#685, dst#686]
+Keys [2]: [src#685, dst#686]
+Functions: []
+Aggregate Attributes: []
+Results [2]: [src#685, dst#686]
+
+(17) AdaptiveSparkPlan
+Output [2]: [src#685, dst#686]
+Arguments: isFinalPlan=true
+
+(18) Filter
+Input [2]: [src#685, dst#686]
+Condition : isnotnull(src#685)
+
+(19) BroadcastExchange
+Input [2]: [src#685, dst#686]
+Arguments: HashedRelationBroadcastMode(List(input[0, string, false]),false), [plan_id=10646]
+
+(20) Scan ExistingRDD
+Output [2]: [src#4065, rank#4066]
+Arguments: [src#4065, rank#4066], MapPartitionsRDD[647] at localCheckpoint at NativeMethodAccessorImpl.java:0, ExistingRDD, UnknownPartitioning(0)
+
+(21) Filter
+Input [2]: [src#4065, rank#4066]
+Condition : isnotnull(src#4065)
+
+(22) BroadcastHashJoin
+Left keys [1]: [src#685]
+Right keys [1]: [src#4065]
+Join type: Inner
+Join condition: None
+
+(23) Project
+Output [3]: [src#685, dst#686, rank#4066]
+Input [4]: [src#685, dst#686, src#4065, rank#4066]
+
+(24) InMemoryTableScan
+Output [2]: [src#4075, out_deg#701L]
+Arguments: [src#4075, out_deg#701L], [isnotnull(src#4075)]
+
+(25) InMemoryRelation
+Arguments: [src#4075, out_deg#701L], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(26) InMemoryTableScan
+Output [1]: [src#685]
+Arguments: [src#685]
+
+(27) InMemoryRelation
+Arguments: [src#685, dst#686], StorageLevel(disk, memory, deserialized, 1 replicas)
+
+(28) TableCacheQueryStage
+Output [1]: [src#685]
+Arguments: 0
+
+(29) HashAggregate [codegen id : 1]
+Input [1]: [src#685]
+Keys [1]: [src#685]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#732L]
+Results [2]: [src#685, count#733L]
+
+(30) Exchange
+Input [2]: [src#685, count#733L]
+Arguments: hashpartitioning(src#685, 200), ENSURE_REQUIREMENTS, [plan_id=2074]
+
+(31) ShuffleQueryStage
+Output [2]: [src#685, count#733L]
+Arguments: 1
+
+(32) HashAggregate [codegen id : 2]
+Input [2]: [src#685, count#733L]
+Keys [1]: [src#685]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#700L]
+Results [2]: [src#685, count(1)#700L AS out_deg#701L]
+
+(33) ResultQueryStage
+Output [2]: [src#685, out_deg#701L]
+Arguments: 2
+
+(34) HashAggregate
+Input [1]: [src#685]
+Keys [1]: [src#685]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#732L]
+Results [2]: [src#685, count#733L]
+
+(35) Exchange
+Input [2]: [src#685, count#733L]
+Arguments: hashpartitioning(src#685, 200), ENSURE_REQUIREMENTS, [plan_id=1650]
+
+(36) HashAggregate
+Input [2]: [src#685, count#733L]
+Keys [1]: [src#685]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#700L]
+Results [2]: [src#685, count(1)#700L AS out_deg#701L]
+
+(37) AdaptiveSparkPlan
+Output [2]: [src#685, out_deg#701L]
+Arguments: isFinalPlan=true
+
+(38) Filter
+Input [2]: [src#4075, out_deg#701L]
+Condition : isnotnull(src#4075)
+
+(39) BroadcastExchange
+Input [2]: [src#4075, out_deg#701L]
+Arguments: HashedRelationBroadcastMode(List(input[0, string, false]),false), [plan_id=10650]
+
+(40) BroadcastHashJoin
+Left keys [1]: [src#685]
+Right keys [1]: [src#4075]
+Join type: Inner
+Join condition: None
+
+(41) Project
+Output [2]: [dst#686 AS src#4078, (rank#4066 / cast(out_deg#701L as double)) AS contrib#4079]
+Input [5]: [src#685, dst#686, rank#4066, src#4075, out_deg#701L]
+
+(42) AdaptiveSparkPlan
+Output [2]: [src#4078, contrib#4079]
+Arguments: isFinalPlan=false
+

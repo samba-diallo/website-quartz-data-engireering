@@ -1,0 +1,46 @@
+== Physical Plan ==
+AdaptiveSparkPlan (7)
++- Sort (6)
+   +- Exchange (5)
+      +- HashAggregate (4)
+         +- Exchange (3)
+            +- HashAggregate (2)
+               +- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [2]: [repo_name#4053, event_count#4055L]
+Batched: true
+Location: InMemoryFileIndex [file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/project final/outputs/project/gold/repo_activity]
+ReadSchema: struct<repo_name:string,event_count:bigint>
+
+(2) HashAggregate
+Input [2]: [repo_name#4053, event_count#4055L]
+Keys [1]: [repo_name#4053]
+Functions [1]: [partial_sum(event_count#4055L)]
+Aggregate Attributes [1]: [sum#4063L]
+Results [2]: [repo_name#4053, sum#4064L]
+
+(3) Exchange
+Input [2]: [repo_name#4053, sum#4064L]
+Arguments: hashpartitioning(repo_name#4053, 200), ENSURE_REQUIREMENTS, [plan_id=10605]
+
+(4) HashAggregate
+Input [2]: [repo_name#4053, sum#4064L]
+Keys [1]: [repo_name#4053]
+Functions [1]: [sum(event_count#4055L)]
+Aggregate Attributes [1]: [sum(event_count#4055L)#4061L]
+Results [2]: [repo_name#4053, sum(event_count#4055L)#4061L AS total#4056L]
+
+(5) Exchange
+Input [2]: [repo_name#4053, total#4056L]
+Arguments: rangepartitioning(total#4056L DESC NULLS LAST, 200), ENSURE_REQUIREMENTS, [plan_id=10608]
+
+(6) Sort
+Input [2]: [repo_name#4053, total#4056L]
+Arguments: [total#4056L DESC NULLS LAST], true, 0
+
+(7) AdaptiveSparkPlan
+Output [2]: [repo_name#4053, total#4056L]
+Arguments: isFinalPlan=false
+

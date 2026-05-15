@@ -10,7 +10,7 @@ project:
 
 paths:
   # Entrées
-  raw_csv_glob: "data/archive/*.json"
+  raw_csv_glob: "data/archive/*.json.gz"
   streaming_landing: "data/landing/"
   
   # Sorties Medallion

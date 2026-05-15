@@ -1,1 +1,139 @@
-run_id,stage,task,metric_name,metric_value,notes,timestamp
+run_id,stage,task,metric_name,metric_value,"notes",timestamp
+run_1778793656,Batch ETL,task,bronze_latency_sec,14.202190637588501,"Traitement de 1000 évènements bruts",2026-05-14T23:20:56.993945
+run_1778793660,Batch ETL,task,silver_latency_sec,3.4158687591552734,"Nettoyage de 1000 évènements",2026-05-14T23:21:00.876493
+run_1778793662,Batch ETL,task,gold_latency_sec,1.7492597103118896,"Agrégation des dépôts réussie",2026-05-14T23:21:02.626210
+run_1778793773,Batch ETL,task,bronze_latency_sec,6.1820595264434814,"Traitement de 1000 évènements bruts",2026-05-14T23:22:53.304646
+run_1778793774,Batch ETL,task,silver_latency_sec,1.1999244689941406,"Nettoyage de 1000 évènements",2026-05-14T23:22:54.719608
+run_1778793775,Batch ETL,task,gold_latency_sec,0.8028366565704346,"Agrégation des dépôts réussie",2026-05-14T23:22:55.522847
+run_1778793796,Batch ETL,task,bronze_latency_sec,1.067847490310669,"Traitement de 1000 évènements bruts",2026-05-14T23:23:16.532002
+run_1778793797,Batch ETL,task,silver_latency_sec,0.4307270050048828,"Nettoyage de 1000 évènements",2026-05-14T23:23:17.119829
+run_1778793797,Batch ETL,task,gold_latency_sec,0.388690710067749,"Agrégation des dépôts réussie",2026-05-14T23:23:17.509031
+run_1778794249,Batch ETL,task,bronze_latency_sec,59.754629611968994,"Traitement de 590187 évènements bruts",2026-05-14T23:30:49.439709
+run_1778794254,Batch ETL,task,silver_latency_sec,4.269775152206421,"Nettoyage de 590187 évènements",2026-05-14T23:30:54.054224
+run_1778794256,Batch ETL,task,gold_latency_sec,1.9711580276489258,"Agrégation des dépôts réussie",2026-05-14T23:30:56.025538
+run_1778794931,Batch ETL,task,bronze_latency_sec,71.732168674469,"Traitement de 863008 évènements bruts",2026-05-14T23:42:11.141209
+run_1778794936,Batch ETL,task,silver_latency_sec,4.900241851806641,"Nettoyage de 863008 évènements",2026-05-14T23:42:16.399932
+run_1778794938,Batch ETL,task,gold_latency_sec,2.0080556869506836,"Agrégation des dépôts réussie",2026-05-14T23:42:18.408463
+run_1778796341,Batch ETL,task,bronze_latency_sec,69.37793183326721,"Traitement de 863008 évènements bruts",2026-05-15T00:05:41.276904
+run_1778796345,Batch ETL,task,silver_latency_sec,4.194418907165527,"Nettoyage de 863008 évènements",2026-05-15T00:05:45.831130
+run_1778796348,Batch ETL,task,gold_latency_sec,2.257009744644165,"Agrégation des dépôts réussie",2026-05-15T00:05:48.088360
+run_1778796490,Batch ETL,task,bronze_latency_sec,65.82133197784424,"Traitement de 863008 évènements bruts",2026-05-15T00:08:10.497098
+run_1778796495,Batch ETL,task,silver_latency_sec,4.810941934585571,"Nettoyage de 863008 évènements",2026-05-15T00:08:15.624082
+run_1778796497,Batch ETL,task,gold_latency_sec,1.9498472213745117,"Agrégation des dépôts réussie",2026-05-15T00:08:17.574138
+run_1778796653,Batch ETL,task,bronze_latency_sec,65.77125835418701,"Traitement de 863008 évènements bruts",2026-05-15T00:10:53.436789
+run_1778796657,Batch ETL,task,silver_latency_sec,3.514523506164551,"Nettoyage de 863008 évènements",2026-05-15T00:10:57.430267
+run_1778796659,Batch ETL,task,gold_latency_sec,2.3443384170532227,"Agrégation des dépôts réussie",2026-05-15T00:10:59.774797
+run_1778797610,Batch ETL,task,bronze_latency_sec,40.43455100059509,"Traitement de 323291 évènements bruts",2026-05-15T00:26:50.608525
+run_1778797613,Batch ETL,task,silver_latency_sec,2.625988483428955,"Nettoyage de 323291 évènements",2026-05-15T00:26:53.612877
+run_1778797615,Batch ETL,task,gold_latency_sec,1.5196361541748047,"Agrégation des dépôts réussie",2026-05-15T00:26:55.132987
+run_1778798108,Batch ETL,task,bronze_latency_sec,40.91511130332947,"Traitement de 323291 évènements bruts",2026-05-15T00:35:08.541914
+run_1778798111,Batch ETL,task,silver_latency_sec,3.033384323120117,"Nettoyage de 323291 évènements",2026-05-15T00:35:11.986313
+run_1778798113,Batch ETL,task,gold_latency_sec,1.6150898933410645,"Agrégation des dépôts réussie",2026-05-15T00:35:13.601910
+run_1778798287,Batch ETL,task,bronze_latency_sec,55.037238121032715,"Traitement de 323291 évènements bruts",2026-05-15T00:38:07.198144
+run_1778798394,Batch ETL,task,bronze_latency_sec,39.50687599182129,"Traitement de 323291 évènements bruts",2026-05-15T00:39:54.822088
+run_1778798398,Batch ETL,task,silver_latency_sec,3.046205520629883,"Nettoyage de 323291 évènements",2026-05-15T00:39:58.175493
+run_1778798399,Batch ETL,task,gold_latency_sec,1.5452957153320312,"Agrégation des dépôts réussie",2026-05-15T00:39:59.720959
+run_1778798490,Streaming,task,streaming_trigger_latency,5,"Batch 3",2026-05-15T00:41:30.575769
+run_1778798519,Batch ETL,task,bronze_latency_sec,44.95620656013489,"Traitement de 323291 évènements bruts",2026-05-15T00:41:59.512592
+run_1778798522,Batch ETL,task,silver_latency_sec,2.8594634532928467,"Nettoyage de 323291 évènements",2026-05-15T00:42:02.757137
+run_1778798524,Batch ETL,task,gold_latency_sec,1.7092862129211426,"Agrégation des dépôts réussie",2026-05-15T00:42:04.467010
+run_1778798763,Streaming,task,streaming_trigger_latency,10,"Batch 3",2026-05-15T00:46:03.096078
+run_1778799357,Batch ETL,task,bronze_latency_sec,40.28175163269043,"Traitement de 323291 évènements bruts",2026-05-15T00:55:57.331162
+run_1778799360,Batch ETL,task,silver_latency_sec,2.8466477394104004,"Nettoyage de 323291 évènements",2026-05-15T00:56:00.511326
+run_1778799362,Batch ETL,task,gold_latency_sec,1.5360291004180908,"Agrégation des dépôts réussie",2026-05-15T00:56:02.047665
+run_1778799452,Streaming,task,streaming_trigger_latency,12,"Batch 3",2026-05-15T00:57:32.805758
+run_1778799732,Text,task,query_latency_fix_ms,361.4,"freq=175",2026-05-15T01:02:12.372821
+run_1778799732,Text,task,query_latency_bug_ms,54.8,"freq=7",2026-05-15T01:02:12.427779
+run_1778799732,Text,task,query_latency_feature_ms,52.6,"freq=0",2026-05-15T01:02:12.480550
+run_1778799732,Text,task,parquet_size_mb,11.75,"",2026-05-15T01:02:12.488505
+run_1778799732,Text,task,csv_size_mb,16.85,"",2026-05-15T01:02:12.488622
+run_1778799732,Text,task,parquet_vs_csv_pct,69.7,"SLO<=60%",2026-05-15T01:02:12.488683
+run_1778799732,Text,task,text_pipeline_sec,278.84,"",2026-05-15T01:02:12.488732
+run_1778799747,Clustering,task,silhouette_k3,0.9981,"cost=1445162.14",2026-05-15T01:02:27.042103
+run_1778799752,Clustering,task,silhouette_k5,0.9979,"cost=1302970.69",2026-05-15T01:02:32.937121
+run_1778799757,Clustering,task,silhouette_k8,0.9604,"cost=855673.00",2026-05-15T01:02:37.628005
+run_1778799762,Clustering,task,silhouette_k10,0.9325,"cost=829263.54",2026-05-15T01:02:42.704491
+run_1778799770,Clustering,task,kmeans_before_sec,3.68,"sans repartition",2026-05-15T01:02:50.056256
+run_1778799770,Clustering,task,kmeans_after_sec,1.92,"repartition(8)",2026-05-15T01:02:50.056405
+run_1778799770,Clustering,task,clustering_pipeline_sec,37.19,"",2026-05-15T01:02:50.056611
+run_1778799775,LLM,task,llm_pass_rate_pct,25.7,"SLO>=80%",2026-05-15T01:02:55.116768
+run_1778799775,LLM,task,llm_records,77857,"",2026-05-15T01:02:55.117001
+run_1778799775,LLM,task,llm_pipeline_sec,5.06,"",2026-05-15T01:02:55.117139
+run_1778800466,Batch ETL,task,bronze_latency_sec,40.38833498954773,"Traitement de 323291 évènements bruts",2026-05-15T01:14:26.901203
+run_1778800469,Batch ETL,task,silver_latency_sec,2.755449056625366,"Nettoyage de 323291 évènements",2026-05-15T01:14:29.966411
+run_1778800471,Batch ETL,task,gold_latency_sec,1.5215392112731934,"Agrégation des dépôts réussie",2026-05-15T01:14:31.488150
+run_1778800562,Streaming,task,streaming_trigger_latency,7,"Batch 3",2026-05-15T01:16:02.175147
+run_1778800655,Batch ETL,task,bronze_latency_sec,40.86831545829773,"Traitement de 323291 évènements bruts",2026-05-15T01:17:35.515108
+run_1778800777,Batch ETL,task,bronze_latency_sec,42.24316143989563,"Traitement de 323291 évènements bruts",2026-05-15T01:19:37.604612
+run_1778800782,Batch ETL,task,silver_latency_sec,4.906848669052124,"Nettoyage de 323291 évènements",2026-05-15T01:19:42.892726
+run_1778800784,Batch ETL,task,gold_latency_sec,1.8286638259887695,"Agrégation des dépôts réussie",2026-05-15T01:19:44.722506
+run_1778800875,Streaming,task,streaming_trigger_latency,10,"Batch 3",2026-05-15T01:21:15.490820
+run_1778800902,Text,task,query_latency_fix_ms,264.93072509765625,"Found 24128 docs",2026-05-15T01:21:42.235834
+run_1778800902,Text,task,query_latency_bug_ms,73.028564453125,"Found 1708 docs",2026-05-15T01:21:42.309096
+run_1778800902,Text,task,query_latency_feature_ms,92.62442588806152,"Found 767 docs",2026-05-15T01:21:42.401902
+run_1778800978,Batch ETL,task,bronze_latency_sec,42.4778094291687,"Traitement de 323291 évènements bruts",2026-05-15T01:22:58.297397
+run_1778800983,Batch ETL,task,silver_latency_sec,4.582379102706909,"Nettoyage de 323291 évènements",2026-05-15T01:23:03.231776
+run_1778800984,Batch ETL,task,gold_latency_sec,1.6351356506347656,"Agrégation des dépôts réussie",2026-05-15T01:23:04.867147
+run_1778801075,Streaming,task,streaming_trigger_latency,11,"Batch 3",2026-05-15T01:24:35.613758
+run_1778801086,Batch ETL,task,bronze_latency_sec,50.843599796295166,"Traitement de 323291 évènements bruts",2026-05-15T01:24:46.225138
+run_1778801091,Batch ETL,task,silver_latency_sec,5.249314069747925,"Nettoyage de 323291 évènements",2026-05-15T01:24:51.835147
+run_1778801093,Batch ETL,task,gold_latency_sec,1.8541593551635742,"Agrégation des dépôts réussie",2026-05-15T01:24:53.689783
+run_1778801173,Batch ETL,task,bronze_latency_sec,51.87365412712097,"Traitement de 323291 évènements bruts",2026-05-15T01:26:13.499189
+run_1778801179,Batch ETL,task,silver_latency_sec,5.522043228149414,"Nettoyage de 323291 évènements",2026-05-15T01:26:19.397432
+run_1778801181,Batch ETL,task,gold_latency_sec,1.7955310344696045,"Agrégation des dépôts réussie",2026-05-15T01:26:21.193447
+run_1778801184,Streaming,task,streaming_trigger_latency,5,"Batch 3",2026-05-15T01:26:24.612094
+run_1778801272,Streaming,task,streaming_trigger_latency,14,"Batch 3",2026-05-15T01:27:52.053958
+run_1778801299,Text,task,query_latency_fix_ms,309.5977306365967,"Found 24128 docs",2026-05-15T01:28:19.035258
+run_1778801299,Text,task,query_latency_bug_ms,109.85803604125977,"Found 1708 docs",2026-05-15T01:28:19.145283
+run_1778801299,Text,task,query_latency_feature_ms,75.07538795471191,"Found 767 docs",2026-05-15T01:28:19.220506
+run_1778801310,Text,task,storage_ratio_pct,53.576634203897044,"Parquet vs CSV",2026-05-15T01:28:30.359601
+run_1778801329,Iterative,task,pagerank_delta,0.7162205602056391,"Iteration 1",2026-05-15T01:28:49.609133
+run_1778801331,Iterative,task,pagerank_delta,0.2879600641256986,"Iteration 2",2026-05-15T01:28:51.855719
+run_1778801332,Iterative,task,pagerank_delta,None,"Iteration 3",2026-05-15T01:28:52.403402
+run_1778801413,Batch ETL,task,bronze_latency_sec,44.247371435165405,"Traitement de 323291 évènements bruts",2026-05-15T01:30:13.132985
+run_1778801418,Batch ETL,task,silver_latency_sec,4.445916175842285,"Nettoyage de 323291 évènements",2026-05-15T01:30:18.173130
+run_1778801419,Batch ETL,task,gold_latency_sec,1.8222296237945557,"Agrégation des dépôts réussie",2026-05-15T01:30:19.995675
+run_1778801510,Streaming,task,streaming_trigger_latency,12,"Batch 3",2026-05-15T01:31:50.748206
+run_1778801534,Text,task,query_latency_fix_ms,224.20883178710938,"Found 24128 docs",2026-05-15T01:32:14.819579
+run_1778801534,Text,task,query_latency_bug_ms,82.0319652557373,"Found 1708 docs",2026-05-15T01:32:14.901761
+run_1778801534,Text,task,query_latency_feature_ms,77.9271125793457,"Found 767 docs",2026-05-15T01:32:14.979842
+run_1778801543,Text,task,storage_ratio_pct,53.49821664363289,"Parquet vs CSV",2026-05-15T01:32:23.473286
+run_1778801560,Iterative,task,pagerank_delta,0.6866576893215606,"Iteration 1",2026-05-15T01:32:40.409380
+run_1778801565,Iterative,task,pagerank_delta,0.1423944947583112,"Iteration 2",2026-05-15T01:32:45.591116
+run_1778801571,Iterative,task,pagerank_delta,0.0,"Iteration 3",2026-05-15T01:32:51.183543
+run_1778801576,Iterative,task,pagerank_delta,0.0,"Iteration 4",2026-05-15T01:32:56.233984
+run_1778801581,Iterative,task,pagerank_delta,0.0,"Iteration 5",2026-05-15T01:33:01.123679
+run_1778801586,Iterative,task,pagerank_delta,0.0,"Iteration 6",2026-05-15T01:33:06.877464
+run_1778801594,Iterative,task,pagerank_delta,0.0,"Iteration 7",2026-05-15T01:33:14.017813
+run_1778801673,Batch ETL,task,bronze_latency_sec,43.08638644218445,"Traitement de 323291 évènements bruts",2026-05-15T01:34:33.143132
+run_1778801678,Batch ETL,task,silver_latency_sec,4.986118793487549,"Nettoyage de 323291 évènements",2026-05-15T01:34:38.500183
+run_1778801680,Batch ETL,task,gold_latency_sec,1.7778687477111816,"Agrégation des dépôts réussie",2026-05-15T01:34:40.278285
+run_1778801771,Streaming,task,streaming_trigger_latency,12,"Batch 3",2026-05-15T01:36:11.007972
+run_1778801793,Text,task,query_latency_fix_ms,226.18603706359863,"Found 24128 docs",2026-05-15T01:36:33.180032
+run_1778801793,Text,task,query_latency_bug_ms,74.54895973205566,"Found 1708 docs",2026-05-15T01:36:33.254762
+run_1778801793,Text,task,query_latency_feature_ms,82.67784118652344,"Found 767 docs",2026-05-15T01:36:33.337616
+run_1778801801,Text,task,storage_ratio_pct,53.49821664363289,"Parquet vs CSV",2026-05-15T01:36:41.227632
+run_1778802002,Batch ETL,task,bronze_latency_sec,43.04860186576843,"Traitement de 323291 évènements bruts",2026-05-15T01:40:02.185097
+run_1778802007,Batch ETL,task,silver_latency_sec,4.7700183391571045,"Nettoyage de 323291 évènements",2026-05-15T01:40:07.330215
+run_1778802009,Batch ETL,task,gold_latency_sec,1.7059423923492432,"Agrégation des dépôts réussie",2026-05-15T01:40:09.036563
+run_1778802122,Streaming,task,streaming_trigger_latency,5,"Batch 3",2026-05-15T01:42:02.339747
+run_1778802213,Text,task,query_latency_fix_ms,344.01845932006836,"Found 24128 docs",2026-05-15T01:43:33.304855
+run_1778802213,Text,task,query_latency_bug_ms,86.94624900817871,"Found 1708 docs",2026-05-15T01:43:33.392314
+run_1778802213,Text,task,query_latency_feature_ms,64.11242485046387,"Found 767 docs",2026-05-15T01:43:33.456689
+run_1778802256,Text,task,storage_ratio_pct,53.576634203897044,"Parquet vs CSV",2026-05-15T01:44:16.132060
+run_1778802366,Iterative,task,pagerank_delta,0.7162205602056391,"Iteration 1",2026-05-15T01:46:06.873917
+run_1778802369,Iterative,task,pagerank_delta,0.2879600641256986,"Iteration 2",2026-05-15T01:46:09.077597
+run_1778802369,Iterative,task,pagerank_delta,None,"Iteration 3",2026-05-15T01:46:09.753779
+run_1778802579,Iterative,task,pagerank_delta,0.6866576893213889,"Iteration 1",2026-05-15T01:49:39.548808
+run_1778802582,Iterative,task,pagerank_delta,0.142394494758326,"Iteration 2",2026-05-15T01:49:42.147323
+run_1778802584,Iterative,task,pagerank_delta,0.0,"Iteration 3",2026-05-15T01:49:44.280529
+run_1778802586,Iterative,task,pagerank_delta,0.0,"Iteration 4",2026-05-15T01:49:46.521600
+run_1778802588,Iterative,task,pagerank_delta,0.0,"Iteration 5",2026-05-15T01:49:48.320721
+run_1778802590,Iterative,task,pagerank_delta,0.0,"Iteration 6",2026-05-15T01:49:50.490613
+run_1778802592,Iterative,task,pagerank_delta,0.0,"Iteration 7",2026-05-15T01:49:52.385759
+run_1778802594,Iterative,task,pagerank_delta,0.0,"Iteration 8",2026-05-15T01:49:54.118389
+run_1778802595,Iterative,task,pagerank_delta,0.0,"Iteration 9",2026-05-15T01:49:55.898271
+run_1778802597,Iterative,task,pagerank_delta,0.0,"Iteration 10",2026-05-15T01:49:57.551553
+run_1778802598,Iterative,task,pagerank_latency_sec,25.80275797843933,"10 itérations",2026-05-15T01:49:58.281539
+run_1778802628,Iterative,task,pagerank_opt_latency_sec,2.867727518081665,"2 itérations optimisées",2026-05-15T01:50:28.829200
+run_1778802664,LLM,task,quality_pass_rate_pct,12.16710182767624,"Pass rate, min_len=50",2026-05-15T01:51:04.715965
