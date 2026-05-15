@@ -1,9 +1,9 @@
-# Data Engineering Portfolio - ESIEE Paris
+# Data Engineering - ESIEE Paris
 
-> **Auteur:** DIALLO Samba
-> **Professeur:** TAJINI Badr
-> **Formation:** Master Data Engineering - ESIEE Paris (2025-2026)
-> **Technologies:** Apache Spark, PySpark, Hadoop, Structured Streaming, MLlib, Quartz
+-[> **Auteur:** DIALLO Samba & DIOP Mouhamed ]
+-[> **Professeur:** TAJINI Badr ]
+-[> **Formation:** Master Data Engineering - ESIEE Paris (2025-2026)]
+-[> **Technologies:** Apache Spark, PySpark, Hadoop, Structured Streaming, MLlib, Quartz ]
 
 **[📖 Accéder au site de documentation Quartz](https://website-quartz-data-engireering.pages.dev/)**
 
@@ -365,11 +365,17 @@ spark-submit --version
 ### Cloner le Projet
 
 ```bash
-# Cloner le repository
-git clone https://github.com/[votre-username]/data-engineering-portfolio.git
+# Cloner le repository (HTTPS)
+git clone https://github.com/samba-diallo/website-quartz-data-engireering.git
+
+# Ou en SSH
+git clone git@github.com:samba-diallo/website-quartz-data-engireering.git
+
+# Ou avec GitHub CLI
+gh repo clone samba-diallo/website-quartz-data-engireering
 
 # Accéder au répertoire
-cd data-engineering-portfolio
+cd website-quartz-data-engireering
 ```
 
 ### Installation des Dépendances

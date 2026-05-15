@@ -1,0 +1,56 @@
+{
+  "id": "830cbb22-c1d7-4fce-9cda-3a82daff144b",
+  "runId": "176da210-a6dc-4419-aafb-2c82de48e2be",
+  "name": null,
+  "timestamp": "2026-05-14T23:42:00.000Z",
+  "batchId": 3,
+  "batchDuration": 5,
+  "durationMs": {
+    "triggerExecution": 5,
+    "latestOffset": 4
+  },
+  "eventTime": {
+    "watermark": "2024-01-01T01:49:59.000Z"
+  },
+  "stateOperators": [
+    {
+      "operatorName": "stateStoreSave",
+      "numRowsTotal": 44,
+      "numRowsUpdated": 0,
+      "numRowsRemoved": 180,
+      "allUpdatesTimeMs": 449,
+      "allRemovalsTimeMs": 3698,
+      "commitTimeMs": 18876,
+      "memoryUsedBytes": 146248,
+      "numRowsDroppedByWatermark": 0,
+      "numShufflePartitions": 200,
+      "numStateStoreInstances": 200,
+      "customMetrics": {
+        "stateOnCurrentVersionSizeBytes": 36000,
+        "loadedMapCacheHitCount": 800,
+        "loadedMapCacheMissCount": 0
+      }
+    }
+  ],
+  "sources": [
+    {
+      "description": "FileStreamSource[file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/project final/data/landing]",
+      "startOffset": "{\"logOffset\":1}",
+      "endOffset": "{\"logOffset\":1}",
+      "latestOffset": "None",
+      "numInputRows": 0,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 0.0,
+      "metrics": {}
+    }
+  ],
+  "sink": {
+    "description": "FileSink[file:/home/sable/Documents/E4FD/S4/Data Engineering/Data Engineering 2/project final/outputs/project/streaming]",
+    "numOutputRows": -1,
+    "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+}
