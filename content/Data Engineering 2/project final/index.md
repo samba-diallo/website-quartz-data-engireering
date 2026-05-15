@@ -16,3 +16,4 @@ Ce projet implémente une architecture Medallion complète avec du Streaming, du
 3. [[Usage_IA|Déclaration d'utilisation de l'IA]]
 
 Toutes les preuves d'exécution (Spark UI, Plans d'exécution) sont intégrées dans le rapport final.
+4. [[DE2_Project_Notebook_EN|Code Source du Notebook (PySpark)]]
