@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: de2_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the outputs directory so DuckDB can read the Parquet files
+      - ./outputs:/app/outputs:ro
+    environment:
+      # We tell the backend to look for data inside /app/outputs
+      - PARQUET_BASE_PATH=/app/outputs/project
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend-dashboard
+      dockerfile: Dockerfile
+    container_name: de2_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      # In Docker, we use the service name 'backend' to communicate between containers internally,
+      # but for the browser (client-side React), it still needs to access localhost
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    restart: unless-stopped

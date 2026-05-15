@@ -1,55 +1,52 @@
-from fastapi import FastAPI, HTTPException
-import duckdb
-import os
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="GitHub Archive Analytics API", description="API lisant les données Gold via DuckDB")
+# Importation des routeurs
+from routers import analytics, streaming, pagerank
 
-# Configuration CORS pour autoriser le frontend (Next.js) à faire des requêtes
+app = FastAPI(
+    title="GitHub Archive Analytics API", 
+    description="API lisant les données du pipeline Spark via DuckDB",
+    version="1.0.0"
+)
+
+# Configuration CORS pour autoriser le frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # En développement on autorise tout
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Chemins relatifs vers les données Parquet (on suppose qu'on lance depuis le dossier backend/)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GOLD_PATH = os.path.join(BASE_DIR, "outputs", "project", "gold")
+# Inclusion des routeurs
+app.include_router(analytics.router)
+app.include_router(streaming.router)
+app.include_router(pagerank.router)
 
-# Initialisation de la connexion DuckDB (base de données en mémoire)
-con = duckdb.connect(database=':memory:', read_only=False)
+@app.on_event("startup")
+def preload_cache():
+    """Pré-charge les requêtes analytiques lourdes au démarrage pour éviter les deadlocks de concurrence DuckDB"""
+    try:
+        from routers.analytics import fetch_top_repos_cached, fetch_event_types_cached
+        from routers.pagerank import fetch_pagerank_cached
+        print("Pre-loading DuckDB cache...")
+        fetch_top_repos_cached(10)
+        fetch_event_types_cached()
+        fetch_pagerank_cached(10)
+        print("Cache loaded successfully.")
+    except Exception as e:
+        print(f"Erreur lors du pré-chargement du cache : {e}")
 
-@app.get("/")
+@app.get("/", tags=["Root"])
 def read_root():
-    return {"message": "Bienvenue sur l'API GitHub Archive Analytics", "status": "online"}
-
-@app.get("/api/health")
-def health_check():
-    """Vérifie si les fichiers Parquet sont accessibles par DuckDB"""
-    repo_activity_path = os.path.join(GOLD_PATH, "repo_activity", "*.parquet")
-    try:
-        # On vérifie juste qu'on peut lire la table
-        count = con.execute(f"SELECT COUNT(*) FROM '{repo_activity_path}'").fetchone()[0]
-        return {"status": "ok", "gold_records_found": count}
-    except Exception as e:
-        return {"status": "error", "detail": str(e)}
-
-@app.get("/api/analytics/top-repos")
-def get_top_repos(limit: int = 10):
-    """Récupère les dépôts avec le plus d'activité globale"""
-    repo_activity_path = os.path.join(GOLD_PATH, "repo_activity", "*.parquet")
-    try:
-        query = f"""
-            SELECT repo_name, SUM(event_count) as total_events
-            FROM '{repo_activity_path}'
-            GROUP BY repo_name
-            ORDER BY total_events DESC
-            LIMIT {limit}
-        """
-        # Exécution de la requête et conversion en liste de dictionnaires
-        results = con.execute(query).fetchdf().to_dict(orient="records")
-        return results
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {
+        "message": "Bienvenue sur l'API GitHub Archive Analytics", 
+        "status": "online",
+        "endpoints": [
+            "/api/analytics/top-repos",
+            "/api/analytics/event-types",
+            "/api/streaming/events",
+            "/api/graph/pagerank"
+        ]
+    }
