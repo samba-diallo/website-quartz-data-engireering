@@ -1,10 +1,10 @@
 ---
 title: Plateforme E2E (extension v2)
-description: Pipeline temps réel Kafka + Spark Streaming + Airflow + FastAPI + Next.js — extension construite par-dessus le rapport noté
+description: Pipeline temps réel Kafka + Spark Streaming + Airflow + FastAPI + Next.js - extension construite par-dessus le rapport noté
 date: 2026-05-16
 ---
 
-# Plateforme E2E — Extension du Projet Final (v2)
+# Plateforme E2E - Extension du Projet Final (v2)
 
 Cette page documente l'**extension** du projet final DE2 : une plateforme End-to-End temps réel ajoutée par-dessus le pipeline Spark Medallion noté. Le rapport noté ([[Rapport_Projet|Rapport Final]]) couvre l'architecture Batch Spark + Streaming + PageRank + LLM-readiness. Cette page-ci décrit ce qu'on a construit **en plus** : Kafka, Airflow, un backend API et un dashboard web temps réel, le tout orchestré sous Docker Compose.
 

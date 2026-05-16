@@ -32,9 +32,9 @@ SPARK_SCRIPTS_PATH = "/opt/spark/scripts"
 
 def log_pipeline_start(**context):
     """Enregistre le demarrage du pipeline dans les logs Airflow."""
-    execution_date = context["execution_date"]
-    print(f"[pipeline] Demarrage du pipeline batch pour : {execution_date}")
-    print(f"[pipeline] Heure logique de traitement : {execution_date.strftime('%Y-%m-%d-%H')}")
+    logical_date = context["logical_date"]
+    print(f"[pipeline] Demarrage du pipeline batch pour : {logical_date}")
+    print(f"[pipeline] Heure logique de traitement : {logical_date.strftime('%Y-%m-%d-%H')}")
 
 
 with DAG(

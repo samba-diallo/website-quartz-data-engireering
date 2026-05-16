@@ -14,8 +14,8 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 USER airflow
 
-# Etape 1 : Installation de PySpark seul (pas de conflit)
-RUN pip install --no-cache-dir "pyspark==3.5.2"
+# Etape 1 : Installation des dependances Python (PySpark, Kafka, Requests)
+RUN pip install --no-cache-dir "pyspark==3.5.2" "kafka-python-ng" "requests"
 
 # Etape 2 : Installation du provider Spark SANS ses dependances
 # pour eviter que pip ne mette a jour Airflow vers la version 3.x

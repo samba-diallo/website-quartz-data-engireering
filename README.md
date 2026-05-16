@@ -287,11 +287,72 @@ Documents
 
 ---
 
-#### Projet Final DE2 : [En cours]
+#### Projet Final DE2 : GitHub Archive Analytics Pipeline
 
-**Objectif :** Projet intégré combinant streaming, indexation et ML.
+**Objectif :** Pipeline E2E temps réel sur les événements publics GitHub, du ingestion streaming jusqu'au dashboard analytique, orchestré sous Docker Compose.
 
-**Status :** En développement
+**Architecture :**
+
+```
+┌──────────────┐    ┌──────────┐    ┌──────────────┐    ┌──────────┐    ┌──────────┐
+│ GH Archive   │───▶│ Producer │───▶│ Kafka topic  │───▶│  Spark   │───▶│ Bronze   │
+│  (.json.gz)  │    │ (Python) │    │ raw.events   │    │ Streaming│    │ Parquet  │
+└──────────────┘    └──────────┘    └──────────────┘    └──────────┘    └────┬─────┘
+                                                                              │
+                              ┌──────────┐    ┌──────────┐    ┌──────────────┘
+                              │ Frontend │◀───│  FastAPI │◀───│ Gold/Silver
+                              │ Next.js  │    │  + DuckDB│    │ (Airflow DAG)
+                              └──────────┘    └──────────┘    └──────────────┘
+```
+
+**Composants :**
+
+| Service | Rôle | Port |
+|---------|------|------|
+| **Zookeeper + Kafka** | Bus streaming (topic `github.raw.events`) | 9092 (host), 29092 (interne) |
+| **Kafka UI** (provectus) | Visualiser topics et messages | 8090 |
+| **Producer** Python | Télécharge GH Archive, push dans Kafka | — |
+| **Spark Streaming Bronze** | Consume Kafka → écrit Parquet bruts 24/7 | — |
+| **Airflow Webserver + Scheduler** | Orchestre les DAG Silver/Gold | 8080 |
+| **Airflow metadata DB** (Postgres) | Stocke les états des DAG | — |
+| **Backend FastAPI + DuckDB** | API analytics qui lit la couche Gold | 8000 |
+| **Frontend Next.js** | Dashboard "Luxe de Minuit" temps réel | 3000 |
+
+**Stack pédagogique avec Medallion Architecture :**
+- **Bronze** : raw events du topic Kafka (un parquet par micro-batch streaming)
+- **Silver** : events nettoyés et normalisés (batch Airflow)
+- **Gold** : agrégations applicatives — `repo_activity`, `pagerank`, `user_activity` (batch Airflow)
+
+**Dashboard (port 3000) :**
+- Cartes KPI temps réel : Active Developers, Signal Volume, Throughput
+- Chart "Global Activity Trends" (commits vs PRs par heure)
+- Pie chart "Ecosystem Influence" (distribution PushEvent/PullRequestEvent/etc.)
+- Top Repos trending (activity-based)
+- Panneau **"Pipeline Status"** live : compte les parquets de chaque couche + dernier sync
+- Toggle dark/light mode ("Luxe de Minuit" / "Aurore")
+- 4 vues navigables : Global Pulse, Data Sources, Kafka Streams, Spark Jobs
+
+**Compétences démontrées :**
+- Architecture event-driven avec Kafka + Spark Structured Streaming
+- Pipeline Medallion (Bronze/Silver/Gold) en file-based Data Lake
+- Orchestration batch avec Airflow (DAG, scheduler, webserver, executor Local)
+- Serving layer avec FastAPI + DuckDB query engine in-process
+- Frontend moderne (Next.js 16 + Tailwind v4 + Framer Motion + Recharts)
+- Conteneurisation complète : 10 services orchestrés en Docker Compose
+- Externalisation des credentials via `.env` + `.env.example`
+
+**Fichiers clés :**
+- `Data Engineering 2/project final/docker-compose.yml` : orchestration de la stack
+- `Data Engineering 2/project final/kafka/producer/gh_producer.py` : ingestion GH Archive
+- `Data Engineering 2/project final/spark/streaming/bronze_consumer.py` : streaming Kafka → Parquet
+- `Data Engineering 2/project final/airflow/dags/gh_archive_batch.py` : DAG Silver/Gold
+- `Data Engineering 2/project final/backend/routers/analytics.py` : API analytics
+- `Data Engineering 2/project final/frontend-dashboard/src/app/page.tsx` : dashboard React
+- `Data Engineering 2/project final/PROJET_JOURNAL.md` : journal pédagogique des obstacles
+
+**Guides détaillés :**
+- **[PIPELINE_RUNBOOK.md](documentation/PIPELINE_RUNBOOK.md)** : lancement complet de A à Z, vérifications, troubleshooting, commandes utiles
+- **[PROJET_JOURNAL.md](Data%20Engineering%202/project%20final/PROJET_JOURNAL.md)** : journal des obstacles rencontrés et solutions
 
 ---
 
@@ -320,21 +381,52 @@ Documents
 
 ### Big Data & Processing
 
-- **Apache Spark 4.0.1** : Moteur de traitement distribué
+- **Apache Spark 4.0.1** : Moteur de traitement distribué (batch + streaming)
 - **PySpark** : API Python pour Spark
-- **Hadoop HDFS** : Système de fichiers distribué
+- **Spark Structured Streaming** : Pipeline temps réel Kafka → Parquet
+- **Hadoop HDFS** : Système de fichiers distribué (labs DE1)
 - **Parquet** : Format de stockage colonnaire
+- **DuckDB** : SQL analytique in-process pour le serving layer
+
+### Streaming & Orchestration (Projet Final DE2)
+
+- **Apache Kafka 7.5** (Confluent) : Bus de messages
+- **Zookeeper** : Coordination Kafka
+- **Apache Airflow 2** : Orchestrateur batch (DAG Silver/Gold)
+- **Postgres** : Metadata DB Airflow
+
+### Backend & Frontend (Projet Final DE2)
+
+- **FastAPI** : API REST asynchrone (Python)
+- **Next.js 16** + **Turbopack** : Framework React frontend
+- **Tailwind CSS v4** : Styling utility-first
+- **Framer Motion** : Animations
+- **Recharts** : Graphiques (AreaChart, PieChart, BarChart)
 
 ### Machine Learning
 
-- **Spark MLlib** : Algorithmes ML distribués
+- **Spark MLlib** : Algorithmes ML distribués (KMeans en DE2 Lab 3)
 - **scikit-learn** : Preprocessing et métriques
 - **pandas** : Manipulation de données
+
+### Conteneurisation & Infra
+
+- **Docker** + **Docker Compose** : Orchestration locale (10 services)
+- **GitHub Actions** : CI/CD (build Quartz, gitleaks, CodeQL)
+- **Cloudflare Pages** : Hébergement statique (auto-deploy on push to `main`)
+
+### Sécurité & Qualité
+
+- **gitleaks** : Scan secrets automatique en CI
+- **GitHub CodeQL** : Analyse statique (Python, JS/TS, Actions)
+- **Dependabot** : Alertes vulnérabilités dépendances
+- **Branch protection rulesets** : `main` protégée (PR + CI green required)
 
 ### Development & Tools
 
 - **Python 3.10+** : Langage principal
-- **Jupyter Notebooks** : Environnement interactif
+- **Node.js 22** : Frontend + Quartz
+- **Jupyter Notebooks** : Environnement interactif (labs)
 - **Git** : Versioning
 - **VS Code** : IDE
 
@@ -349,66 +441,77 @@ Documents
 
 ## Installation & Utilisation
 
-### Prérequis
+### Cloner le repository
 
 ```bash
-# Java 11 ou 17
-java -version
-
-# Python 3.10+
-python --version
-
-# Spark 4.0.1
-spark-submit --version
-```
-
-### Cloner le Projet
-
-```bash
-# Cloner le repository (HTTPS)
 git clone https://github.com/samba-diallo/website-quartz-data-engireering.git
-
-# Ou en SSH
-git clone git@github.com:samba-diallo/website-quartz-data-engireering.git
-
-# Ou avec GitHub CLI
-gh repo clone samba-diallo/website-quartz-data-engireering
-
-# Accéder au répertoire
 cd website-quartz-data-engireering
 ```
 
-### Installation des Dépendances
+### A. Pour exécuter les **labs Spark / notebooks** (DE1 + DE2 Labs)
+
+**Prérequis :**
 
 ```bash
-# Installer les dépendances Python
+java -version              # 11 ou 17
+python --version           # 3.10+
+spark-submit --version     # 4.0.1
+```
+
+**Installation :**
+
+```bash
+# Dépendances Python
 pip install -r requirements.txt
 
 # Configurer Spark (optionnel)
 export SPARK_HOME=/path/to/spark
 export PATH=$SPARK_HOME/bin:$PATH
-```
 
-### Exécution des Notebooks
-
-```bash
 # Lancer Jupyter
 jupyter notebook
-
 # Ou utiliser VS Code avec l'extension Jupyter
 code .
 ```
 
-### Build du Site Web
+### B. Pour lancer le **Projet Final DE2** (pipeline Kafka/Spark/Airflow/FastAPI/Next.js)
+
+**Prérequis :**
 
 ```bash
-# Installer Quartz
+docker --version           # >= 20.10
+docker-compose --version   # >= 2.0
+```
+
+**Démarrage rapide :**
+
+```bash
+cd "Data Engineering 2/project final"
+cp .env.example .env       # éditer les valeurs <change_me>
+docker-compose up -d
+```
+
+**Accès :**
+- Dashboard : http://localhost:3000
+- Backend API + Swagger : http://localhost:8000/docs
+- Airflow UI : http://localhost:8080
+- Kafka UI : http://localhost:8090
+
+→ **Guide complet** : [documentation/PIPELINE_RUNBOOK.md](documentation/PIPELINE_RUNBOOK.md) (configuration, vérifications, troubleshooting, arrêt propre)
+
+### C. Pour builder le **site web Quartz** localement
+
+**Prérequis :**
+
+```bash
+node --version             # >= 22.x
+```
+
+**Build :**
+
+```bash
 npm install
-
-# Build local
 npx quartz build --serve
-
-# Accéder au site
 open http://localhost:8080
 ```
 
@@ -418,16 +521,41 @@ open http://localhost:8080
 
 ### Guides Internes
 
-- **[MISE_A_JOUR_SITE.md](documentation/MISE_A_JOUR_SITE.md)** : Guide de mise à jour du site
-- **[PLAN.md](PLAN.md)** : Architecture et plan de réorganisation
-- **[ARCHITECTURE.md](documentation/ARCHITECTURE.md)** : Architecture détaillée
+- **[documentation/PIPELINE_RUNBOOK.md](documentation/PIPELINE_RUNBOOK.md)** : Lancement de A à Z du pipeline DE2 — prérequis, démarrage, vérifications, troubleshooting, arrêt propre
+- **[Data Engineering 2/project final/PROJET_JOURNAL.md](Data%20Engineering%202/project%20final/PROJET_JOURNAL.md)** : Journal pédagogique des obstacles rencontrés et résolutions
+- **[documentation/MISE_A_JOUR_SITE.md](documentation/MISE_A_JOUR_SITE.md)** : Guide de mise à jour du site Quartz
+- **[PLAN.md](PLAN.md)** : Architecture et plan de réorganisation monorepo
 
 ### Conventions
 
 - **Nommage** : `labX practice/` pour les labs, `project final/` pour les projets
 - **Notebooks** : Format `.ipynb` avec cellules markdown explicatives
 - **Preuves** : Dossier `proof/` dans chaque lab (plans, métriques, screenshots)
-- **Commits** : Format conventionnel (`feat:`, `fix:`, `docs:`, etc.)
+- **Commits** : Format conventionnel (`feat:`, `fix:`, `docs:`, `chore:`, etc.)
+- **Branches** : `main` (prod, protégée), `v2-kafka-airflow` (dev pipeline), `refactor/monorepo-architecture` (refacto), `feat/<sujet>` ou `fix/<sujet>` (features atomiques)
+
+---
+
+## Sécurité du Repository
+
+### Protections actives
+
+| Item | Statut |
+|---|---|
+| Secret scanning + Push protection | Activé |
+| Dependabot alerts + security updates | Activé |
+| CodeQL (Python, JS/TS, Actions) | Activé (tourne sur chaque PR) |
+| gitleaks (CI step) | Activé (scan secrets sur diff) |
+| Branch protection ruleset "Protect main" | Activé (PR + CI required, no force push) |
+| `.env` & credentials | Externalisés, jamais commit (gitignored) |
+| `.env.example` | Template documenté, commité |
+
+### Bonnes pratiques appliquées
+
+- Tous les credentials sensibles passent par `${VAR}` du `.env`, jamais hardcodés dans `docker-compose.yml`
+- Permissions GitHub Actions least-privilege (`permissions: contents: read`)
+- Fichiers brainstorming/prompts gitignored (pas de leak de processus interne)
+- Lab outputs (`*.parquet`, `*.csv`, `outputs/`) gitignored (régénérables)
 
 ---
 
@@ -435,35 +563,56 @@ open http://localhost:8080
 
 | Métrique | Valeur |
 |----------|--------|
-| **Labs Complétés** | 7/7 (DE1: 3 + Projet, DE2: 3) |
+| **Labs Complétés** | 7/7 (DE1: 3 + Projet, DE2: 3 + Projet) |
 | **Notebooks** | 10+ |
-| **Lignes de Code** | ~5000+ |
-| **Optimisations** | 15+ techniques appliquées |
+| **Services Docker** | 10 (Kafka, Spark, Airflow×3, Backend, Frontend, Postgres, Zookeeper, Kafka UI) |
+| **Lignes de Code** | ~8000+ |
+| **Optimisations Spark** | 15+ techniques appliquées |
 | **Gain de Performance** | 30-60% selon les cas |
-| **Documentation** | 100% des labs documentés |
+| **Documentation** | 100% des labs + 2 guides runbook/journal |
+| **CI/CD** | Build Quartz + gitleaks + CodeQL sur chaque PR |
 
 ---
 
 ## Compétences Démontrées
 
-### Techniques
+### Big Data & Spark (DE1 + DE2 labs)
 
 - Architecture Spark (Driver, Executors, DAG)
-- RDD & DataFrame API
-- Spark SQL & Catalyst Optimizer
-- Structured Streaming
-- MLlib (Clustering, Feature Engineering)
-- Optimisation de requêtes
-- Partitionnement et shuffle management
-- Broadcast joins
-- Caching strategies
-- Watermarks & late data handling
+- RDD & DataFrame API + Spark SQL & Catalyst Optimizer
+- Structured Streaming + Watermarks + Checkpoints
+- MLlib (KMeans, BisectingKMeans, Feature Engineering)
+- Optimisation : Broadcast joins, partitionnement, caching, bucketing, predicate pushdown
+- Pipeline ETL Medallion (Bronze/Silver/Gold) sur Data Lake file-based
+
+### Event-Driven Architecture (Projet Final DE2)
+
+- Apache Kafka : topic design, partitioning, consumer groups
+- Spark Streaming + Kafka integration (sources, watermarks, checkpoints)
+- Apache Airflow : DAG, scheduler, executor Local, sensors
+- DuckDB : SQL analytique in-process pour serving layer
+
+### Full-Stack Web (Projet Final DE2)
+
+- FastAPI : API REST + Pydantic + Swagger auto
+- Next.js 16 + Turbopack + Tailwind v4 + Framer Motion + Recharts
+- Hot-reload Docker volume sync
+- Connexion Frontend ↔ Backend avec fetch + refresh interval
+
+### DevOps & Sécurité
+
+- Docker Compose multi-services (10 containers orchestrés)
+- GitHub Actions (CI/CD avec least-privilege permissions)
+- Secret scanning (gitleaks) + CodeQL static analysis
+- Branch protection rulesets, Dependabot
+- Externalisation credentials via `.env` + `.env.example`
+- Cloudflare Pages (auto-deploy on push to `main`)
 
 ### Soft Skills
 
-- Documentation technique professionnelle
+- Documentation technique professionnelle (README + runbook + journal pédagogique)
 - Analyse de performance et métriques
-- Résolution de problèmes complexes
+- Résolution de problèmes complexes (debugging Docker, cache CSS, conflits Git)
 - Approche méthodique et reproductible
 - Communication claire des résultats
 

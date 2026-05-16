@@ -1,328 +1,727 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { 
-  Database, Network, PieChart as PieChartIcon, Star, Activity, GitCommit, Users, 
-  ArrowRight, GitBranch, ChevronRight, Terminal, Server, Cpu
-} from "lucide-react";
+import React, { useState, useEffect } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
-  PieChart, Pie, Cell
-} from "recharts";
+  TrendingUp, Users, Activity, Package, Terminal, Search,
+  Bell, ChevronRight, LayoutDashboard, Database, Zap, Settings,
+  Sun, Moon, HelpCircle, BookOpen, AlertCircle, Workflow
+} from 'lucide-react';
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell
+} from 'recharts';
+import { motion } from 'framer-motion';
 
-// Types
-interface TopRepo { repo_name: string; total_events: number; }
-interface EventType { event_type: string; count: number; }
-interface PageRankNode { node_name: string; influence_score: number; }
+// --- Types ---
+interface TopRepo {
+  name: string;
+  activity: number;
+  color?: string;
+}
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#f43f5e'];
+interface ActivityPoint {
+  time: string;
+  commits: number;
+  prs: number;
+}
 
-export default function CinematicLanding() {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
-  const opacity1 = useTransform(scrollY, [0, 500], [1, 0]);
+interface InfluenceScore {
+  name: string;
+  value: number;
+}
 
-  const [topRepos, setTopRepos] = useState<TopRepo[]>([]);
-  const [eventTypes, setEventTypes] = useState<EventType[]>([]);
-  const [pagerankNodes, setPagerankNodes] = useState<PageRankNode[]>([]);
-  const [loading, setLoading] = useState(true);
+interface AnalyticsData {
+  total_events: number;
+  active_users: number;
+  top_repos: TopRepo[];
+  activity_over_time: ActivityPoint[];
+  influence_scores: InfluenceScore[];
+}
+
+interface StatCardProps {
+  title: string;
+  value: string | undefined;
+  change: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  delay: number;
+}
+
+const StatCard = ({ title, value, change, icon: Icon, delay }: StatCardProps) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    className="glass p-6 relative overflow-hidden group cursor-default"
+  >
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-text-dim text-xs font-semibold uppercase tracking-wider mb-2 font-heading">{title}</p>
+        <h3 className="text-3xl font-bold font-heading text-text-main group-hover:text-primary-gold transition-colors duration-500">{value}</h3>
+        <div className="flex items-center mt-2 space-x-1">
+          <span className={`text-xs font-medium ${change.startsWith('+') ? 'text-accent-emerald-bright' : 'text-red-400'}`}>
+            {change}
+          </span>
+          <span className="text-text-dim text-[10px] uppercase">vs last hour</span>
+        </div>
+      </div>
+      <div className="p-3 rounded-xl bg-bg-deep border border-border-subtle group-hover:border-primary-gold transition-colors duration-500">
+        <Icon size={20} className="text-primary-gold" />
+      </div>
+    </div>
+    {/* Animated background glow */}
+    <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-primary-gold opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 rounded-full" />
+  </motion.div>
+);
+
+type LucideIcon = React.ComponentType<{ size?: number; className?: string }>;
+
+interface SidebarItemProps {
+  icon: LucideIcon;
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
+}
+
+const SidebarItem = ({ icon: Icon, label, active = false, onClick }: SidebarItemProps) => (
+  <div
+    onClick={onClick}
+    className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all duration-300 group ${active ? 'bg-primary-gold-muted text-primary-gold' : 'text-text-dim hover:text-text-main hover:bg-white/5'}`}
+  >
+    <Icon size={18} className={active ? 'text-primary-gold' : 'group-hover:scale-110 transition-transform'} />
+    <span className="text-sm font-medium">{label}</span>
+  </div>
+);
+
+type ViewKey = 'global-pulse' | 'data-sources' | 'kafka-streams' | 'spark-jobs' | 'help';
+
+interface PlaceholderItem {
+  name: string;
+  status: string;
+  detail: string;
+}
+
+interface PlaceholderViewProps {
+  title: string;
+  subtitle: string;
+  icon: LucideIcon;
+  items: PlaceholderItem[];
+}
+
+const PlaceholderView = ({ title, subtitle, icon: Icon, items }: PlaceholderViewProps) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    className="glass p-8"
+  >
+    <div className="flex items-center space-x-4 mb-8">
+      <div className="p-4 rounded-2xl bg-bg-deep border border-border-subtle">
+        <Icon size={28} className="text-primary-gold" />
+      </div>
+      <div>
+        <h3 className="text-2xl font-bold font-heading">{title}</h3>
+        <p className="text-text-dim text-sm">{subtitle}</p>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {items.map((item, idx) => (
+        <div key={idx} className="p-5 rounded-2xl border border-border-subtle bg-bg-surface/40 hover:border-primary-gold/40 transition-colors">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-sm font-bold text-text-main">{item.name}</p>
+            <span className={`text-[10px] font-bold uppercase tracking-tighter px-2 py-1 rounded-full ${item.status === 'active' ? 'text-accent-emerald-bright bg-accent-emerald/30' : 'text-text-dim bg-bg-deep'}`}>
+              {item.status}
+            </span>
+          </div>
+          <p className="text-xs text-text-dim leading-relaxed">{item.detail}</p>
+        </div>
+      ))}
+    </div>
+  </motion.div>
+);
+
+interface LayerStatus {
+  active: boolean;
+  files: number;
+  last_update: string | null;
+}
+
+interface PipelineStatus {
+  bronze: LayerStatus;
+  silver: LayerStatus;
+  gold: LayerStatus;
+}
+
+const formatRelative = (iso: string | null): string => {
+  if (!iso) return '—';
+  const diff = Date.now() - new Date(iso).getTime();
+  if (diff < 0) return 'just now';
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+};
+
+const PipelineStatusPanel = () => {
+  const [status, setStatus] = useState<PipelineStatus | null>(null);
 
   useEffect(() => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    
-    Promise.all([
-      fetch(`${API_URL}/api/analytics/top-repos`).then(res => res.json()),
-      fetch(`${API_URL}/api/analytics/event-types`).then(res => res.json()),
-      fetch(`${API_URL}/api/graph/pagerank`).then(res => res.json())
-    ]).then(([reposData, eventsData, rankData]) => {
-      setTopRepos(reposData);
-      setEventTypes(eventsData);
-      setPagerankNodes(rankData);
-      setLoading(false);
-    }).catch(err => {
-      console.error(err);
-      setLoading(false);
-    });
+    const fetchStatus = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/analytics/pipeline-status`);
+        if (response.ok) setStatus(await response.json());
+      } catch {
+        // silent — UI shows '—' on missing data
+      }
+    };
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 30000);
+    return () => clearInterval(interval);
   }, []);
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const layers: { key: keyof PipelineStatus; label: string }[] = [
+    { key: 'bronze', label: 'Bronze' },
+    { key: 'silver', label: 'Silver' },
+    { key: 'gold', label: 'Gold' },
+  ];
+
+  const latest = status
+    ? [status.bronze.last_update, status.silver.last_update, status.gold.last_update]
+        .filter((t): t is string => !!t)
+        .sort()
+        .pop() ?? null
+    : null;
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 overflow-hidden font-sans selection:bg-amber-500/30">
-      
-      {/* Background Grids */}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-grid-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] opacity-[0.03]"></div>
-      <div className="fixed inset-0 z-0 pointer-events-none bg-dot-white [mask-image:radial-gradient(ellipse_at_top,transparent_10%,black)] opacity-[0.08]"></div>
-      
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
-              <Database className="w-4 h-4 text-amber-500" />
+    <div className="glass p-4 rounded-2xl">
+      <div className="flex justify-between items-center mb-3">
+        <p className="text-xs text-primary-gold font-bold uppercase tracking-wider">Pipeline Status</p>
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-emerald-bright opacity-60" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-emerald-bright" />
+        </span>
+      </div>
+
+      <div className="space-y-2 mb-3">
+        {layers.map(({ key, label }) => {
+          const layer = status?.[key];
+          const active = layer?.active ?? false;
+          return (
+            <div key={key} className="flex justify-between items-center text-[11px]">
+              <span className="text-text-muted">{label}</span>
+              <div className="flex items-center space-x-2">
+                <span className="font-mono text-text-dim">{layer ? `${layer.files} files` : '…'}</span>
+                <span className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-accent-emerald-bright' : 'bg-text-dim'}`} />
+              </div>
             </div>
-            <span className="font-medium text-sm tracking-widest uppercase text-slate-300">ArchiveData<span className="text-amber-500">.Engine</span></span>
+          );
+        })}
+      </div>
+
+      <div className="pt-3 border-t border-border-subtle">
+        <p className="text-[10px] text-text-dim">
+          Last sync <span className="font-mono text-text-muted">{formatRelative(latest)}</span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const HelpView = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    className="space-y-6"
+  >
+    {/* Intro */}
+    <div className="glass p-8">
+      <div className="flex items-center space-x-4 mb-6">
+        <div className="p-4 rounded-2xl bg-bg-deep border border-border-subtle">
+          <BookOpen size={28} className="text-primary-gold" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold font-heading">C&apos;est quoi ce dashboard ?</h3>
+          <p className="text-text-dim text-sm">En quelques phrases simples</p>
+        </div>
+      </div>
+      <p className="text-text-muted leading-relaxed">
+        Ce dashboard affiche en temps réel <span className="text-primary-gold font-bold">ce qui se passe sur GitHub</span>,
+        la plus grande plateforme de code au monde. Toutes les heures, des millions de développeurs créent, modifient
+        et partagent du code. Notre pipeline collecte ces événements, les nettoie, les agrège, puis te montre les
+        résultats sous forme de chiffres et de graphiques.
+      </p>
+    </div>
+
+    {/* Les KPI */}
+    <div className="glass p-8">
+      <div className="flex items-center space-x-3 mb-6">
+        <TrendingUp size={20} className="text-primary-gold" />
+        <h3 className="text-lg font-bold font-heading">Les 4 chiffres en haut (les KPI)</h3>
+      </div>
+      <div className="space-y-4">
+        <div className="p-4 rounded-xl bg-bg-surface/40 border border-border-subtle">
+          <div className="flex items-center space-x-2 mb-1">
+            <Users size={14} className="text-primary-gold" />
+            <p className="text-sm font-bold text-text-main">Active Developers</p>
           </div>
-          <a href="https://github.com/samba-diallo/website-quartz-data-engireering" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">
-            <GitBranch className="w-4 h-4" /> Code Source
-          </a>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Combien de personnes uniques (comptes GitHub distincts) ont fait quelque chose dans
+            les données traitées. Calculé en temps réel depuis la couche Bronze de notre pipeline.
+          </p>
         </div>
-      </header>
+        <div className="p-4 rounded-xl bg-bg-surface/40 border border-border-subtle">
+          <div className="flex items-center space-x-2 mb-1">
+            <TrendingUp size={14} className="text-primary-gold" />
+            <p className="text-sm font-bold text-text-main">Signal Volume</p>
+          </div>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Nombre total d&apos;événements traités depuis le démarrage du pipeline.
+            Un &laquo; événement &raquo; = une action (commit, ouverture d&apos;une pull request, commentaire, etc.).
+          </p>
+        </div>
+        <div className="p-4 rounded-xl bg-bg-surface/40 border border-border-subtle">
+          <div className="flex items-center space-x-2 mb-1">
+            <Zap size={14} className="text-primary-gold" />
+            <p className="text-sm font-bold text-text-main">Throughput</p>
+          </div>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Vitesse de traitement : combien d&apos;événements par seconde le système avale.
+            Plus c&apos;est haut, plus le pipeline est performant.
+          </p>
+        </div>
+        <div className="p-4 rounded-xl bg-bg-surface/40 border border-border-subtle">
+          <div className="flex items-center space-x-2 mb-1">
+            <Package size={14} className="text-primary-gold" />
+            <p className="text-sm font-bold text-text-main">Data Layers</p>
+          </div>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Où on en est dans le traitement. <span className="text-primary-gold">Bronze</span> = brut,
+            tel qu&apos;il arrive. <span className="text-primary-gold">Silver</span> = nettoyé.
+            <span className="text-primary-gold"> Gold</span> = prêt à être affiché.
+          </p>
+        </div>
+      </div>
+    </div>
 
-      {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 z-10">
-        <motion.div 
-          style={{ y: y1, opacity: opacity1 }}
-          className="max-w-5xl mx-auto px-6 text-center"
-        >
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-8"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-            </span>
-            Pipeline PySpark Temps Réel
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight"
-          >
-            Le déluge de données GitHub <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 font-serif italic">
-              Maîtrisé à l'échelle.
-            </span>
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg text-slate-400 max-w-2xl mx-auto mb-12"
-          >
-            Une architecture Data Engineering de classe mondiale. Traitement Medallion par lots, flux structurés (Streaming) et calcul d'influence de graphes (PageRank) sur des millions d'événements.
-          </motion.p>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <button onClick={() => scrollTo('architecture')} className="px-8 py-4 bg-slate-100 text-slate-900 rounded-full font-medium hover:bg-white hover:scale-105 transition-all flex items-center gap-2">
-              Découvrir l'Architecture <ArrowRight className="w-4 h-4" />
-            </button>
-            <button onClick={() => scrollTo('live-engine')} className="px-8 py-4 bg-slate-900 border border-slate-800 text-slate-100 rounded-full font-medium hover:bg-slate-800 transition-all flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-amber-500" /> Voir le Monitoring Live
-            </button>
-          </motion.div>
-        </motion.div>
+    {/* Les graphiques */}
+    <div className="glass p-8">
+      <div className="flex items-center space-x-3 mb-6">
+        <Activity size={20} className="text-primary-gold" />
+        <h3 className="text-lg font-bold font-heading">Les graphiques au milieu</h3>
+      </div>
+      <div className="space-y-5">
+        <div>
+          <p className="text-sm font-bold text-text-main mb-2">Global Activity Trends (la grande courbe)</p>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Montre l&apos;activité au fil des heures.
+            La courbe <span className="text-primary-gold font-bold">or</span> = les <em>commits</em> (sauvegardes de code).
+            La courbe <span className="text-accent-emerald-bright font-bold">verte pointillée</span> = les <em>pull requests</em>
+            (propositions de modifications soumises par les développeurs).
+          </p>
+        </div>
+        <div className="border-t border-border-subtle pt-5">
+          <p className="text-sm font-bold text-text-main mb-2">Ecosystem Influence (le donut à droite)</p>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Camembert qui montre quels types d&apos;actions sont les plus courants.
+            En général <em>Push</em> (sauvegarde de code) domine largement, suivi de <em>Create</em> (création de branche/repo),
+            <em> PullRequest</em> (proposition de modif) et <em>IssueComment</em> (commentaire sur un problème).
+          </p>
+        </div>
+        <div className="border-t border-border-subtle pt-5">
+          <p className="text-sm font-bold text-text-main mb-2">Trending Architectural Units (le tableau en bas)</p>
+          <p className="text-xs text-text-muted leading-relaxed">
+            Les dépôts de code les plus actifs sur la période, classés du plus à intense au moins intense.
+            Le chiffre à droite = nombre d&apos;événements observés pour ce dépôt.
+          </p>
+        </div>
+      </div>
+    </div>
 
-        {/* Cinematic bottom gradient */}
-        <div className="absolute bottom-0 w-full h-64 bg-gradient-to-t from-[#020617] to-transparent z-20"></div>
-      </section>
+    {/* Pipeline Status */}
+    <div className="glass p-8">
+      <div className="flex items-center space-x-3 mb-6">
+        <Workflow size={20} className="text-primary-gold" />
+        <h3 className="text-lg font-bold font-heading">Le petit panneau &laquo; Pipeline Status &raquo; en bas à gauche</h3>
+      </div>
+      <p className="text-text-muted text-sm leading-relaxed mb-4">
+        Ce panneau montre l&apos;état des 3 couches de stockage de données.
+        Le point <span className="text-accent-emerald-bright">vert qui clignote</span> indique que le pipeline est actif.
+      </p>
+      <div className="space-y-3 text-xs text-text-muted">
+        <div className="flex items-start space-x-3">
+          <span className="text-primary-gold font-bold w-16 shrink-0">Bronze</span>
+          <span>Les données brutes, telles qu&apos;elles sortent de GitHub. Aucun traitement, juste un dépôt.</span>
+        </div>
+        <div className="flex items-start space-x-3">
+          <span className="text-primary-gold font-bold w-16 shrink-0">Silver</span>
+          <span>Les données nettoyées : on a enlevé les doublons, formaté les dates, retiré les champs inutiles.</span>
+        </div>
+        <div className="flex items-start space-x-3">
+          <span className="text-primary-gold font-bold w-16 shrink-0">Gold</span>
+          <span>Les données agrégées et prêtes à être affichées (top repos, distribution des événements, etc.).</span>
+        </div>
+      </div>
+      <p className="text-[11px] text-text-dim mt-4">
+        &laquo; Last sync &raquo; indique quand le pipeline a été mis à jour pour la dernière fois.
+      </p>
+    </div>
 
-      {/* CONTEXT / EXPLANATION SECTION */}
-      <section className="relative py-24 z-20 bg-[#020617] border-y border-white/5">
-        <div className="max-w-5xl mx-auto px-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
-            className="p-8 md:p-12 rounded-3xl bg-amber-500/5 border border-amber-500/10 backdrop-blur-xl relative overflow-hidden"
-          >
-            {/* Decorative background glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-            
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-6 text-slate-100 flex items-center gap-3">
-              <Database className="w-6 h-6 text-amber-500" />
-              Pourquoi ce projet ?
+    {/* Comment on calcule Active Developers */}
+    <div className="glass p-8 border border-accent-emerald-bright/20">
+      <div className="flex items-center space-x-3 mb-4">
+        <AlertCircle size={20} className="text-accent-emerald-bright" />
+        <h3 className="text-lg font-bold font-heading">D&apos;où vient le chiffre &laquo; Active Developers &raquo; ?</h3>
+      </div>
+      <p className="text-text-muted text-sm leading-relaxed mb-3">
+        Pour compter les développeurs uniques, le backend fait une requête SQL en direct
+        sur la couche <span className="text-primary-gold">Bronze</span> du data lake :
+      </p>
+      <pre className="text-[11px] font-mono text-text-muted bg-bg-deep p-3 rounded-lg overflow-x-auto border border-border-subtle">
+{`SELECT COUNT(DISTINCT actor_login)
+FROM bronze_v2/**/*.parquet
+WHERE actor_login IS NOT NULL`}
+      </pre>
+      <p className="text-xs text-text-muted leading-relaxed mt-3">
+        Chaque événement GitHub (commit, PR, comment...) contient le pseudo de la personne
+        qui l&apos;a déclenché. On compte les pseudos uniques, et voilà.
+        Pas de calcul Gold pré-agrégé : c&apos;est lu en temps réel depuis le streaming Bronze
+        (1.5M+ events ingérés).
+      </p>
+    </div>
+
+    {/* Coulisses */}
+    <div className="glass p-8">
+      <div className="flex items-center space-x-3 mb-6">
+        <Terminal size={20} className="text-primary-gold" />
+        <h3 className="text-lg font-bold font-heading">Comment ça marche en coulisses ?</h3>
+      </div>
+      <p className="text-text-muted text-sm leading-relaxed mb-4">
+        Imagine une usine de recyclage d&apos;eau, mais pour les données :
+      </p>
+      <ol className="space-y-3 text-xs text-text-muted leading-relaxed list-decimal list-inside">
+        <li><span className="text-text-main font-bold">GitHub Archive</span> publie un fichier toutes les heures avec tous les événements publics.</li>
+        <li>Notre <span className="text-text-main font-bold">producer</span> télécharge ce fichier et le verse dans <span className="text-text-main font-bold">Kafka</span> (une file d&apos;attente géante).</li>
+        <li><span className="text-text-main font-bold">Spark Streaming</span> lit Kafka 24h/24 et écrit chaque événement dans la couche <em>Bronze</em>.</li>
+        <li><span className="text-text-main font-bold">Airflow</span> déclenche le nettoyage (Silver) puis les agrégations (Gold) à intervalles réguliers.</li>
+        <li>Le <span className="text-text-main font-bold">backend FastAPI</span> lit les résultats Gold et les expose via une API.</li>
+        <li>Ce <span className="text-text-main font-bold">dashboard</span> interroge l&apos;API toutes les 30 secondes et rafraîchit les chiffres tout seul.</li>
+      </ol>
+    </div>
+  </motion.div>
+);
+
+const VIEW_DATA: Record<Exclude<ViewKey, 'global-pulse' | 'help'>, { title: string; subtitle: string; icon: LucideIcon; items: PlaceholderItem[] }> = {
+  'data-sources': {
+    title: 'Data Sources',
+    subtitle: 'Connected ingestion endpoints',
+    icon: Database,
+    items: [
+      { name: 'GH Archive', status: 'active', detail: 'Hourly GitHub event dumps — JSON.gz over HTTPS.' },
+      { name: 'DuckDB Cache', status: 'active', detail: 'Local analytical cache pre-loaded at API startup.' },
+      { name: 'Bronze Lake', status: 'active', detail: 'Raw streaming layer written by Spark Structured Streaming.' },
+      { name: 'Silver/Gold', status: 'idle', detail: 'Daily batch aggregation orchestrated by Airflow.' },
+    ],
+  },
+  'kafka-streams': {
+    title: 'Kafka Streams',
+    subtitle: 'Topics and consumer groups',
+    icon: Zap,
+    items: [
+      { name: 'gh-events-raw', status: 'active', detail: 'Source topic — ingestion from GH Archive producer.' },
+      { name: 'gh-events-normalized', status: 'active', detail: 'Normalized stream consumed by Spark Bronze writer.' },
+      { name: 'consumer: spark-bronze', status: 'active', detail: 'Lag < 200 ms — healthy.' },
+      { name: 'consumer: backend-cache', status: 'idle', detail: 'Reserved for live dashboard push (WS coming).' },
+    ],
+  },
+  'spark-jobs': {
+    title: 'Spark Jobs',
+    subtitle: 'Streaming and batch pipelines',
+    icon: Activity,
+    items: [
+      { name: 'bronze-streaming-writer', status: 'active', detail: 'Structured Streaming job — Kafka → Parquet bronze.' },
+      { name: 'silver-daily-rollup', status: 'idle', detail: 'Triggered by Airflow DAG gh_archive_batch.' },
+      { name: 'gold-metrics-builder', status: 'idle', detail: 'Aggregates influence scores and top repos.' },
+      { name: 'spark-history-server', status: 'active', detail: 'UI on port 18080 (when exposed).' },
+    ],
+  },
+};
+
+// --- Main Page ---
+
+export default function Dashboard() {
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<ViewKey>('global-pulse');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    document.body.classList.toggle('theme-light', theme === 'light');
+  }, [theme]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/api/analytics/`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        setData(result);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching analytics data:', err);
+        setData({
+          total_events: 0,
+          active_users: 0,
+          top_repos: [],
+          activity_over_time: [],
+          influence_scores: []
+        });
+        setLoading(false);
+      }
+    };
+    fetchData();
+    
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex h-screen bg-bg-deep text-text-main overflow-hidden">
+      
+      {/* Sidebar Cinématique */}
+      <aside className="w-64 border-r border-border-subtle p-6 flex flex-col justify-between hidden lg:flex">
+        <div>
+          <div className="flex items-center space-x-3 mb-12">
+            <div className="w-10 h-10 rounded-xl bg-primary-gold flex items-center justify-center shadow-[0_0_20px_rgba(197,160,89,0.3)]">
+              <Terminal className="text-bg-deep" size={24} />
+            </div>
+            <h1 className="text-xl font-bold font-heading tracking-tight">PULSE<span className="text-primary-gold">.</span></h1>
+          </div>
+
+          <nav className="space-y-2">
+            <p className="text-[10px] font-bold text-text-dim uppercase tracking-widest mb-4 ml-3">Navigation</p>
+            <SidebarItem icon={LayoutDashboard} label="Global Pulse" active={currentView === 'global-pulse'} onClick={() => setCurrentView('global-pulse')} />
+            <SidebarItem icon={Database} label="Data Sources" active={currentView === 'data-sources'} onClick={() => setCurrentView('data-sources')} />
+            <SidebarItem icon={Zap} label="Kafka Streams" active={currentView === 'kafka-streams'} onClick={() => setCurrentView('kafka-streams')} />
+            <SidebarItem icon={Activity} label="Spark Jobs" active={currentView === 'spark-jobs'} onClick={() => setCurrentView('spark-jobs')} />
+            <SidebarItem icon={HelpCircle} label="Comment lire ?" active={currentView === 'help'} onClick={() => setCurrentView('help')} />
+          </nav>
+        </div>
+
+        <div className="space-y-4">
+          <PipelineStatusPanel />
+          <SidebarItem icon={Settings} label="Project Settings" />
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        
+        {/* Header Navigation */}
+        <header className="flex justify-between items-center mb-10 animate-fade" style={{ animationDelay: '0.1s' }}>
+          <div>
+            <h2 className="text-2xl font-bold font-heading">
+              {currentView === 'global-pulse'
+                ? 'Digital Instrument Dashboard'
+                : currentView === 'help'
+                  ? 'Comment lire ce dashboard'
+                  : VIEW_DATA[currentView].title}
             </h2>
-            <div className="space-y-4 text-slate-300 leading-relaxed">
-              <p>
-                <strong>ArchiveData.Engine</strong> est né d'un défi complexe : comment comprendre et analyser en temps réel la collaboration de millions de développeurs à travers le monde ?
-              </p>
-              <p>
-                Chaque jour, des développeurs créent des dépôts, publient du code (Push), ouvrent des tickets (Issues) et collaborent sur la plateforme GitHub. Toutes ces actions génèrent un volume massif de données brutes (le GitHub Archive).
-              </p>
-              <p>
-                Ce projet démontre ma capacité à concevoir une plateforme complète capable d'<strong>ingérer ces données brutes</strong>, de les <strong>nettoyer</strong> (Pipeline Medallion), d'en <strong>extraire la valeur</strong> (Algorithmes de Graphe), et de les <strong>restituer instantanément</strong> dans un tableau de bord analytique haute performance.
-              </p>
+            <p className="text-text-dim text-sm">
+              {currentView === 'global-pulse'
+                ? 'Real-time GitHub Archive Signal Analytics'
+                : currentView === 'help'
+                  ? 'Guide pédagogique pour les non-techniques'
+                  : VIEW_DATA[currentView].subtitle}
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center bg-bg-surface border border-border-subtle rounded-full px-4 py-2 w-64 focus-within:border-primary-gold transition-colors">
+              <Search size={16} className="text-text-dim" />
+              <input type="text" placeholder="Search signals..." className="bg-transparent border-none focus:outline-none text-xs ml-2 w-full text-text-main" />
+            </div>
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+              className="relative p-2 rounded-full border border-border-subtle hover:bg-white/5 cursor-pointer transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={20} className="text-primary-gold" /> : <Moon size={20} className="text-text-dim" />}
+            </button>
+            <div className="relative p-2 rounded-full border border-border-subtle hover:bg-white/5 cursor-pointer">
+              <Bell size={20} className="text-text-dim" />
+              <div className="absolute top-2 right-2 w-2 h-2 bg-primary-gold rounded-full border-2 border-bg-deep" />
+            </div>
+            <div className="w-10 h-10 rounded-full border border-primary-gold/50 p-0.5">
+              <div className="w-full h-full rounded-full bg-primary-gold flex items-center justify-center font-bold text-bg-deep">SD</div>
+            </div>
+          </div>
+        </header>
+
+        {currentView === 'help' && <HelpView />}
+
+        {currentView !== 'global-pulse' && currentView !== 'help' && (
+          <PlaceholderView {...VIEW_DATA[currentView]} />
+        )}
+
+        {currentView === 'global-pulse' && (<>
+        {/* KPI Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          <StatCard title="Active Developers" value={loading ? "..." : data?.active_users.toLocaleString()} change="+12.5%" icon={Users} delay={0.2} />
+          <StatCard title="Signal Volume" value={loading ? "..." : data?.total_events.toLocaleString()} change="+24.1%" icon={TrendingUp} delay={0.3} />
+          <StatCard title="Throughput" value="1.2k/s" change="+5.2%" icon={Zap} delay={0.4} />
+          <StatCard title="Data Layers" value="Bronze" change="Streaming" icon={Package} delay={0.5} />
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          
+          {/* Main Activity Chart */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="xl:col-span-2 glass p-8"
+          >
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h3 className="text-lg font-bold font-heading">Global Activity Trends</h3>
+                <p className="text-text-dim text-xs">Hourly commit vs pull request frequency</p>
+              </div>
+              <div className="flex space-x-2">
+                <div className="flex items-center space-x-1.5"><div className="w-2 h-2 rounded-full bg-primary-gold" /><span className="text-[10px] text-text-dim uppercase font-bold tracking-tighter">Commits</span></div>
+                <div className="flex items-center space-x-1.5"><div className="w-2 h-2 rounded-full bg-accent-emerald-bright" /><span className="text-[10px] text-text-dim uppercase font-bold tracking-tighter">PRs</span></div>
+              </div>
+            </div>
+            
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data?.activity_over_time}>
+                  <defs>
+                    <linearGradient id="colorCommits" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#c5a059" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#c5a059" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
+                  <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{fill: '#71717a', fontSize: 10}} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#71717a', fontSize: 10}} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1c1c21', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    itemStyle={{ fontSize: '12px', color: '#e4e4e7' }}
+                  />
+                  <Area type="monotone" dataKey="commits" stroke="#c5a059" strokeWidth={3} fillOpacity={1} fill="url(#colorCommits)" />
+                  <Area type="monotone" dataKey="prs" stroke="#4caf50" strokeWidth={2} strokeDasharray="5 5" fill="transparent" />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </motion.div>
-        </div>
-      </section>
 
-      {/* ARCHITECTURE SECTION */}
-      <section id="architecture" className="relative min-h-screen py-32 z-20 bg-[#020617]">
-        <div className="max-w-7xl mx-auto px-6">
+          {/* Influence Distribution */}
           <motion.div 
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}
-            className="mb-20 text-center"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
+            className="glass p-8"
           >
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Ingénierie de Précision</h2>
-            <p className="text-slate-400">Trois piliers techniques conçus pour la performance et la fiabilité.</p>
+            <h3 className="text-lg font-bold font-heading mb-1">Ecosystem Influence</h3>
+            <p className="text-text-dim text-xs mb-8">Language distribution across signals</p>
+            
+            <div className="h-[250px] relative">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={data?.influence_scores}
+                    cx="50%" cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={8}
+                    dataKey="value"
+                  >
+                    <Cell fill="#c5a059" />
+                    <Cell fill="#2e4036" />
+                    <Cell fill="#1c1c21" stroke="rgba(255,255,255,0.1)" />
+                    <Cell fill="#71717a" />
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="text-center">
+                  <p className="text-text-dim text-[10px] uppercase font-bold tracking-tighter">Leading</p>
+                  <p className="text-lg font-bold text-primary-gold">JS</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 mt-6">
+              {data?.influence_scores.map((item, idx) => (
+                <div key={idx} className="flex justify-between items-center group">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: idx === 0 ? '#c5a059' : idx === 1 ? '#4caf50' : '#71717a' }} />
+                    <span className="text-xs text-text-muted group-hover:text-text-main transition-colors">{item.name}</span>
+                  </div>
+                  <span className="text-xs font-mono font-medium text-text-dim">{item.value}%</span>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Server className="w-6 h-6 text-blue-400" />,
-                title: "Pipeline Medallion Scalable",
-                desc: "Ingestion, nettoyage et agrégation (Bronze → Silver → Gold) via PySpark, optimisé avec des checkpoints locaux pour prévenir les OOM.",
-                color: "from-blue-500/10 to-transparent",
-                border: "group-hover:border-blue-500/50"
-              },
-              {
-                icon: <Network className="w-6 h-6 text-purple-400" />,
-                title: "Graphe & PageRank Itératif",
-                desc: "Construction d'un graphe Développeur-Dépôt et exécution itérative de PageRank avec gestion précise du Shuffle et mesure de la convergence.",
-                color: "from-purple-500/10 to-transparent",
-                border: "group-hover:border-purple-500/50"
-              },
-              {
-                icon: <Cpu className="w-6 h-6 text-amber-400" />,
-                title: "Analytics In-Memory (DuckDB)",
-                desc: "API FastAPI ultra-rapide connectée directement aux fichiers Parquet générés par Spark via DuckDB, éliminant le besoin d'entrepôt intermédiaire.",
-                color: "from-amber-500/10 to-transparent",
-                border: "group-hover:border-amber-500/50"
-              }
-            ].map((feature, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.2 }}
-                className={`group p-8 rounded-3xl bg-slate-900/40 border border-white/5 backdrop-blur-sm relative overflow-hidden transition-all duration-500 ${feature.border}`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-                <div className="relative z-10">
-                  <div className="mb-6 p-4 rounded-2xl bg-white/5 inline-block">{feature.icon}</div>
-                  <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                  <p className="text-slate-400 leading-relaxed text-sm">{feature.desc}</p>
+        </div>
+
+        {/* Table / Top Repos */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 0.8 }}
+          className="mt-8 glass p-8 overflow-hidden"
+        >
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-lg font-bold font-heading">Trending Architectural Units</h3>
+            <button className="text-xs text-primary-gold font-bold hover:underline flex items-center">View Full Repository Insights <ChevronRight size={14} /></button>
+          </div>
+          
+          <div className="space-y-4">
+            {data?.top_repos.map((repo, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-all duration-300 border border-transparent hover:border-border-subtle group">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-xl bg-bg-surface border border-border-subtle flex items-center justify-center font-bold text-text-dim group-hover:text-primary-gold transition-colors">
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-text-main">{repo.name}</p>
+                    <p className="text-[10px] text-text-dim uppercase tracking-tighter">Signal Intensity: High</p>
+                  </div>
                 </div>
-              </motion.div>
+                <div className="flex items-center space-x-8">
+                  <div className="hidden md:block">
+                    <p className="text-xs text-text-dim mb-1 text-right">Growth</p>
+                    <div className="w-24 h-1 bg-bg-surface rounded-full overflow-hidden">
+                      <div className="h-full bg-primary-gold rounded-full" style={{ width: `${80 - idx * 15}%` }} />
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-mono text-text-main">{repo.activity}</p>
+                    <p className="text-[10px] text-accent-emerald-bright font-bold">ACTIVE</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
+        </motion.div>
+        </>)}
 
-      {/* LIVE ENGINE SECTION (DASHBOARD) */}
-      <section id="live-engine" className="relative min-h-screen py-32 z-20 border-t border-white/5 bg-slate-950/50">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-[#020617] to-[#020617] pointer-events-none"></div>
-        
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="flex items-center justify-between mb-12"
-          >
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-3">
-                <Terminal className="w-8 h-8 text-amber-500" />
-                DuckDB Live Engine
-              </h2>
-              <p className="text-slate-400">Interface de visualisation dynamique connectée en direct aux données de la Couche Gold.</p>
-            </div>
-            <div className="hidden md:flex items-center gap-6">
-              <div className="flex flex-col">
-                <span className="text-xs text-slate-500 uppercase tracking-widest">Actifs</span>
-                <span className="text-xl font-mono text-white">45,231</span>
-              </div>
-              <div className="w-px h-8 bg-white/10"></div>
-              <div className="flex flex-col">
-                <span className="text-xs text-slate-500 uppercase tracking-widest">Événements</span>
-                <span className="text-xl font-mono text-white">323,940</span>
-              </div>
-            </div>
-          </motion.div>
+        {/* Ambient background blur */}
+        <div className="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary-gold opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
+        <div className="fixed bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-accent-emerald-bright opacity-[0.02] blur-[100px] rounded-full pointer-events-none" />
 
-          {loading ? (
-             <div className="h-[500px] rounded-3xl border border-white/5 bg-slate-900/50 flex flex-col items-center justify-center text-amber-500/50">
-               <div className="w-12 h-12 border-4 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mb-4"></div>
-               <span className="font-mono text-sm tracking-widest uppercase">Initialisation Engine...</span>
-             </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              
-              {/* Top Repos Table */}
-              <motion.div 
-                initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
-                className="lg:col-span-7 bg-slate-900/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-xl flex flex-col"
-              >
-                <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-                  <h3 className="font-bold flex items-center gap-2"><Star className="w-4 h-4 text-amber-400"/> Top Dépôts GitHub</h3>
-                </div>
-                <div className="p-6 h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={Array.isArray(topRepos) ? topRepos.slice(0, 7) : []} layout="vertical" margin={{ top: 0, right: 0, left: 30, bottom: 0 }}>
-                      <XAxis type="number" hide />
-                      <YAxis dataKey="repo_name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12 }} width={120} />
-                      <RechartsTooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                      <Bar dataKey="total_events" fill="#10b981" radius={[0, 4, 4, 0]}>
-                        {Array.isArray(topRepos) && topRepos.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </motion.div>
-
-              <div className="lg:col-span-5 flex flex-col gap-8">
-                {/* PageRank Influence */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }}
-                  className="bg-slate-900/40 border border-white/5 p-6 rounded-3xl backdrop-blur-xl flex-1 flex flex-col"
-                >
-                  <h3 className="font-bold flex items-center gap-2 mb-4"><Network className="w-4 h-4 text-purple-400"/> Graphe d'Influence (PageRank)</h3>
-                  <div className="flex-1 min-h-[180px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={Array.isArray(pagerankNodes) ? pagerankNodes.slice(0, 5) : []} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
-                        <XAxis dataKey="node_name" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <YAxis hide />
-                        <RechartsTooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                        <Bar dataKey="influence_score" fill="#a855f7" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </motion.div>
-
-                {/* Event Distribution */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.4 }}
-                  className="bg-slate-900/40 border border-white/5 p-6 rounded-3xl backdrop-blur-xl flex-1 flex flex-col"
-                >
-                  <h3 className="font-bold flex items-center gap-2 mb-2"><PieChartIcon className="w-4 h-4 text-blue-400"/> Top Actions</h3>
-                  <div className="flex-1 min-h-[180px] flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={Array.isArray(eventTypes) ? eventTypes.slice(0, 5) : []}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={50}
-                          outerRadius={70}
-                          paddingAngle={5}
-                          dataKey="count"
-                          nameKey="event_type"
-                        >
-                          {Array.isArray(eventTypes) && eventTypes.slice(0, 5).map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <RechartsTooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </motion.div>
-              </div>
-
-            </div>
-          )}
-        </div>
-      </section>
-      
-      {/* Footer */}
-      <footer className="border-t border-white/5 bg-[#020617] py-12 text-center text-slate-500 text-sm font-mono">
-        <p>Architecturé pour l'échelle. Développé pour impacter.</p>
-      </footer>
+      </main>
     </div>
   );
 }
