@@ -24,6 +24,9 @@ node_modules/
 # -------- Build / cache --------------------------------------
 public/
 **/public/
+# Re-include Next.js public/ for the dashboard (static assets shipped to Vercel)
+!Data Engineering 2/project final/frontend-dashboard/public/
+!Data Engineering 2/project final/frontend-dashboard/public/**
 dist/
 .next/
 .quartz-cache/

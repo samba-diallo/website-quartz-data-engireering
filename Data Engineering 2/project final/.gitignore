@@ -2,7 +2,9 @@
 data/
 outputs/
 *.parquet
-*.json
+# JSON: only exclude data/output JSON, NOT frontend config (package.json, tsconfig.json, etc.)
+data/**/*.json
+outputs/**/*.json
 *.json.gz
 
 # Spark/Hadoop logs
