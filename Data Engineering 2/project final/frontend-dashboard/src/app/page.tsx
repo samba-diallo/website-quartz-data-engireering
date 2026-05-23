@@ -36,6 +36,7 @@ interface AnalyticsData {
   top_repos: TopRepo[];
   activity_over_time: ActivityPoint[];
   influence_scores: InfluenceScore[];
+  data_coverage?: string;
 }
 
 interface StatCardProps {
@@ -482,7 +483,8 @@ export default function Dashboard() {
           active_users: 0,
           top_repos: [],
           activity_over_time: [],
-          influence_scores: []
+          influence_scores: [],
+          data_coverage: 'GitHub Archive · 15 janvier 2025 · 10h–13h UTC'
         });
         setLoading(false);
       }
@@ -542,6 +544,11 @@ export default function Dashboard() {
                   ? 'Guide pédagogique pour les non-techniques'
                   : VIEW_DATA[currentView].subtitle}
             </p>
+            {data?.data_coverage && (
+              <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-text-dim bg-bg-surface border border-border-subtle rounded-full px-3 py-1">
+                📅 Données analysées : {data.data_coverage}
+              </p>
+            )}
           </div>
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center bg-bg-surface border border-border-subtle rounded-full px-4 py-2 w-64 focus-within:border-primary-gold transition-colors">

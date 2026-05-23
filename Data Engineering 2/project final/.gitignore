@@ -18,3 +18,8 @@ __pycache__/
 # Mac/Windows system files
 .DS_Store
 Thumbs.db
+
+# Exception : bundle de données Gold embarqué pour le déploiement du backend
+# sur Render (free tier sans volume persistant). ~5 Mo, vraies données.
+!backend/data/
+!backend/data/**

@@ -3,7 +3,14 @@ import os
 
 # Chemins vers les données Parquet (support local et Docker)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PROJECT_OUTPUTS = os.environ.get("PARQUET_BASE_PATH", os.path.join(BASE_DIR, "outputs", "project"))
+# Source des données, par ordre de priorité :
+#   1) PARQUET_BASE_PATH si défini (docker-compose local : volume avec tout le lake)
+#   2) le bundle Gold embarqué backend/data/project (déploiement Render sans volume)
+#   3) le data lake local outputs/project (dev hors Docker)
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_BUNDLED_OUTPUTS = os.path.join(_BACKEND_DIR, "data", "project")
+_DEFAULT_OUTPUTS = _BUNDLED_OUTPUTS if os.path.isdir(_BUNDLED_OUTPUTS) else os.path.join(BASE_DIR, "outputs", "project")
+PROJECT_OUTPUTS = os.environ.get("PARQUET_BASE_PATH", _DEFAULT_OUTPUTS)
 GOLD_PATH = os.path.join(PROJECT_OUTPUTS, "gold")
 STREAMING_PATH = os.path.join(PROJECT_OUTPUTS, "streaming")
 

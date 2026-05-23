@@ -9,8 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source code
 COPY . .
 
-# Expose port
+# Expose port (Render injecte $PORT au runtime ; 8000 par défaut en local)
 EXPOSE 8000
 
-# Run the API
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the API — forme shell pour substituer $PORT (sinon non interpolé)
+CMD python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
