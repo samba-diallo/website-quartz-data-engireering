@@ -137,3 +137,40 @@ dbt_packages/
 .mypy_cache/
 .ruff_cache/
 htmlcov/
+
+# =============================================================
+# AJOUTS NETTOYAGE REPO (2026-05-23) — fichiers gardés en local
+# mais retirés du suivi GitHub (cf. git rm --cached)
+# =============================================================
+
+# -------- Ancien site Quartz abandonné (committé par erreur) --
+# 1557 fichiers dont un .git.archive/ + copie complète du code Quartz
+Data Engineering 1/website1/
+
+# -------- Cache TypeScript -----------------------------------
+*.tsbuildinfo
+
+# -------- Scripts one-shot / de fix (gardés en local) --------
+/verify_spark.py
+/fix_iframe_paths.sh
+Data Engineering 2/project final/add_phase*.py
+Data Engineering 2/project final/append_phases.py
+Data Engineering 2/project final/fix_notebook*.py
+Data Engineering 2/project final/fix_phase2.py
+Data Engineering 2/project final/run_notebook.py
+
+# -------- Docs internes (workflow perso, non publiées) -------
+# On garde PIPELINE_RUNBOOK.md (utile publiquement).
+documentation/MISE_A_JOUR_SITE.md
+documentation/README.md
+documentation/GUIDE_DEPLOIEMENT_POUR_DEBUTANT.md
+
+# -------- Supports de cours / présentations (lourds) ---------
+Course/
+*.pptx
+
+# -------- Outils CLI locaux ----------------------------------
+.antigravitycli/
+
+# -------- Artefacts runtime (preuves générées) ---------------
+Data Engineering 2/project final/proof/streaming_lastProgress.json
