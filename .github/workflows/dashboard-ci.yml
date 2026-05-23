@@ -1,0 +1,63 @@
+name: Dashboard CI
+
+# Valide le dashboard Next.js (lint + build export statique) à chaque push/PR
+# qui touche son dossier, sur main et v2-kafka-airflow. Sert de garde-fou
+# "est-ce que c'est bon ?" avant le déploiement Cloudflare Pages.
+on:
+  push:
+    branches: [main, v2-kafka-airflow]
+    paths:
+      - "Data Engineering 2/project final/frontend-dashboard/**"
+      - ".github/workflows/dashboard-ci.yml"
+  pull_request:
+    branches: [main, v2-kafka-airflow]
+    paths:
+      - "Data Engineering 2/project final/frontend-dashboard/**"
+      - ".github/workflows/dashboard-ci.yml"
+  workflow_dispatch:
+
+# Least-privilege : ce workflow ne fait que valider (pas de déploiement)
+permissions:
+  contents: read
+
+# Toutes les commandes `run` s'exécutent dans le dossier du dashboard
+defaults:
+  run:
+    working-directory: "Data Engineering 2/project final/frontend-dashboard"
+
+jobs:
+  validate:
+    name: Lint & build (export statique)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "Data Engineering 2/project final/frontend-dashboard/package-lock.json"
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Lint (eslint)
+        run: npm run lint
+
+      - name: Build (Next.js export statique)
+        run: npx next build
+
+      - name: Vérification de la sortie statique
+        run: |
+          if [ ! -d "out" ]; then
+            echo "ERREUR: dossier 'out' introuvable — output:'export' manquant dans next.config.ts ?"
+            exit 1
+          fi
+          if [ ! -f "out/index.html" ]; then
+            echo "ERREUR: out/index.html manquant"
+            exit 1
+          fi
+          FILE_COUNT=$(find out -type f | wc -l)
+          echo "Export OK : $FILE_COUNT fichiers générés dans out/"
