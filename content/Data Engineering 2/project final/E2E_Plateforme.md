@@ -91,6 +91,8 @@ Total : **10 services** orchestrés via un seul `docker-compose.yml`.
 
 ## 5. Le dashboard "Luxe de Minuit"
 
+> 🔗 **Dashboard en ligne (démo live) : https://de2-dashboard-e2e.pages.dev/**
+
 Le dashboard implémente une esthétique cinématique inspirée des design systems premium (Dribbble). Tout est interactif et rafraîchi automatiquement.
 
 ### Mode sombre (par défaut)

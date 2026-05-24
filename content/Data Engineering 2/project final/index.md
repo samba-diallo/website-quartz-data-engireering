@@ -6,6 +6,11 @@ description: Vue d'ensemble du projet final Data Engineering 2
 
 # Projet Final DE2 : Pipeline Data-Intensive sur GitHub Archive
 
+> ## 🔗 Démo en ligne
+> **▶️ Dashboard temps réel : https://de2-dashboard-e2e.pages.dev/**
+>
+> Application **Next.js** déployée qui consomme l'API analytics (FastAPI) du pipeline. Aperçus dans la [[proof/|galerie de preuves]].
+
 Bienvenue sur la documentation de mon projet final pour le cours de Data Engineering 2.
 Ce projet implémente une architecture Medallion complète avec du Streaming, du Traitement de Graphes (PageRank) et une préparation de données pour le Fine-Tuning LLM.
 
@@ -21,5 +26,6 @@ Le projet a deux faces :
 3. [[Data_Card|Data Card (Qualité des données pour l'IA)]]
 4. [[Usage_IA|Déclaration d'utilisation de l'IA]]
 5. [[DE2_Project_Notebook_EN|Code Source du Notebook (PySpark)]]
+6. [[proof/|Preuves d'exécution (dashboard, Spark UI, PageRank)]]
 
-Toutes les preuves d'exécution (Spark UI, Plans d'exécution, captures du dashboard) sont intégrées dans le rapport et la page Plateforme.
+Toutes les preuves d'exécution (captures du dashboard, Spark UI, plans d'exécution) sont rassemblées dans la **[[proof/|galerie de preuves]]**, et également intégrées dans le rapport et la page Plateforme.
