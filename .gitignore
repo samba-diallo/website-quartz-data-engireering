@@ -98,7 +98,23 @@ sample_*.json
 samples/
 
 # -------- Scratch / brainstorming / prompts (consigne) -------
-p*.md
+# -------- Airflow logs & caches (runtime generated) --------
+Data Engineering 2/project final/airflow/logs/
+Data Engineering 2/project final/airflow/plugins/
+
+# -------- Data outputs & temporary files -------------------
+Data Engineering 2/project final/data/landing/
+Data Engineering 2/project final/data/archive/
+
+# -------- Frontend build caches --------------------------
+Data Engineering 2/project final/frontend-dashboard/.turbo/
+Data Engineering 2/project final/frontend-dashboard/.next/dev/cache/
+
+# -------- Credentials never to commit ---------------------
+# If accidentally added, remove with: git rm --cached <file>
+*.key.json
+smtp-*.conf
+github-token-*p*.md
 pus.md
 PROMPT_*.md
 Prompt.md
