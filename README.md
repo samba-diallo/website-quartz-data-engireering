@@ -5,7 +5,9 @@
 > **Students** : DIALLO Samba & DIOP Mouhamed
 
 🎥 **[Regarder la vidéo de démonstration du Projet Final DE2][demo-video]** *(SharePoint ESIEE)*
+
 🌐 **Site de documentation** → https://website-quartz-data-engireering.pages.dev/Data-Engineering-2
+
 📊 **Dashboard temps réel (Projet Final DE2)** → https://de2-dashboard-e2e.pages.dev/
 
 [![Quartz](https://img.shields.io/badge/Built%20with-Quartz-blue)](https://quartz.jzhao.xyz/)
