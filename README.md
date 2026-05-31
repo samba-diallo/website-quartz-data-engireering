@@ -4,6 +4,7 @@
 >
 > **Students** : DIALLO Samba & DIOP Mouhamed
 
+🎥 **Vidéo de démonstration (Projet Final DE2)** → https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBddKK1juBnR5rsKe7DkHvjAZtsVvf1kMWr7NtC9Q4RpH8?e=FLKjyg&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
 🌐 **Site de documentation** → https://website-quartz-data-engireering.pages.dev/Data-Engineering-2
 📊 **Dashboard temps réel (Projet Final DE2)** → https://de2-dashboard-e2e.pages.dev/
 
