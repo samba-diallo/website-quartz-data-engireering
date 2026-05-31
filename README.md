@@ -4,7 +4,7 @@
 >
 > **Students** : DIALLO Samba & DIOP Mouhamed
 
-🎥 **Vidéo de démonstration (Projet Final DE2)** → https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBddKK1juBnR5rsKe7DkHvjAZtsVvf1kMWr7NtC9Q4RpH8?e=FLKjyg&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
+🎥 **[Regarder la vidéo de démonstration du Projet Final DE2][demo-video]** *(SharePoint ESIEE)*
 🌐 **Site de documentation** → https://website-quartz-data-engireering.pages.dev/Data-Engineering-2
 📊 **Dashboard temps réel (Projet Final DE2)** → https://de2-dashboard-e2e.pages.dev/
 
@@ -144,3 +144,5 @@ npx quartz build --serve      # http://localhost:8080
 Projet académique réalisé à ESIEE Paris (2025-2026) sous l'encadrement du professeur **Badr TAJINI**.
 
 © 2025-2026 — DIALLO Samba & DIOP Mouhamed.
+
+[demo-video]: https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBddKK1juBnR5rsKe7DkHvjAZtsVvf1kMWr7NtC9Q4RpH8?e=FLKjyg&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D

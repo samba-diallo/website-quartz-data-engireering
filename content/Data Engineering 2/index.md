@@ -48,7 +48,7 @@ Sert de base au volet « graphe » du projet final.
 **Track B — GitHub Archive** : pipeline data-intensive complet, du JSON brut horaire jusqu'à un dashboard temps réel déployé.
 
 > ### 🎥 Vidéo de démonstration
-> **▶ [Regarder la démo complète (SharePoint ESIEE)](https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBddKK1juBnR5rsKe7DkHvjAZtsVvf1kMWr7NtC9Q4RpH8?e=FLKjyg&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D)**
+> **▶ [Regarder la démo complète sur SharePoint ESIEE][demo-video]**
 > Vue d'ensemble du pipeline et démonstration du dashboard en action.
 
 > ### Démo en ligne
@@ -93,3 +93,5 @@ Sert de base au volet « graphe » du projet final.
 [[support/index|Setup et troubleshooting]] — installation, problèmes courants, environnement.
 
 *Roadmap officielle :* `roadmap-labs-project-DE2-FR.pdf` *(racine du dossier)*
+
+[demo-video]: https://esieeparis-my.sharepoint.com/:v:/g/personal/samba_diallo_edu_esiee_fr/IQBddKK1juBnR5rsKe7DkHvjAZtsVvf1kMWr7NtC9Q4RpH8?e=FLKjyg&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
